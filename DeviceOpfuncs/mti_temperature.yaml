@@ -1,0 +1,839 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+# ==================== Temperature Controller =====================================================
+- set_temp_set_pointt:
+  - op  : 10
+  - arg : [value: Float]
+  - ret : null
+  - getter_op : 11
+  - desc: Set temperature target in celcius
+
+- get_temp_set_point:
+  - op  : 11
+  - arg : null
+  - ret : [value: Float]
+  - eeprom : null
+  - desc: Get temperature target in celcius
+
+- set_temp_controller_enable:
+  - op  : 12
+  - arg : [enabled: Boolean]
+  - ret : null
+  - desc: Set temperature control enabled 0 = disabled, 1 = enabled
+
+- get_temp_controller_enable:
+  - op  : 13
+  - arg : null
+  - ret : [enabled: Boolean]
+  - desc: Get temperature control enabled 0 = disabled, 1 = enabled
+
+- set_temp_controller_pid:
+  - op  : 14
+  - arg : [p: Float, i: Float, d: Float, iLimH: Float, iLimL: Float]
+  - ret : null
+  - getter_op : 15
+  - desc: Set temperature control pid gains
+
+- get_temp_controller_pid:
+  - op  : 15
+  - arg : null
+  - ret : [p: Float, i: Float, d: Float, iLimH: Float, iLimL: Float]
+  - eeprom : null
+  - desc: Get temperature control pid gains
+
+- set_temp_controller_deadband:
+  - op  : 16
+  - arg : [lower: Float, upper: Float]
+  - ret : null
+  - getter_op : 17
+  - desc: Set temperature control pid deadband in Celcius relative from target
+
+- get_temp_controller_deadband:
+  - op  : 17
+  - arg : null
+  - ret : [lower: Float, upper: Float]
+  - eeprom : null
+  - desc: Get temperature control pid deadband
+
+- read_temp_controller_feedback:
+  - op : 18
+  - arg: null
+  - ret: [value: Float]
+  - desc: Get temperature sensor feedback with exact same period sampling with controller
+
+- set_temp_controller_out:
+  - op  : 19
+  - arg : [value: Float]
+  - ret : null
+  - desc: Get temperature controller pwm out in percentage
+
+- get_temp_controller_out:
+  - op  : 20
+  - arg : null
+  - ret : [value: Float]
+  - desc: Get temperature controller pwm out in percentage
+
+- set_temp_controller_auto:
+  - op  : 21
+  - arg : [auto: Boolean]
+  - ret : null
+  - desc: Set temperature control auto, if 0 = we can manually control the actuator, if 1 we cannot control manually actuator output
+
+- get_temp_controller_auto:
+  - op  : 22
+  - arg : null
+  - ret : [auto: Boolean]
+  - desc: Get temperature controller auto
+
+- set_temp_controller_period:
+  - op  : 23
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 24
+  - desc: Set temperature controller period in micro seconds
+
+- get_temp_controller_period:
+  - op  : 24
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get temperature controller period in micro seconds 
+
+- set_temp_controller_enable_on_start:
+  - op  : 25
+  - arg : [enable: Boolean]
+  - ret : null
+  - getter_op : 26
+  - desc: set temperature controller to be enabled on firmware start
+  
+- get_temp_controller_enable_on_start:
+  - op  : 26
+  - arg : null
+  - ret : [enable: Boolean]
+  - eeprom : null
+  - desc: get temperature controller to be enabled on firmware start
+
+- set_temp_controller_door_config:
+  - op  : 27
+  - arg : [enable: Boolean, velocity: Float]
+  - ret : null
+  - getter_op : 28
+  - desc: set temperature controller door config
+  
+- get_temp_controller_door_config:
+  - op  : 28
+  - arg : null
+  - ret : [enable: Boolean, velocity: Float]
+  - eeprom : null
+  - desc: get temperature controller door config
+
+- set_door_out_threshold:
+  - op  : 56
+  - arg : [upper: Float, lower: Float]
+  - ret : null
+  - desc: set door open and close threshold in celcius
+
+- get_door_out_threshold:
+  - op  : 57
+  - arg : null
+  - ret : [upper: Float, lower: Float]
+  - eeprom : null
+  - desc: Get door open and close threshold in celcius
+  
+
+# ==================== PROPORTIONAL VALVE CONTROL =====================================================
+- set_valve_controller_enable:
+  - op  : 30
+  - arg : [enable: Boolean]
+  - ret : null
+  - desc: Set valve control enabled 0 = disabled, 1 = enabled
+
+- get_valve_controller_enable:
+  - op  : 31
+  - arg : null
+  - ret : [enabled: Boolean]
+  - desc: Get valve control enabled 0 = disabled, 1 = enabled
+
+- set_valve_controller_pid:
+  - op  : 32
+  - arg : [p: Float, i: Float, d: Float, iLimH: Float, iLimL: Float]
+  - ret : null
+  - getter_op : 33
+  - desc: Set valve control pid gains
+
+- get_valve_controller_pid:
+  - op  : 33
+  - arg : null
+  - ret : [p: Float, i: Float, d: Float, iLimH: Float, iLimL: Float]
+  - eeprom : null
+  - desc: Get valve control pid gains
+
+- set_valve_controller_deadband:
+  - op  : 34
+  - arg : [lower: Float, upper: Float]
+  - ret : null
+  - desc: Set valve control pid deadband in Celcius relative from target
+
+- get_valve_controller_deadband:
+  - op  : 35
+  - arg : null
+  - ret : [lower: Float, upper: Float]
+  - desc: Get valve control pid deadband
+
+- read_valve_controller_feedback:
+  - op : 36
+  - arg: null
+  - ret: [value: Float]
+  - desc: Get valve sensor feedback with exact same period sampling with controller
+
+- set_valve_controller_set_pointt:
+  - op  : 37
+  - arg : [value: Float]
+  - ret : null
+  - getter_op : 38
+  - desc: Set valve temperature target in celcius
+
+- get_valve_controller_set_point:
+  - op  : 38
+  - arg : null
+  - ret : [value: Float]
+  - eeprom : null
+  - desc: Get valve temperature target in celcius
+
+- get_valve_controller_fault:
+  - op  : 39
+  - arg : null
+  - ret : [is_fault: Boolean]
+  - desc: Gasdasd
+
+- clear_valve_controller_fault:
+  - op  : 40
+  - arg : null
+  - ret : null
+  - desc: Gasdasd
+
+- set_valve_controller_period:
+  - op  : 41
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 42
+  - desc: Set valve controller period in micro seconds
+
+- get_valve_controller_period:
+  - op  : 42
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get valve controller period in micro seconds 
+
+- set_valve_flow_monitor_period:
+  - op  : 43
+  - arg : [period: UInt32]
+  - ret : null
+  - desc: Set valve flow monitor period in micro seconds
+
+- get_valve_flow_monitor_period:
+  - op  : 44
+  - arg : null
+  - ret : [period: UInt32]
+  - desc: Get valve flow monitor period in micro seconds 
+
+- read_flow:
+  - op : 45
+  - arg: null
+  - ret: [value: Float]
+  - desc: Get water flow value
+
+- set_valve_error_handling_enable:
+  - op  : 46
+  - arg : [enable: Boolean]
+  - ret : null
+  - getter_op : 47
+  - desc: Set valve error handling enabled
+
+- get_valve_error_handling_enable:
+  - op  : 47
+  - arg : null
+  - ret : [enable: Boolean]
+  - eeprom : null
+  - desc: Get valve error handling enabled
+
+- set_valve_controller_manual:
+  - op  : 48
+  - arg : [is_manual: Boolean]
+  - ret : null
+  - desc: set manually set the valve control. need to enable first
+
+- get_valve_controller_manual:
+  - op  : 49
+  - arg : null
+  - ret : [is_manual: Boolean]
+  - desc: Get manual mode
+
+- set_valve_controller_out:
+  - op  : 50
+  - arg : [value: Float]
+  - ret : [success: Boolean]
+  - desc: Get temperature controller pwm out in percentage
+
+- get_valve_controller_out:
+  - op  : 51
+  - arg : null
+  - ret : [value: Float]
+  - desc: Get temperature controller pwm out in percentage
+
+- set_valve_controller_enable_on_start:
+  - op  : 52
+  - arg : [enable: Boolean]
+  - ret : null
+  - getter_op : 53
+  - desc: set valve controller to be enabled on firmware start
+  
+- get_valve_controller_enable_on_start:
+  - op  : 53
+  - arg : null
+  - ret : [enable: Boolean]
+  - eeprom : null
+  - desc: get valve controller to be enabled on firmware start
+
+- set_internal_valve_range:
+  - op  : 54
+  - arg : [max: Float, min: Float]
+  - ret : null
+  - getter_op : 55
+  - desc: Set internal valve range
+
+- set_internal_valve_range:
+  - op  : 55
+  - arg : null
+  - ret : [max: Float, min: Float]
+  - eeprom : null
+  - desc: see op 54
+
+- set_internal_valve_enable:
+  - op  : 58
+  - arg : [isEnabled: Boolean]
+  - ret : [isSuccess: Boolean]
+  - desc: Set internal valve enable to manually control for debugging purpose, cant be use if the valve control still enabled
+
+- get_internal_valve_enable:
+  - op  : 59
+  - arg : null
+  - ret : [isEnabled: Boolean]
+  - desc: see op 58
+
+# ==================== FAN :D =====================================================
+- set_fan_enable:
+  - op  : 60
+  - arg : [enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: Set FAN output for temperature control in percentage of PWM, this opcode only work if the temp auto control is set to 0
+
+- get_fan_enable:
+  - op  : 61
+  - arg : null
+  - ret : [return: Boolean]
+  - desc: Get FAN output for temperature control in percentage of PWM
+
+- set_fan_out:
+  - op  : 62
+  - arg : [value: Float]
+  - ret : [status: Boolean]
+  - desc: Set FAN output for temperature control in percentage of PWM, this opcode only work if the temp auto control is set to 0
+
+- get_fan_out:
+  - op  : 63
+  - arg : null
+  - ret : [value: Float]
+  - desc: Get FAN output for temperature control in percentage of PWM
+
+- set_fan_range:
+  - op  : 64
+  - arg : [max: Float, min: Float]
+  - ret : null
+  - getter_op : 65
+  - desc: Set FAN for temperature control working range in percentage pwm min and max
+
+- get_fan_range:
+  - op  : 65
+  - arg : null
+  - ret : [max: Float, min: Float]
+  - eeprom : null
+  - desc: Get FAN for temperature control working range in percentage pwm min and max
+
+- get_fan_fault:
+  - op  : 66
+  - arg : [id: UInt16]
+  - ret : [is_fault: Boolean]
+  - desc: Get fault status of fan
+
+- set_fan_timeout:
+  - op  : 67
+  - arg : [period: UInt32]
+  - ret : null
+  - desc: Set fan no speed timeout error period in micro seconds
+
+- get_fan_timeout:
+  - op  : 68
+  - arg : null
+  - ret : [period: UInt32]
+  - desc: Get fan no speed timeout error period in micro seconds
+
+- set_fan_error_handling_enable:
+  - op  : 69
+  - arg : [enable: Boolean]
+  - ret : null
+  - getter_op : 70
+  - desc: Set fan error handling enabled
+
+- get_fan_error_handling_enable:
+  - op  : 70
+  - arg : null
+  - ret : [enable: Boolean]
+  - eeprom : null
+  - desc: Get fan error handling enabled
+
+- read_fan_speed:
+  - op : 71
+  - arg: [id: UInt16]
+  - ret: [value: Float]
+  - desc: Get fan speed value
+
+- set_fan_pwm_period:
+  - op : 72
+  - arg: [period_us: UInt16]
+  - ret: null
+  - getter_op : 73
+  - desc: set fan pwm period
+
+- get_fan_pwm_period:
+  - op : 73
+  - arg: null
+  - ret: [period_us: UInt16]
+  - eeprom : null
+  - desc: get fan pwm period
+
+- set_fan_error_params:
+  - op  : 74
+  - arg : [actuator_out_threshold: Float,min_val_threshold : Float,max_val_threshold : Float, timeout_us : UInt32]
+  - ret : null
+  - getter_op : 75
+  - desc: Set fan error handling params
+
+- get_fan_error_params:
+  - op  : 75
+  - arg : null
+  - ret : [actuator_out_threshold: Float,min_val_threshold : Float,max_val_threshold : Float, timeout_us : UInt32]
+  - eeprom : null
+  - desc: Get fan error handling params
+
+- clear_fan_error:
+  - op  : 76
+  - arg : null
+  - ret : null
+  - desc: clear error fan status so it can send event again
+
+- is_fan_error:
+  - op  : 77
+  - arg : [id: UInt16]
+  - ret : [is_error: Boolean]
+  - desc: get the fan error status
+
+# ==================== Sliding Door Control =====================================================
+
+- set_door_movement:
+  - op : 80
+  - arg: [move: UInt16, velocity: Float]
+  - ret: null
+ 
+- get_door_movement_status:
+  - op : 81
+  - arg: null
+  - ret: [move: UInt16, velocity: Float]
+  
+- get_door_limit_status:
+  - op : 82
+  - arg: null
+  - ret: [mask: UInt16]
+  
+- set_door_timeout:
+  - op : 83
+  - arg: [value_ms: UInt32]
+  - ret: null
+  - getter_op : 84
+  
+- get_door_timeout:
+  - op : 84
+  - arg: null
+  - ret: [value_ms: UInt32] 
+  - eeprom : null
+  
+- set_door_servo_zero_duty:
+  - op : 85
+  - arg: [value: Float]
+  - ret: null
+  - getter_op : 86
+  
+- get_door_servo_zero_duty:
+  - op : 86
+  - arg: null
+  - ret: [value: Float]
+  - eeprom : null
+  
+- set_door_servo_range:
+  - op : 87
+  - arg: [max: Float, min: Float]
+  - ret: null
+  - getter_op : 88
+  
+- get_door_servo_range:
+  - op : 88
+  - arg: null
+  - ret: [max: Float, min: Float]
+  - eeprom : null
+
+# ==================== Heater Related =====================================================
+
+- set_heater_pwm_period:
+  - op : 89
+  - arg: [period_us: UInt16]
+  - ret: null
+  - getter_op : 99
+  - desc: set heater pwm period
+
+- set_heater_enable:
+  - op  : 90
+  - arg : [enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: Set FAN output for temperature control in percentage of PWM, this opcode only work if the temp auto control is set to 0
+
+- get_heater_enable:
+  - op  : 91
+  - arg : null
+  - ret : [return: Boolean]
+  - desc: Get FAN output for temperature control in percentage of PWM
+
+- set_heater_range:
+  - op  : 92
+  - arg : [max: Float, min: Float]
+  - ret : null
+  - getter_op : 93
+  - desc: Set heater for temperature control working range in percentage pwm min and max
+
+- get_heater_range:
+  - op  : 93
+  - arg : null
+  - ret : [max: Float, min: Float]
+  - eeprom : null
+  - desc: Get heater for temperature control working range in percentage pwm min and max
+
+- set_heater_out:
+  - op  : 94
+  - arg : [value: Float]
+  - ret : [status: Boolean]
+  - desc: Set Heater output for temperature control in percentage of PWM, this opcode only work if the temp auto control is set to 0
+
+- get_heater_out:
+  - op  : 95
+  - arg : null
+  - ret : [value: Float]
+  - desc: Get Heater output for temperature control in percentage of PWM
+  
+- set_heater_door_enable:
+  - op  : 96
+  - arg : [timeout: UInt32]
+  - ret : null
+  - desc: Set Heater output for temperature control in percentage of PWM, this opcode only work if the temp auto control is set to 0
+
+- set_heater_door_disable:
+  - op  : 97
+  - arg : null
+  - ret : null
+  - desc: Set Heater output for temperature control in percentage of PWM, this opcode only work if the temp auto control is set to 0
+
+- get_heater_door_status:
+  - op  : 98
+  - arg : null
+  - ret : [enable: Boolean, timeout: UInt32]
+  - desc: Set Heater output for temperature control in percentage of PWM, this opcode only work if the temp auto control is set to 0
+
+- get_heater_pwm_period:
+  - op : 99
+  - arg: null
+  - ret: [period_us: UInt16]
+  - eeprom : null
+  - desc: get heater pwm period in useconds
+
+#=============================================== temp parameter setting =============================================
+- set_temp_offset:
+  - op  : 110
+  - arg : [id: UInt16, offset: Float]
+  - ret : null
+  - getter_op : 111
+  - desc: Set temperature offset for correcting the reading of temperature in celcius
+
+- get_temp_offset:
+  - op  : 111
+  - arg : [id: UInt16]
+  - ret : [offset: Float]
+  - eeprom : [id : 4]
+  - desc: Get temperature offset for correcting the reading of temperature in celcius
+
+- set_steinhart_temperature_coeficient:
+  - op  : 112
+  - arg : [id: UInt16, A: Float, B: Float, C: Float]
+  - ret : null
+  - getter_op : 113
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_steinhart_temperature_coeficient:
+  - op  : 113
+  - arg : [id: UInt16]
+  - ret : [A: Float, B: Float, C: Float]
+  - eeprom : [id : 4]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- set_thermistor_coeficient:
+  - op  : 114
+  - arg : [id: UInt16, r_divider: Float, v_offset: Float, gain_amplifier: Float, voltage_divider: Float]
+  - ret : null
+  - getter_op : 115
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_thermistor_coeficient:
+  - op  : 115
+  - arg : [id: UInt16]
+  - ret : [r_divider: Float, v_offset: Float, gain_amplifier: Float, voltage_divider: Float]
+  - eeprom : [id : 4]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- set_temperature_sampling_period:
+  - op  : 116
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 117
+  - desc: Set temperature sampling period in micro seconds 
+
+- get_temperature_sampling_period:
+  - op  : 117
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get temperature sampling period in micro seconds 
+
+- read_temperature:
+  - op  : 118
+  - arg : [id: UInt16]
+  - ret : [value: Float]
+  - desc: read temperature  in celcius 
+  
+- read_adc_raw:
+  - op  : 119
+  - arg : null
+  - ret : [value: Array_UInt16]
+  - desc: Read adc raw value
+
+# ============================== LED RGB related =====================================
+- set_rgb_pwm_value:
+  - op  : 120
+  - arg : [red_value: Float,green_value: Float,blue_value: Float, is_white_on : Boolean]
+  - ret : null
+  - desc: Set rgb pwm duty cycle 0 - 1
+
+- get_rgb_pwm_value:
+  - op  : 121
+  - arg : null
+  - ret : [red_value: Float,green_value: Float,blue_value: Float, is_white_on : Boolean]
+  - desc: read op 120
+
+- set_led_temp_control_enable:
+  - op  : 122
+  - arg : [enable : Boolean]
+  - ret : null
+  - desc: enable the led temp control
+
+- get_led_temp_control_enable:
+  - op  : 123
+  - arg : null
+  - ret : [enable : Boolean]
+  - desc: see op 122
+
+- set_led_temp_control_brightness:
+  - op  : 124
+  - arg : [red_value: Float,green_value: Float,blue_value: Float]
+  - ret : null
+  - desc: Set rgb pwm duty cycle 0 - 1
+
+- get_led_temp_control_brightness:
+  - op  : 125
+  - arg : null
+  - ret : [red_value: Float,green_value: Float,blue_value: Float]
+  - desc: read op 120
+
+- set_led_temp_control_enable_on_start:
+  - op  : 126
+  - arg : [enable : Boolean]
+  - ret : null
+  - getter_op : 127
+  - desc: enable the led temp control on start
+
+- get_led_temp_control_enable_on_start:
+  - op  : 127
+  - arg : null
+  - ret : [enable : Boolean]
+  - eeprom : null
+  - desc: see op 126
+
+- read_heater_current:
+  - op : 130
+  - arg: null
+  - ret: [current_ampere: Float]
+  - desc: read the heater current in ampere 
+
+- set_heater_current_config:
+  - op  : 131
+  - arg : [scale: Float, offset : Float]
+  - ret : null
+  - getter_op : 132
+  - desc: Set the heater current sensor config scale and offset
+
+- get_heater_current_config:
+  - op  : 132
+  - arg : null
+  - ret : [scale: Float, offset : Float]
+  - eeprom : null
+  - desc: see op 131
+
+#=============================================== misc =============================================
+- set_internal_valve_out:
+  - op  : 140
+  - arg : [value: Float]
+  - ret : [isSuccess: Boolean]
+  - desc: Set internal valve out value
+
+- set_internal_valve_out:
+  - op  : 141
+  - arg : null
+  - ret : [value: Float]
+  - desc: see op 140
+
+- set_external_valve_range:
+  - op  : 142
+  - arg : [max: Float, min: Float]
+  - ret : null
+  - getter_op : 143
+  - desc: Set external valve range
+
+- get_internal_valve_range:
+  - op  : 143
+  - arg : null
+  - ret : [max: Float, min: Float]
+  - eeprom : null
+  - desc: see op 142
+
+- set_external_valve_enable:
+  - op  : 144
+  - arg : [isEnabled: Boolean]
+  - ret : [isSuccess: Boolean]
+  - desc: Set external valve enable to manually control for debugging purpose, cant be use if the valve control still enabled
+
+- get_external_valve_enable:
+  - op  : 145
+  - arg : null
+  - ret : [isEnabled: Boolean]
+  - desc: see op 144
+
+- set_external_valve_out:
+  - op  : 146
+  - arg : [value: Float]
+  - ret : [isSuccess: Boolean]
+  - desc: Set external valve out value
+
+- get_external_valve_out:
+  - op  : 147
+  - arg : null
+  - ret : [value: Float]
+  - desc: see op 140
+
+- set_valve_controller_valve_index:
+  - op  : 148
+  - arg : [index: UInt16]
+  - ret : null
+  - getter_op : 149
+  - desc: Set the valve actuator index for valve controller ( 0 internal, 1 external chiller )
+
+- get_valve_controller_valve_index:
+  - op  : 149
+  - arg : null
+  - ret : [index: UInt16]
+  - desc: see op 148
+
+#=============================================== heater extended =============================================
+- set_heater_error_handling_enable:
+  - op  : 150
+  - arg : [enable: Boolean]
+  - ret : null
+  - getter_op : 151
+  - desc: Set heater error handling enabled
+
+- get_heater_error_handling_enable:
+  - op  : 151
+  - arg : null
+  - ret : [enable: Boolean]
+  - eeprom : null
+  - desc: Get heater error handling enabled
+
+- set_heater_error_params:
+  - op  : 152
+  - arg : [actuator_out_threshold: Float,min_val_threshold : Float,max_val_threshold : Float, timeout_us : UInt32]
+  - ret : null
+  - getter_op : 153
+  - desc: Set heater error handling params
+
+- get_heater_error_params:
+  - op  : 153
+  - arg : null
+  - ret : [actuator_out_threshold: Float,min_val_threshold : Float,max_val_threshold : Float, timeout_us : UInt32]
+  - eeprom : null
+  - desc: Get heater error handling params
+
+- clear_heater_error:
+  - op  : 154
+  - arg : null
+  - ret : null
+  - desc: clear error heater status so it can send event again
+
+- is_heater_error:
+  - op  : 155
+  - arg : null
+  - ret : [is_error: Boolean]
+  - desc: get the heater error status
+  
+#=============================================== event list =============================================
+EVENTS:
+
+- on_door_motor_move_done:
+  - op : 900
+  - ret: [movement: UInt16]
+
+- on_door_motor_move_timeout:
+  - op : 901
+  - ret: [movement: UInt16]
+  
+- on_heater_door_timeout:
+  - op : 902
+  - ret: null
+
+- on_fan_error:
+  - op : 910
+  - ret: [id : UInt16,error_type : UInt16]
+
+- on_valve_error:
+  - op : 920
+  - ret: [flow : Float]
+
+- on_heater_error:
+  - op : 930
+  - ret: [ferror_type : UInt16]

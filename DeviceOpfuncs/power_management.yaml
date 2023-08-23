@@ -1,0 +1,53 @@
+APPNAME: PowerManagementDaemon
+VERSION: v0.0.2
+
+ENUMS:
+
+COMMANDS:
+- shutdown_command:
+  - op  : 10
+  - arg : null
+  - ret : null
+  - desc: Shutdown command
+
+- read_power_management_status:
+  - op  : 11
+  - arg : null
+  - ret : [voltage: UInt16, current: UInt16, CAPFLT: Boolean, SYSGD: Boolean, PFO: Boolean, Button: Boolean, AutoOn: Boolean ]
+  - desc: Read power management current paramenter
+
+- read_power_management_state:
+  - op  : 12
+  - arg : null
+  - ret : [state: UInt16]
+  - desc: Read power management state
+
+- set_power_latch_enable:
+  - op  : 13
+  - arg : [enable: Boolean]
+  - ret : null
+  - desc: Set power latch enabled
+
+- get_power_latch_enable:
+  - op  : 14
+  - arg : [enable: Boolean]
+  - ret : null
+  - desc: see op 13
+
+- reset_power_management_firmware:
+  - op  : 15
+  - arg : null
+  - ret : null
+  - desc: reset the power management firmware
+
+EVENTS:
+- on_button_pressed:
+  - op  : 512
+  - ret : null
+  - desc: Fired upon button pressed
+
+- on_power_cutoff:
+  - op  : 513
+  - ret : null
+  - desc: Fired upon Power cut off
+

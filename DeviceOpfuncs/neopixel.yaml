@@ -1,0 +1,53 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+- clear_animator_frame_buffer:
+  - op : 11
+  - arg: [ledIndex: UInt16]
+  - ret: [status: Boolean]  
+
+- get_animator_frame_buffer:
+  - op : 12
+  - arg: [ledIndex: UInt16, frameIndex: UInt16]
+  - ret: [durationUs : UInt32,count: UInt16, dataHighRGB: Array_UInt32_c]
+
+- set_RGB_LED:
+  - op : 13
+  - arg: [id: UInt16, count: UInt16, dataHighColorRGB: Array_UInt32_c]
+  - ret: [status: Boolean]
+
+- set_animator_frame_buffer:
+  - op : 15
+  - arg: [ledIndex: UInt16, frameIndex: UInt16, durationUs: UInt32, offset: UInt16, count: UInt16, dataHighRGB: Array_UInt32_c]
+  - ret: [status: Boolean]
+
+- stop_animator:
+  - op : 16
+  - arg: [ledIndex: UInt16]
+  - ret: null 
+ 
+- start_animator:
+  - op : 17
+  - arg: [ledIndex: UInt16, min_index: UInt16, max_index: UInt16, isRepeat: Boolean]
+  - ret: [status: Boolean]
+
+- get_initial_led:
+  - op : 18
+  - arg: [id: UInt16]
+  - ret: [color: UInt32, led_count: UInt16]
+
+- set_initial_led:
+  - op : 19
+  - arg: [id: UInt16, color: UInt32, led_count: UInt16]
+  - ret: null 
+  
+EVENTS: 
+- move_servo_done:
+  - op : 512
+  - ret: [position: UInt16]
+
+- animator_done:
+  - op : 513
+  - ret: null
+  

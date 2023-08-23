@@ -1,0 +1,395 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+#--------------- CONTROLLER ---------------------------------------------------------
+- set_target:
+  - op : 10
+  - arg: [id: Int16, value: Double]
+  - ret: null
+
+- get_target:
+  - op : 11
+  - arg: [id: Int16]
+  - ret: [target_pressure: Double]
+
+- set_controller_enable:
+  - op : 12
+  - arg: [id: Int16, value: UInt16]
+  - ret: null
+
+- get_controller_enable:
+  - op : 13
+  - arg: [id: Int16]
+  - ret: [enabled: UInt16]
+
+- set_controller_pid:
+  - op : 14
+  - arg: [id: Int16, p: Double, i: Double, d: Double]
+  - ret: null
+
+- get_controller_pid:
+  - op : 15
+  - arg: [id: Int16]
+  - ret: [p: Double, i: Double, d: Double]
+
+- set_deadband:
+  - op : 16
+  - arg: [id: Int16, lower: Double, upper: Double]
+  - ret: null
+
+- get_deadband:
+  - op : 17
+  - arg: [id: Int16]
+  - ret: [lower: Double, upper: Double]
+
+- read_feedback_sensor:
+  - op : 18
+  - arg: [id: Int16]
+  - ret: [value: Double]
+
+- get_controller_out:
+  - op : 19
+  - arg: [id: Int16]
+  - ret: [value: Double]
+
+- set_feedback_sensor_param:
+  - op : 20
+  - arg: [id: UInt16, scale: Double, offset: Double]
+  - ret: null
+  - desc: |
+          set feedback sensor scale and offset
+          Arguments
+          - id -> 0 = bottle, 1 = pressure, 2 = vacuum
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- get_feedback_sensor_param:
+  - op : 21
+  - arg: [id: UInt16]
+  - ret: [scale: Double, offset: Double]
+  - desc: |
+          get feedback sensor scale and offset
+          Arguments
+          - id -> 0 = bottle, 1 = pressure, 2 = vacuum
+          returns
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- set_auto:
+  - op : 22
+  - arg: [id: Int16, auto: Boolean]
+  - ret: null
+
+- get_auto:
+  - op : 23
+  - arg: [id: Int16]
+  - ret: [auto: Boolean]
+
+- set_controller_limit:
+  - op : 25
+  - arg: [id: Int16, source_limit: Double, drain_limit: Double, time_limit_ms: UInt32]
+  - ret: null
+  - desc: |
+          set the source and drain valve opening timeout, if the valve open output is more than setting and for more than time limit_type
+          the controller will shut down
+
+- get_controller_limit:
+  - op : 26
+  - arg: [id: Int16]
+  - ret: [source_limit: Double, drain_limit: Double, time_limit_ms: UInt32]
+  - desc: |
+          set the source and drain valve opening timeout, if the valve open output is more than setting and for more than time limit_type
+          the controller will shut down
+
+- set_external_sensor_param:
+  - op : 27
+  - arg: [scale: Double, offset: Double]
+  - ret: null
+  - desc: |
+          set feedback sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- get_external_sensor_param:
+  - op : 28
+  - arg: null
+  - ret: [scale: Double, offset: Double]
+  - desc: |
+          get feedback sensor scale and offset
+          returns
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- set_use_external_sensor:
+  - op : 29
+  - arg: [use_external: Boolean]
+  - ret: null
+  - desc: |
+          set the CF bottle pressure controller using external sensor, if true it will use external sensor
+
+- get_use_external_sensor:
+  - op : 30
+  - arg: null
+  - ret: [use_external: Boolean]
+  - desc: |
+          get the CF bottle pressure controller using external sensor, if true it will use external sensor
+
+#--------------- PUMP ---------------------------------------------------------
+- set_pump_voltage:
+  - op : 31
+  - arg: [voltage: Double]
+  - ret: null
+
+- get_pump_voltage:
+  - op : 32
+  - arg: null
+  - ret: [voltage: Double]
+
+- set_pump_on:
+  - op : 33
+  - arg: [on: Boolean]
+  - ret: null
+  - desc: |
+          set pump on, True = on, False = off
+
+- get_pump_on:
+  - op : 34
+  - arg: null
+  - ret: [on: Boolean]
+  - desc: |
+          get pump on, True = on, False = off
+
+- set_pump_rpm_sensor_param:
+  - op : 35
+  - arg: [scale: Double, offset: Double]
+  - ret: null
+  - desc: |
+          set pump rpm sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- get_pump_rpm_sensor_param:
+  - op : 36
+  - arg: null
+  - ret: [scale: Double, offset: Double]
+  - desc: |
+          get pump rpm sensor scale and offset
+          returns
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- read_pump_speed:
+  - op : 37
+  - arg: null
+  - ret: [rpm: Double]
+  - desc: |
+          read pump speed in Rpm
+
+#--------------- ACTUATOR ---------------------------------------------------------
+- set_source_range:
+  - op : 41
+  - arg: [id: Int16, max: Double, min: Double]
+  - ret: null
+
+- get_source_range:
+  - op : 42
+  - arg: [id: Int16]
+  - ret: [max: Double, min: Double]
+
+- set_drain_range:
+  - op : 43
+  - arg: [id: Int16, max: Double, min: Double]
+  - ret: null
+
+- get_drain_range:
+  - op : 44
+  - arg: [id: Int16]
+  - ret: [max: Double, min: Double]
+
+- set_source_out:
+  - op : 45
+  - arg: [id: Int16, value: Double]
+  - ret: null
+
+- get_source_out:
+  - op : 46
+  - arg: [id: Int16]
+  - ret: [value: Double]
+
+- set_drain_out:
+  - op : 47
+  - arg: [id: Int16, value: Double]
+  - ret: null
+
+- get_drain_out:
+  - op : 48
+  - arg: [id: Int16]
+  - ret: [value: Double]
+
+- set_source_enable:
+  - op : 49
+  - arg: [id: Int16, enable: UInt16]
+  - ret: null
+
+- get_source_enable:
+  - op : 50
+  - arg: [id: Int16]
+  - ret: [enable: UInt16]
+
+- set_drain_enable:
+  - op : 51
+  - arg: [id: Int16, enable: UInt16]
+  - ret: null
+
+- get_drain_enable:
+  - op : 52
+  - arg: [id: Int16]
+  - ret: [enable: UInt16]
+
+- get_aux_drain_state:
+  - op : 53
+  - arg: null
+  - ret: [on: UInt16]
+
+- set_aux_drain_state:
+  - op : 54
+  - arg: [on: UInt16]
+  - ret: null
+
+- set_clamp_valve_on:
+  - op : 53
+  - arg: [on: Boolean]
+  - ret: null
+  - desc: |
+          set clamp valve on, True = on, False = off
+
+- get_clamp_valve_on:
+  - op : 54
+  - arg: null
+  - ret: [on: Boolean]
+  - desc: |
+          get clamp valve on, True = on, False = off
+
+- set_cf_valve_on:
+  - op : 55
+  - arg: [on: Boolean]
+  - ret: null
+  - desc: |
+          set cf valve on, True = on, False = off
+
+- get_cf_valve_on:
+  - op : 56
+  - arg: null
+  - ret: [on: Boolean]
+  - desc: |
+          get cf valve on, True = on, False = off
+
+#--------------- LOGGER ---------------------------------------------------------
+- set_log_prescaler:
+  - op : 61
+  - arg: [value: UInt16]
+  - ret: null
+
+- get_log_items:
+  - op : 62
+  - arg: null
+  - ret: [mask1: UInt16, mask2: UInt16, mask3: UInt16]
+
+- set_log_items:
+  - op : 63
+  - arg: [mask1: UInt16, mask2: UInt16, mask3: UInt16]
+  - ret: [error_code: UInt16]
+
+- start_log:
+  - op : 64
+  - arg: null
+  - ret: [started: Boolean]
+
+- stop_log:
+  - op : 65
+  - arg: null
+  - ret: [stopped: Boolean]
+
+- set_trigger:
+  - op : 66
+  - arg: [module_id: Int16, signal_id: Int16, level: Int16, type: Int16]
+  - ret: [succeeded: Boolean]
+
+- get_log_status:
+  - op : 67
+  - arg: null
+  - ret: [status: Int16, triggered_pos: UInt16]
+
+- read_log_data:
+  - op : 68
+  - arg: [first_item: Int16]
+  - ret: [error_code: UInt16, num_items: Int16, data: Array_UInt16_c]
+
+- read_log_stream_data:
+  - op : 69
+  - arg: null
+  - ret: [error_code: UInt16, num_items: Int16, data: Array_UInt16_c]
+
+#--------------- common ---------------------------------------------------------
+- set_address:
+  - op : 100
+  - arg: [address: Int16]
+  - ret: null
+
+
+# ------------------------------- SENSOR MONITOR ------------------------------------
+- get_sensor_monitor_enable_mask:
+  - op : 110
+  - arg: null
+  - ret: [enable_mask: UInt16]
+  - desc: |
+            get sensor monitor enable mask
+
+- set_sensor_monitor_enable_mask:
+  - op : 111
+  - arg: [enable_mask: UInt16]
+  - ret: null
+  - desc: |
+            set sensor monitor enable mask
+
+- get_sensor_monitor_debounce_ms:
+  - op : 112
+  - arg: null
+  - ret: [debounce_ms: UInt16]
+  - desc: |
+            get sensor monitor debounce time in milisecond
+            
+- set_sensor_monitor_debounce_ms:
+  - op : 113
+  - arg: [debounce_ms: UInt16]
+  - ret: null
+  - desc: |
+            set sensor monitor debounce time in milisecond
+            
+- get_sensor_monitor_threshold:
+  - op : 114
+  - arg: [id: UInt16]
+  - ret: [upper_limit: Double, lower_limit: Double]
+  - desc: |
+            get sensor monitor upper and lower threshold for corresponding channel
+
+- set_sensor_monitor_threshold:
+  - op : 115
+  - arg: [id: UInt16, upper_limit: Double, lower_limit: Double]
+  - ret: [success : Boolean]
+  - desc: |
+            set sensor monitor upper and lower threshold for corresponding channel
+
+EVENTS:
+- controller_reach_limit:
+  - op : 512
+  - ret: [id: Int16, source_drain: UInt16]
+  - desc: Fired upon pressure regulator source or drain opening for than setting duty for more than setting time threshold
+
+- on_sensor_out_of_bound:
+  - op  : 802
+  - ret: [id: UInt16, limit_type: UInt16, value: Double]
+  - desc: Fired upon sensor monitor out of counds

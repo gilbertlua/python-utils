@@ -1,0 +1,759 @@
+APPNAME: TipsLoadcell
+VERSION: 0.0.2
+
+################################### ENUMS & BITMASKS #################################################-
+ENUMS:
+- LoadcellLoggerError:
+  - desc : Loadcell Logger error code
+  - type : UInt16
+  - value:
+    - wseNone : [0, No Error]
+    - wseUnder : [1, Underweight]
+    - wseUpper: [2, Over weight]
+    - wseCollision : [3, Collision error detected]
+
+- LoadcellLoggerResult:
+  - desc : Loadcell Logger result
+  - type : UInt16
+  - value:
+    - resultNone : [0, No result yet]
+    - resultPass : [1, Result pass]
+    - resultUnder: [2, Result under weight]
+    - resultUpper : [3, Result over weight]
+
+
+################################### COMMAND #################################################-
+
+COMMANDS:
+
+# ------------------------------- Weight Scale ------------------------------------
+- get_tick:
+  - op : 10
+  - arg: null
+  - ret: [time_milis : UInt32]
+  - desc: |
+            get the current time in millisecond on micro controller
+
+#- read_weight:
+#  - op : 12
+#  - arg: [id: UInt16]
+#  - ret: [status : Boolean, weight : Double,timestamp : UInt32]
+#  - desc: |
+#            status : if the load cell reading disabled, it will return false
+#            and the data is not valid
+#            weight : weight data that processed by moving average
+#            timestamp : is the time in millisecond that show when the
+#            data sampling happen.
+#- tare:
+#  - op : 14
+#  - arg: [id: UInt16, avgWindow: UInt16]
+#  - ret: [status: Boolean]
+#  - desc: |
+#            If the return value is false it means there is ongoing
+#            tare/calibration process, you need to wait it until its done.
+#
+#- calibrate:
+#  - op : 15
+#  - arg: [id: UInt16, refWeight: Double, avgWindow: UInt16]
+#  - ret: [status: Boolean]
+#  - desc: |
+#            before calibrating the scale, you must tare the scale first.
+#            if the calibration process done, event will be sent with the
+#            calibration (scale) value.
+#            If the return value is false it means there is ongoing
+#            tare/calibration process, you need to wait it until its done.
+#            Need to call save configuration to save its scale value
+#
+#- set_scale:
+#  - op : 17
+#  - arg: [id: UInt16, scale: Double]
+#  - ret: null
+#  - getter_op : 18
+#  - desc: |
+#            We can set the scale manually without calibration process,
+#            set it to one to get raw ADC data
+#
+#- get_scale:
+#  - op : 18
+#  - arg: [id: UInt16]
+#  - ret: [scale: Double]
+#  - eeprom : 4
+#  - desc: |
+#            Get current scale value
+#
+#- set_avg_window:
+#  - op : 24
+#  - arg: [id: UInt16, avg_window: UInt16]  
+#  - ret: [stat : Boolean]
+#  - getter_op : 25
+#
+#- get_avg_window:
+#  - op : 25
+#  - arg: [id: UInt16]
+#  - ret: [avg_window: UInt16]
+#  - eeprom : 4
+#
+#- set_load_cell_enable:
+#  - op : 26
+#  - arg: [id: UInt16, enable: Boolean]
+#  - ret: [stat : Boolean]
+#  - getter_op : 27
+#
+#- get_load_cell_enable:
+#  - op : 27
+#  - arg: [id: UInt16]
+#  - ret: [stat : Boolean]
+#  - eeprom : 4
+#  
+#
+#- set_offset:
+#  - op : 28
+#  - arg: [id: UInt16, offset: Int32]
+#  - ret: null
+#  - getter_op : 29
+#  - desc: |
+#
+#- get_offset:
+#  - op : 29
+#  - arg: [id: UInt16]
+#  - ret: [offset: Int32]
+#  - eeprom : 4
+#  - desc: |
+#            Get current offset
+#
+#- set_high_sampling_rate:
+#  - op : 30
+#  - arg: [isHigh: Boolean]
+#  - ret: null
+#  - getter_op : 31
+#  - desc: |
+#            Set High Rate Sampling if true 80Hz, if false 10Hz
+#
+#- get_high_sampling_rate:
+#  - op : 31
+#  - arg: null
+#  - ret: [isHigh: Boolean]
+#  - eeprom : 0
+#  - desc: |
+#            Set High Rate Sampling if true 80Hz, if false 10Hz
+
+#---------------------------- PRESENCE SENS INPUT MONITOR ------------------------------------
+- ads1235_get_scale:
+  - op  : 41
+  - arg : [id: UInt16]
+  - ret : [scale: Double]
+  - eeprom : [id: 8]
+  - desc: get ads1235 weight scale
+
+- ads1235_get_offset:
+  - op  : 42
+  - arg : [id: UInt16]
+  - ret : [offset: Double]
+  - eeprom : [id: 8]
+  - desc: get ads1235 weight offset
+
+
+#---------------------------- PRESENCE SENS INPUT MONITOR ------------------------------------
+- get_ext_input_dir_mask:
+  - op  : 48
+  - arg : null
+  - ret : [mask: UInt16]
+  - eeprom : null
+  - desc: get ext input dir mask
+
+- set_ext_input_dir_mask:
+  - op  : 49
+  - arg : [mask: UInt16]
+  - ret : null
+  - getter_op : 48 
+  - desc: set ext input dir mask 1 is output
+
+- get_ext_input_debouch_time_ms:
+  - op  : 50
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null
+  - desc: get the debouch time in ms
+
+- set_ext_input_debouch_time_ms:
+  - op  : 51
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 50
+  - desc: set the debouch time in ms
+
+- get_ext_input_mask:
+  - op  : 52
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null
+  - desc: get the input mask please see InputMonitorMask
+
+- set_ext_input_mask:
+  - op  : 53
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 52
+  - desc: set the input mask please see InputMonitorMask
+
+- read_ext_input_port_value:
+  - op  : 54
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+  #---------------------------- SEQ ADDR INPUT MONITOR ------------------------------------
+- get_seq_addr_debouch_time_ms:
+  - op  : 55
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null
+  - desc: get the debouch time in ms
+
+- set_seq_addr_debouch_time_ms:
+  - op  : 56
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 55
+  - desc: set the debouch time in ms
+
+- get_seq_addr_input_mask:
+  - op  : 57
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null
+  - desc: get the input mask please see InputMonitorMask
+
+- set_seq_addr_input_mask:
+  - op  : 58
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 57
+  - desc: set the input mask please see InputMonitorMask
+
+- read_seq_addr_port_value:
+  - op  : 59
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+  # ------------------------------- Digital Out ------------------------------------
+- get_digital_out_value:
+  - op  : 70
+  - arg : [id: Int16]
+  - ret : [on: Boolean]
+  - eeprom : [id: 8]
+  - desc: |
+           get the value of digital out ( id 0 - 9 )
+
+- set_digital_out_value:
+  - op  : 71
+  - arg : [id: Int16, on: Boolean]
+  - ret : null
+  - getter_op : 70
+  - desc: |
+           set the value of digital out ( id 0 - 9 )
+
+- read_digital_out_word:
+  - op  : 72
+  - arg : null
+  - ret : [value: UInt16]
+#  - eeprom : 1
+  - desc: |
+           get the value of digital out word mode
+- write_digital_out_value:
+  - op  : 73
+  - arg : [value: UInt16]
+  - ret : null
+#  - getter_op : 72
+  - desc: |
+           set the value of digital out word mode
+
+ 
+ #---------------------------- START STOP INPUT MONITOR ------------------------------------
+- get_startstop_debouch_time_ms:
+  - op  : 75
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null
+  - desc: get the debouch time in ms
+
+- set_startstop_debouch_time_ms:
+  - op  : 76
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 75
+  - desc: set the debouch time in ms
+
+- get_startstop_input_mask:
+  - op  : 77
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null
+  - desc: get the input mask please see InputMonitorMask
+
+- set_startstop_input_mask:
+  - op  : 78
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 77
+  - desc: set the input mask please see InputMonitorMask
+
+- read_startstop_port_value:
+  - op  : 79
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+# ------------------------------- Timed Output ------------------------------------
+- timed_output_perform_set_clear:
+  - op  : 84
+  - arg : [id: UInt16, duration_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: Add set operation on output, followed with clear operation after duration timeouts
+
+- timed_output_perform_clear_set:
+  - op  : 85
+  - arg : [id: UInt16, duration_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: Add set operation on output, followed with clear operation after duration timeouts
+
+- timed_output_abort:
+  - op  : 86
+  - arg : [id: UInt16]
+  - ret : [success: Boolean]
+  - desc: Abort current action on timed output with specified bit
+
+
+# ------------------------------- MOTION ABORT ------------------------------------
+# *Note : currently only one motion abort driver, door interlock, is used
+- get_abort_config:
+  - op  : 90
+  - arg : [abort_id: Int16]
+  - ret : [trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - eeprom : [abort_id: 3]
+  - desc: please see AbortInputBitmask and AbortId
+
+- set_abort_config:
+  - op : 91
+  - arg: [abort_id: Int16, trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - ret: null
+  - getter_op : 90
+  - desc: please see AbortInputBitmask and AbortId
+
+- clear_triggered_inputs:
+  - op : 92
+  - arg: [abort_id: Int16]
+  - ret: null
+
+- get_triggered_inputs:
+  - op : 93
+  - arg: [abort_id: Int16]
+  - ret: [input_mask: UInt32]
+  
+- get_abort_threshold:
+  - op : 96
+  - arg: [abort_id: Int16]
+  - ret: [threshold: Double]
+  - eeprom : [abort_id: 3]
+  
+- set_abort_threshold:
+  - op : 97
+  - arg: [abort_id: Int16, threshold: Double]
+  - ret: [success: Boolean]
+  - getter_op : 96
+ 
+
+# ------------------------------- SENSOR MONITOR ------------------------------------
+#- sensor_monitor_get_enable_mask:
+#  - op : 41
+#  - arg: null
+#  - ret: [enable_mask: UInt16]
+#  - eeprom : 0
+#  - desc: |
+#            get sensor monitor enable mask
+#
+#- sensor_monitor_set_enable_mask:
+#  - op : 42
+#  - arg: [enable_mask: UInt16]
+#  - ret: null
+#  - getter_op : 41
+#  - desc: |
+#            set sensor monitor enable mask
+#
+#- sensor_monitor_get_debounce_ms:
+#  - op : 43
+#  - arg: null
+#  - ret: [debounce_ms: UInt16]
+#  - eeprom : 0
+#  - desc: |
+#            get sensor monitor debounce time in milisecond
+#            
+#- sensor_monitor_set_debounce_ms:
+#  - op : 44
+#  - arg: [debounce_ms: UInt16]
+#  - ret: null
+#  - getter_op : 43
+#  - desc: |
+#            set sensor monitor debounce time in milisecond
+#            
+#- sensor_monitor_get_threshold:
+#  - op : 45
+#  - arg: [id: UInt16]
+#  - ret: [upper_limit: Double, lower_limit: Double]
+#  - eeprom : 8
+#  - desc: |
+#            get sensor monitor upper and lower threshold for corresponding channel
+#
+#- sensor_monitor_set_threshold:
+#  - op : 46
+#  - arg: [id: UInt16, upper_limit: Double, lower_limit: Double]
+#  - ret: [success : Boolean]
+#  - getter_op : 45
+#  - desc: |
+#            set sensor monitor upper and lower threshold for corresponding channel
+
+
+#-------------------------------ADS1235 ----------------------------         
+- ads1235_set_enable:
+  - op : 132    
+  - arg: [id : UInt16,  enable : UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            set enable (1) or disable (0)           
+
+- ads1235_set_cut_off_freq:
+  - op : 133    
+  - arg: [id : UInt16,  alpha : Double]
+  - ret: [status: Boolean]
+  - desc: |
+            set alpha 0 < alpha <= 1    
+
+- ads1235_tare:
+  - op : 134    
+  - arg: [id : UInt16, avgWindow: UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            If the return value is false it means there is ongoing
+            tare/calibration process, you need to wait it until its done.
+
+- ads1235_calibrate:
+  - op : 135    
+  - arg: [id: UInt16, refWeight: Double, avgWindow: UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            before calibrating the scale, you must tare the scale first.
+            if the calibration process done, event will be sent with the
+            calibration (scale) value.
+            If the return value is false it means there is ongoing
+            tare/calibration process, you need to wait it until its done.
+            Need to call save configuration to save its scale value
+           
+           
+- ads1235_read_weight:
+  - op : 136
+  - arg: [id : UInt16]
+  - ret: [status : Boolean, weight : Double]
+  - desc: |
+            status : if the load cell reading disabled, it will return false
+            and the data is not valid
+
+- ads1235_set_datarate_filter_delay_gain:
+  - op : 137    
+  - arg: [chipidx: UInt16, datarate : UInt16,  filter : UInt16, delay: UInt16, gain : UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+          Set Data rate, filter, delay, gain
+  
+- ads1235_get_status:
+  - op : 138
+  - arg: [id : UInt16]
+  - ret: [enable : UInt16, cut_off : Double, offset : Double, scale : Double, data_rate : UInt16, filter : UInt16, delay : UInt16, gain : UInt16]
+  - eeprom: [id: 8]
+  - desc: |
+            Get status enable, current cut off freq value, current offset value and current scale value
+  
+- ads1235_set_scale:
+  - op : 139
+  - arg: [id: UInt16, scale: Double]
+  - ret: null
+  - getter_op: 41
+  - desc: |
+            We can set the scale manually without calibration process,
+            set it to one to get raw ADC data  
+            
+- ads1235_set_offset:
+  - op : 140
+  - arg: [id: UInt16, offset: Double] 
+  - ret: null
+  - getter_op: 42
+  - desc: |
+            We can set the offset manually without tare process,
+            set it to one to get raw ADC data  
+
+- ads1235_read_id:
+  - op : 142
+  - arg: [chip_idx: UInt16] 
+  - ret: [chip_id: UInt16]
+  - desc: Read register value for ads1235 chips ID
+
+- get_skip_loadcell_option:
+  - op  : 143
+  - arg : null
+  - ret : [status: Boolean]
+  - eeprom: null
+  - desc: Check whether loadcell logger is used or not
+
+- set_skip_loadcell_option:
+  - op  : 144
+  - arg : [status: Boolean]
+  - ret : null
+  - getter_op: 143
+  - desc: set whether loadcell logger is used or not, true is used, false is skipped
+ 
+
+#---------------------------------- LOGGER ---------------------------------------
+
+- get_log_items:
+  - op  : 111
+  - arg : null
+  - ret : [log_mask: UInt16]
+  - desc: |
+           Get data logger activation status. Each logger module has bitmasks to represent/activate which data is logged.
+           1: channel 1
+           2: challel 2
+           4: channel 3
+
+- set_log_items:
+  - op  : 112
+  - arg : [log_mask: UInt16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set data logger activation.  Check get_log_items opcode for furher explanation of bitmasks and modules.
+         
+- start_log:
+  - op  : 113
+  - arg : null
+  - ret : [started: Boolean]
+  - desc: Start data logger. started is False if unable to start (log items is not set yet).
+
+- stop_log:
+  - op  : 114
+  - arg : null
+  - ret : null
+  - desc: Stop data logger.
+
+- read_log_data:
+  - op  : 115
+  - arg : [start_index: Int16]
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: Read log data from a starting index, maximum data per command is 251 items.
+          Arguments
+          - start_index -> Starting index to be read
+
+          Returns
+          - num_items -> number of received data
+          - data      -> array of received data
+
+- get_log_status:
+  - op  : 116
+  - arg : null
+  - ret : [status: Int16, triggered_pos: UInt16]
+  - desc: | 
+          Get logger status. 
+
+- read_log_stream_data:
+  - op  : 117
+  - arg : null
+  - ret : [num_items: Int16, data: Array_Int16_c]
+  - desc: | 
+          Read streaming of data from last read index, max 200 data per command. For example, first read_log_stream_data command will obtain
+          data 0-199, second command will obtain data 200-399, and so on.
+          Arguments
+          - num_items -> number of received data
+          - data      -> array of received data
+
+ ################################### LOADCELL LOGGER #################################################
+- get_tip_seating_threshold:
+  - op  : 122
+  - arg : null
+  - ret : [threshold: Double]
+  - eeprom: null
+  - desc: |
+           Get Loadcell Tips Seating Threshold
+
+- set_tip_seating_threshold:
+  - op  : 123
+  - arg : [threshold: Double]
+  - ret : null
+  - getter_op: 122
+  - desc: |
+          Set Loadcell tip Seating Threshold
+  
+- get_tip_sealing_threshold:
+  - op  : 124
+  - arg : null
+  - ret : [lower: Double, upper: Double]
+  - eeprom: null
+  - desc: |
+           Get Loadcell Tips Sealing Threshold
+
+- set_tip_sealing_threshold:
+  - op  : 125
+  - arg : [lower: Double, upper: Double]
+  - ret : null
+  - getter_op: 124
+  - desc: |
+          Set Loadcell tip Sealing Threshold
+
+- start_loadcell_logger:
+  - op  : 126
+  - arg : [state: Boolean]
+  - ret : null
+  - desc: |
+          Dummy opcode to trigger loadcell logger state, True  to start log, False to stop
+
+- set_loadcell_logger_result:
+  - op  : 127
+  - arg : [state: UInt16,value: UInt16]
+  - ret : null
+  - desc: |
+          opcode to trigger loadcell logger result pass/fail measurement and set valve out value
+
+- get_tip_collision_threshold:
+  - op  : 128
+  - arg : null
+  - ret : [threshold: Double]
+  - eeprom: null
+  - desc: |
+           Get Loadcell Tips Collision Threshold
+
+- set_tip_collision_threshold:
+  - op  : 129
+  - arg : [threshold: Double]
+  - ret : null
+  - getter_op: 128
+  - desc: |
+          Set Loadcell tip Collision Threshold
+
+- get_use_presence_sensor:
+  - op  : 130
+  - arg : null
+  - ret : [use_sensor: Boolean]
+  - eeprom: null
+  - desc: |
+           Get Loadcell Tips presence sensor usage
+
+- set_use_presence_sensor:
+  - op  : 131
+  - arg : [use_sensor: Boolean]
+  - ret : null
+  - getter_op: 130
+  - desc: |
+          Set Loadcell tip presence sensor usage
+
+- get_loadcell_logger_state:
+  - op  : 141
+  - arg : null
+  - ret : [state: UInt16]
+  - desc: |
+           Get Loadcell Logger State
+
+- stop_loadcell_logger:
+  - op  : 145
+  - arg : [clear_buffer: Boolean]
+  - ret : null
+  - desc: |
+           Stop Loadcell Logger with clear buffer option
+
+
+- get_loadcell_logger_period:
+  - op  : 146
+  - arg : null
+  - ret : [period: UInt16]
+  - eeprom: null
+  - desc: |
+           Get Loadcell Logger period in 100 us
+
+- set_loadcell_logger_period:
+  - op  : 147
+  - arg : [period: UInt16]
+  - ret : null
+  - getter_op: 146
+  - desc: |
+           Set Loadcell Logger period in 100 us
+
+- get_loadcell_trigger_level:
+  - op  : 148
+  - arg : null
+  - ret : [level: Boolean]
+  - eeprom: null
+  - desc: |
+           Get Loadcell Logger trigger active low enable
+
+- set_loadcell_trigger_level:
+  - op  : 149
+  - arg : [level: Boolean]
+  - ret : null
+  - getter_op: 148
+  - desc: |
+           Set Loadcell Logger trigger active low enable
+
+
+
+ ################################### EVENTS #################################################
+EVENTS:
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon input monitor changed
+  
+- on_sensor_out_of_bound:
+  - op  : 802
+  - ret: [id: UInt16, limit_type: UInt16, value: Double]
+  - desc: Fired upon sensor monitor out of counds
+
+- on_tare_done:
+  - op  : 803
+  - ret: [id: UInt16, offset: Int32 ]
+  - desc: Fired when tare scale done
+
+- on_calibrate_done:
+  - op  : 804
+  - ret: [id: UInt16, scale: Double]
+  - desc: Fired when tare scale done
+
+- on_timed_output_action_start:
+  - op  : 810
+  - ret: [id: UInt16, is_on: Boolean]
+  - desc: Fired when timed output with specified id and bit has started
+
+- on_timed_output_action_finish:
+  - op  : 811
+  - ret: [id: UInt16, is_on: Boolean]
+  - desc: Fired when timed output with specified id and bit has finished
+
+- on_sequence_read_started:
+  - op  : 814
+  - ret: [id: UInt16]
+  - desc: Fired when loadcell sequence logger started
+
+
+- on_sequence_read_finish:
+  - op  : 815
+  - ret: [id: UInt16]
+  - desc: Fired when loadcell sequence logger finished
+
+- on_sequence_read_error:
+  - op  : 818
+  - ret: [id: UInt16, cellId: UInt16, errType: UInt16, value: Double]
+  - desc: Fired when loadcell sequence logger read has an error
+
+- on_sequence_get_address:
+  - op  : 819
+  - ret: [id: UInt16]
+  - desc: Fired when loadcell sequence get new address
+
+- on_loadcell_logger_error:
+  - op  : 820
+  - ret: [error: UInt16]
+  - desc: Fired when loadcell logger has error

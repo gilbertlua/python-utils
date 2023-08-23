@@ -1,0 +1,575 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+- get_product_type:
+  - op : 3
+  - arg : null
+  - ret : [product_type: Int16]
+
+- set_product_type:
+  - op : 4
+  - arg : [product_type: Int16]
+  - ret : null
+
+- read_mem16:
+  - op : 5
+  - arg : [address: UInt32]
+  - ret : [data: UInt16]
+
+- write_mem16:
+  - op : 6  
+  - arg : [address: UInt32, data: UInt16]
+  - ret : null
+
+- get_dog_alarm:  
+  - op : 7
+  - arg : null
+  - ret : [alarms: String]
+
+- reset_dog_alarm:
+  - op : 8
+  - arg : null
+  - ret : null
+
+- hang_firmware:
+  - op : 9
+  - arg : null
+  - ret : null
+
+- get_motor_limits:
+  - op : 10
+  - arg : [motor_id: Int16]
+  - ret : [min_limit: Double, max_limit: Double]
+
+- set_motor_limits:
+  - op : 11
+  - arg : [motor_id: Int16, min_limit: Double, max_limit: Double]
+  - ret : null
+
+- get_motor_currents:
+  - op : 12
+  - arg : [motor_id: Int16]
+  - ret : [boost: Double, travel: Double, hold: Double]
+
+- set_motor_currents:
+  - op : 13
+  - arg : [motor_id: Int16, boost: Double, travel: Double, hold: Double]
+  - ret : null
+
+- get_motor_config:
+  - op : 14
+  - arg : [motor_id: Int16]
+  - ret : [invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16, fol_error_home_anchor_to_0: Boolean]
+
+- get_motor_config_old:
+  - op : 14
+  - arg : [motor_id: Int16]
+  - ret : [invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16]
+
+- set_motor_config:
+  - op : 15
+  - arg : [motor_id: Int16, invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16, fol_error_home_anchor_to_0: Boolean]
+  - ret : null
+
+- set_motor_config_old:
+  - op : 15
+  - arg : [motor_id: Int16, invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16]
+  - ret : null
+
+- read_motor_inputs:
+  - op : 16
+  - arg : [motor_id: Int16]
+  - ret : [motor_inputs: Int16]
+
+- clear_motor_fault:
+  - op : 17
+  - arg : [motor_id: Int16]
+  - ret : null
+
+- get_motor_open_loop:
+  - op : 18
+  - arg : [motor_id: Int16]
+  - ret : [is_open_loop: Boolean]
+
+- set_motor_open_loop:
+  - op : 19
+  - arg : [motor_id: Int16, is_open_loop: Boolean]
+  - ret : null
+
+- get_motor_status:
+  - op : 20
+  - arg : [motor_id: Int16]
+  - ret : [motor_status: UInt16]
+
+- home_motor:
+  - op : 21
+  - arg : [motor_id: Int16, flag: UInt16, pos_edge: Boolean, pos_dir: Boolean, slow_vel: Double, fast_vel: Double, accel: Double]
+  - ret : [motor_error_code: UInt16]
+
+- move_motor_abs:
+  - op : 22
+  - arg : [motor_id: Int16, pos: Double, vel: Double, acc: Double]
+  - ret : [motor_error_code: UInt16]
+
+- move_motor_vel:
+  - op : 23
+  - arg : [motor_id: Int16, forward: Boolean, vel: Double, accel: Double]
+  - ret : [motor_error_code: UInt16]
+
+- stop_motor:
+  - op : 24
+  - arg : [motor_id: Int16, accel: Double]
+  - ret : [motor_error_code: UInt16]
+
+- abort_motor:
+  - op : 25
+  - arg : [motor_id: Int16]
+  - ret : [motor_error_code: UInt16]
+
+- get_motor_pos:
+  - op : 27
+  - arg: [motor_id: Int16]
+  - ret: [curr_pos: Double, curr_vel: Double, curr_acc: Double, cmd_pos: Double, cmd_vel: Double, cmd_acc: Double]
+
+- set_motor_pos:
+  - op : 28
+  - arg : [motor_id: Int16, pos: Double]
+  - ret : null
+
+- set_motor_duty_cycle:
+  - op : 29
+  - arg : [motor_id: Int16, pct_a: Double, pct_b: Double]
+  - ret : null
+
+- get_lower_limit_enabled:
+  - op : 30
+  - arg : [motor_id: Int16]
+  - ret : [enabled: Boolean]
+
+- set_lower_limit_enabled:
+  - op : 31
+  - arg : [motor_id: Int16, enabled: Boolean]
+  - ret : null
+
+- get_upper_limit_enabled:
+  - op : 32
+  - arg : [motor_id: Int16]
+  - ret : [enabled: Boolean]
+
+- set_upper_limit_enabled:
+  - op : 33
+  - arg : [motor_id: Int16, enabled: Boolean]
+  - ret : null
+
+- get_motor_log_items: 
+  - op : 35 
+  - arg : [motor_id: Int16] 
+  - ret : [value: UInt16]
+
+- set_motor_log_items: 
+  - op : 36
+  - arg : [motor_id: Int16, values: UInt16]
+  - ret : [motor_error_code: UInt16] 
+
+- start_motor_log: 
+  - op : 37
+  - arg : [motor_id: Int16]
+  - ret : [motor_error_code: UInt16] 
+
+- stop_motor_log: 
+  - op : 38 
+  - arg : [motor_id: Int16]
+  - ret : [motor_error_code: UInt16] 
+
+- read_log_data: 
+  - op : 39
+  - arg : [motor_id: Int16, first_item: Int16]
+  - ret : [motor_error_code: UInt16, num_items: Int16, data: Array_Int16_c] 
+
+- read_ppi_shadow:
+  - op : 40
+  - arg : [index: Int16, count: Int16]
+  - ret : [values : Array_UInt16_c]
+
+- write_ppi:
+  - op : 41
+  - arg : [index: Int16, count: Int16, values: Array_UInt16_c]
+  - ret : null
+
+- clear_ppi:
+  - op : 42
+  - arg : [index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : null
+
+- set_ppi:
+  - op : 43
+  - arg : [index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : null
+
+- read_digital_inputs:
+  - op : 44
+  - arg : [count: Int16]
+  - ret : [values: Array_UInt16_c]
+
+- get_sensor_params:
+  - op : 45
+  - arg : [sensor_id: Int16]
+  - ret : [scale: Double, offset: Double]
+
+- set_sensor_params:
+  - op : 46
+  - arg : [sensor_id: Int16, scale: Double, offset: Double]
+  - ret : null
+
+- read_sensor_values:
+  - op : 47
+  - arg : [sensor_id: Int16]
+  - ret : [sensor_values: Double]
+
+- get_debounce_time:
+  - op : 48
+  - arg : [ext_input_id: Int16]
+  - ret : [debounce_time_ms: UInt16]
+
+- set_debounce_time:
+  - op : 49
+  - arg : [ext_input_id: Int16, debounce_time_ms: UInt16]
+  - ret : null
+
+- get_sensor_enabled:
+  - op : 50
+  - arg : [sensor_id: Int16]
+  - ret : [enabled: Boolean]
+
+- set_sensor_enabled:
+  - op : 51
+  - arg : [sensor_id: Int16, enabled: Boolean]
+  - ret : null
+
+- get_sensor_limits:
+  - op : 52
+  - arg : [sensor_id: Int16]
+  - ret : [min: Double, max: Double]
+
+- set_sensor_limits:
+  - op : 53
+  - arg : [sensor_id: Int16, min: Double, max: Double]
+  - ret : null
+
+- get_ext_input_mask:
+  - op : 54
+  - arg : null
+  - ret : [mask: UInt32]
+
+- set_ext_input_mask:
+  - op : 55
+  - arg : [mask: UInt32]
+  - ret : null
+
+- read_ppi:
+  - op : 56
+  - arg : [index: Int16]
+  - ret : [values: UInt16]
+
+- get_sequencer_info:
+  - op : 60
+  - arg : null
+  - ret : [status: UInt16, size: Int16, count: Int16]
+
+- clear_sequencer:
+  - op : 61
+  - arg : null
+  - ret : [count: Int16]
+
+- start_sequencer:
+  - op : 62
+  - arg : null
+  - ret : [count: Int16]
+
+- stop_sequencer:
+  - op : 63
+  - arg : null
+  - ret : [count: Int16]
+
+- abort_sequencer:
+  - op : 64
+  - arg : null
+  - ret : [count: Int16]
+
+- queue_write_ppi_item:
+  - op : 65
+  - arg : [seqId: Int16, duration_ms: UInt16, index: Int16, count: Int16, values: Array_UInt16_c]
+  - ret : [count: Int16, error: Int16]
+
+- queue_clear_ppi_item:
+  - op : 66
+  - arg : [seqId: Int16, duration_ms: UInt16, index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : [count: Int16, error: Int16]
+
+- queue_set_ppi_item:
+  - op : 67
+  - arg : [seqId: Int16, duration_ms: UInt16, index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : [count: Int16, error: Int16]
+
+- queue_move_item:
+  - op : 68
+  - arg : [seq_id: Int16, is_relative: Boolean, wait_move: Boolean, posX: Double, velX: Double, accelX: Double, posY: Double, velY: Double, accelY: Double, posZ: Double, velZ: Double, accelZ: Double]
+  - ret : [count: Int16, error: Int16]
+
+- queue_stop_item:
+  - op : 69
+  - arg : [seqId: Int16]
+  - ret : [count: Int16, error: Int16]
+
+- queue_set_clear_ppi_item:
+  - op : 70
+  - arg : [seqId: Int16, duration_ms: UInt16, index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : [count: Int16, error: Int16]
+
+- queue_clear_set_ppi_item:
+  - op : 71
+  - arg : [seqId: Int16, duration_ms: UInt16, index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : [count: Int16, error: Int16]
+
+- immediate_abort_sequencer:
+  - op : 72
+  - arg : null
+  - ret : [count: Int16]
+
+- get_timed_ppi_info:
+  - op : 73
+  - arg : null
+  - ret : [status: UInt16, size: Int16, count: Int16]
+
+- reset_timed_ppi:
+  - op : 74
+  - arg : null
+  - ret : [error: UInt16]
+
+- start_timed_ppi_item:
+  - op : 75
+  - arg : [id: Int16, duration_ms: UInt16, inverted: Boolean, index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : [error: UInt16, items_left: Int16]
+
+- abort_timed_ppi_items_with_id:
+  - op : 76
+  - arg : [id: Int16]
+  - ret : [error: UInt16, items_left: Int16]
+
+- get_encoder_config:
+  - op : 80
+  - arg : [motor_id: Int16]
+  - ret : [inverted: Boolean, count_per_step: Double]
+
+- set_encoder_config:
+  - op : 81
+  - arg : [motor_id: Int16, inverted: Boolean, count_per_step: Double]
+  - ret : null
+
+- get_fol_error_config:
+  - op : 82
+  - arg : [motor_id: Int16]
+  - ret : [is_tracking_enabled: Boolean, max_fol_error: Double]
+
+- set_fol_error_config:
+  - op : 83
+  - arg : [motor_id: Int16, is_tracking_enabled: Boolean, max_fol_error: Double]
+  - ret : null
+
+- get_encoder_position:
+  - op : 84
+  - arg : [motor_id: Int16]
+  - ret : [position: Double]
+
+- set_encoder_position:
+  - op : 85
+  - arg : [motor_id: Int16, position: Double]
+  - ret : null
+
+- get_encoder_source:
+  - op : 86
+  - arg : [id: Int16]
+  - ret : [error_code: Int16, source: UInt16]
+
+- set_encoder_source:
+  - op : 87
+  - arg : [id: Int16, source: UInt16]
+  - ret : [error_code: Int16]
+
+- get_encoder_correction:
+  - op : 88
+  - arg : [id: Int16]
+  - ret : [error_code: Int16, enable_enc_cor: Boolean, ECp: Double, max_step_rate: Double]
+
+- set_encoder_correction:
+  - op : 89
+  - arg : [id: Int16, enable_enc_cor: Boolean, ECp: Double, max_step_rate: Double]
+  - ret : [error_code: Int16]
+
+- get_abort_config:
+  - op : 90
+  - arg : [motor_id: Int16]
+  - ret : [trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+
+- set_abort_config:
+  - op : 91
+  - arg : [motor_id: Int16, trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - ret : null
+
+- clear_triggered_inputs:
+  - op : 92
+  - arg : [motor_id: Int16]
+  - ret : null
+
+- get_triggered_inputs:
+  - op : 93
+  - arg : [motor_id: Int16]
+  - ret : [input_mask: UInt32]
+
+- get_triggered_positions:
+  - op : 94
+  - arg : [motor_id: Int16, first_input: Int16, count: Int16]
+  - ret : [positions: Array_Double_c]
+
+- get_abort_deceleration:
+  - op : 95
+  - arg : [motor_id: Int16]
+  - ret : [deceleration: Double]
+
+- set_abort_deceleration:
+  - op : 96
+  - arg : [motor_id: Int16, deceleration: Double]
+  - ret : null
+
+- get_log_items_mod: 
+  - op : 110
+  - arg : [id: Int16]
+  - ret : [mask: UInt16] 
+
+- set_log_items_mod: 
+  - op : 111
+  - arg : [id: Int16, mask: UInt16]
+  - ret : [error_code: UInt16] 
+
+- start_log_mod: 
+  - op : 112
+  - arg : null 
+  - ret : [error_code: UInt16] 
+
+- stop_log_mod: 
+  - op : 113
+  - arg : null 
+  - ret : [error_code: UInt16] 
+
+- read_log_data_mod: 
+  - op : 114
+  - arg : [first_item: Int16]
+  - ret : [motor_error_code: UInt16, num_items: Int16, data: Array_Int16_c] 
+
+- read_log_stream_data:
+  - op : 115
+  - arg : null
+  - ret : [motor_error_code: UInt16, num_items: Int16, data: Array_Int16_c]
+
+- queue_write_ppi_item32:
+  - op : 120
+  - arg : [seqId: Int16, duration_ms: UInt32, index: Int16, count: Int16, values: Array_UInt16_c]
+  - ret : [count: Int16, error: Int16]
+
+- queue_clear_ppi_item32:
+  - op : 121
+  - arg : [seqId: Int16, duration_ms: UInt32, index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : [count: Int16, error: Int16]
+
+- queue_set_ppi_item32:
+  - op : 122
+  - arg : [seqId: Int16, duration_ms: UInt32, index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : [count: Int16, error: Int16]
+
+- queue_set_clear_ppi_item32:
+  - op : 123
+  - arg : [seqId: Int16, duration_ms: UInt32, index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : [count: Int16, error: Int16]
+
+- queue_clear_set_ppi_item32:
+  - op : 124
+  - arg : [seqId: Int16, duration_ms: UInt32, index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : [count: Int16, error: Int16]
+
+- start_timed_ppi_item32:
+  - op : 125
+  - arg : [id: Int16, duration_ms: UInt32, inverted: Boolean, index: Int16, count: Int16, masks: Array_UInt16_c]
+  - ret : [error: UInt16, items_left: Int16]
+
+- set_address:
+  - op : 130
+  - arg: [new_addr: Int16]
+  - ret: null
+
+- set_motor_enabled:
+  - op : 131
+  - arg: [motor_id: Int16, enabled: Int16]
+  - ret: null
+
+- start_monitor:
+  - op : 135
+  - arg: [id: Int16]
+  - ret: null
+
+- abort_monitor:
+  - op : 136
+  - arg: [id: Int16]
+  - ret: null
+
+- get_monitor_state:
+  - op : 137
+  - arg: [id: Int16]
+  - ret: [state: Int16]
+
+- get_position_threshold:
+  - op : 138
+  - arg: [id: Int16]
+  - ret: [position: Double, above: Boolean]
+
+- set_position_threshold:
+  - op : 139
+  - arg: [id: Int16, position: Double, above: Boolean]
+  - ret: null
+
+EVENTS:
+- motor_move_started:
+  - op : 512
+  - ret: [motor_id: Int16]
+
+- motor_move_done:
+  - op : 513
+  - ret: [motor_id: Int16, status: UInt16, position: Double]
+
+- motor_home_done:
+  - op : 514
+  - ret: [motor_id: Int16, home_pos: Double, pos: Double]
+
+- motor_error_occured:
+  - op : 515
+  - ret: [motor_id: Int16, motor_error_code: UInt16]
+
+- sequence_progress:
+  - op : 784
+  - ret: [seq_id: Int16, count: Int16, unused: Int16]
+
+- sequence_stopped:
+  - op : 785
+  - ret: [seq_id: Int16, count: Int16]
+
+- on_position_reached:
+  - op : 800
+  - ret: [motor_id: Int16, position: Double]
+
+- input_monitor_changed:
+  - op : 801
+  - ret: [input_id: Int16, isOn: Boolean]
+
+- sensor_alarm:
+  - op : 769
+  - ret: [  count: Int16, sensor_id1: UInt16, change_type1: UInt16, value1: double, sensor_id2: UInt16, change_type2: UInt16, value2: double, sensor_id3: UInt16, change_type3: UInt16, value3: double, sensor_id4: UInt16, change_type4: UInt16, value4: double, sensor_id5: UInt16, change_type5: UInt16, value5: double, sensor_id6: UInt16, change_type6: UInt16, value6: double, sensor_id7: UInt16, change_type7: UInt16, value7: double, sensor_id8: UInt16, change_type8: UInt16, value8: double  ]

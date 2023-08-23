@@ -1,0 +1,388 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+
+
+#---------------------------- INPUT MONITOR ------------------------------------
+- get_debouch_time_ms:
+  - op  : 50
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the debouch time in ms
+
+- set_debouch_time_ms:
+  - op  : 51
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the debouch time in ms
+
+- get_input_mask:
+  - op  : 52
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the input mask please see InputMonitorMask
+
+- set_input_mask:
+  - op  : 53
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the input mask please see InputMonitorMask
+
+- read_input_monitor_port_value:
+  - op  : 54
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+  # ------------------------------- Digital Out ------------------------------------
+- get_digital_out_value:
+  - op  : 70
+  - arg : [abort_id: Int16]
+  - ret : [on: Boolean]
+  - desc: |
+           set the value of digital out ( id 0 - 2 )
+           0 = uV light
+           1 = refrigerator 0
+           2 = refrigerator 1
+
+- set_digital_out_value:
+  - op  : 71
+  - arg : [abort_id: Int16, on: Boolean]
+  - ret : null
+  - desc: |
+           set the value of digital out ( id 0 - 2 )
+           0 = uV light
+           1 = refrigerator 0
+           2 = refrigerator 1
+
+
+
+#---------------------------- Auxs ---------------------------------------------
+- get_aux_analog_in_params:
+  - op  : 60
+  - arg : [id: UInt16]  
+  - ret : [scale: Double, offset: Double]
+  - desc: get setting scale and offset for reading the analog in from ADC
+
+- set_aux_analog_in_params:
+  - op  : 61
+  - arg : [id: UInt16, scale: Double, offset: Double]
+  - ret : null
+  - desc: setting scale and offset for reading the analog in from ADC
+
+- read_aux_analog_in_value:
+  - op  : 62
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read value aux input analog
+
+- get_aux_analog_out_params:
+  - op  : 63
+  - arg : [id: UInt16]
+  - ret : [max_range: Double, min_range: Double]
+  - desc: get max range and min range of output in percentag
+
+- set_aux_analog_out_params:
+  - op  : 64
+  - arg : [id: UInt16, max_range: Double, min_range: Double]
+  - ret : null
+  - desc: set max range and min range of output in percentage
+
+- get_aux_analog_out_value:
+  - op  : 65
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: get value in percentage from range
+
+- set_aux_analog_out_value:
+  - op  : 66
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - desc: set value in percentage from range
+
+- get_aux_analog_out_pwm_freq:
+  - op  : 67
+  - arg : null
+  - ret : [value: UInt32]
+  - desc: get freq analog out pwm in Hz
+
+- set_aux_analog_out_pwm_freq:
+  - op  : 68
+  - arg : [value: UInt32]
+  - ret : null
+  - desc: set freq analog out pwm in Hz
+
+# ------------------------------- Timed Output ------------------------------------
+- timed_output_perform_set_clear:
+  - op  : 84
+  - arg : [id: UInt16, duration_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: Add set operation on output, followed with clear operation after duration timeouts
+
+- timed_output_perform_clear_set:
+  - op  : 85
+  - arg : [id: UInt16, duration_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: Add set operation on output, followed with clear operation after duration timeouts
+
+- timed_output_abort:
+  - op  : 86
+  - arg : [id: UInt16]
+  - ret : [success: Boolean]
+  - desc: Abort current action on timed output with specified bit
+
+
+# ------------------------------- SENSOR MONITOR ------------------------------------
+- sensor_monitor_get_enable_mask:
+  - op : 41
+  - arg: null
+  - ret: [enable_mask: UInt16]
+  - desc: |
+            get sensor monitor enable mask
+
+- sensor_monitor_set_enable_mask:
+  - op : 42
+  - arg: [enable_mask: UInt16]
+  - ret: null
+  - desc: |
+            set sensor monitor enable mask
+
+- sensor_monitor_get_debounce_ms:
+  - op : 43
+  - arg: null
+  - ret: [debounce_ms: UInt16]
+  - desc: |
+            get sensor monitor debounce time in milisecond
+            
+- sensor_monitor_set_debounce_ms:
+  - op : 44
+  - arg: [debounce_ms: UInt16]
+  - ret: null
+  - desc: |
+            set sensor monitor debounce time in milisecond
+            
+- sensor_monitor_get_threshold:
+  - op : 45
+  - arg: [id: UInt16]
+  - ret: [upper_limit: Double, lower_limit: Double]
+  - desc: |
+            get sensor monitor upper and lower threshold for corresponding channel
+
+- sensor_monitor_set_threshold:
+  - op : 46
+  - arg: [id: UInt16, upper_limit: Double, lower_limit: Double]
+  - ret: [success : Boolean]
+  - desc: |
+            set sensor monitor upper and lower threshold for corresponding channel
+
+
+
+# ------------------------------- Cap Sensors & Aspirate -----------------------------------
+- read_aux_cap_value:
+  - op  : 10
+  - arg : [id_snr: UInt16, id_ch: UInt16]
+  - ret : [capasitance: Int32]
+  - desc: Read FDC1004 capasitance sensor measurement, unit in femto farads
+
+- get_aux_cap_reader_enable:
+  - op  : 11
+  - arg : [id_snr: UInt16]
+  - ret : [enable: UInt16]
+  - desc: Get FDC1004 capasitance sensor reader service enable
+
+- set_aux_cap_reader_enable:
+  - op  : 12
+  - arg : [id_snr: UInt16, enable: UInt16]
+  - ret : null
+  - desc: Set FDC1004 capasitance sensor reader service enable
+
+- tare:
+  - op  : 13
+  - arg : [id_snr: UInt16, id_ch: UInt16, avgwindow: UInt16]
+  - ret : null
+  - desc: Tare FDC1004 capasitance sensor 
+
+- get_aspirate_input_range:
+  - op  : 14
+  - arg : [id: UInt16]
+  - ret : [ min : UInt32, max : UInt32]
+  - desc: aspirate sensor threshold 
+          Parameter id ( 0 ~ 5 ) , return input range value  
+          
+- get_aspirate_threshold:
+  - op  : 15
+  - arg : [id: UInt16]
+  - ret : [ low : UInt32, high : UInt32]
+  - desc: aspirate sensor threshold 
+          Parameter id ( 0 ~ 5 ) , return threshold value
+  
+- set_aspirate_threshold:
+  - op  : 16
+  - arg : [id: UInt16, low : UInt32, high : UInt32]
+  - ret : [success: Boolean]
+  - desc: aspirate sensor threshold 
+          Parameter id ( 0 ~ 5 ) , threshold value
+          
+- aspirate_valves:
+  - op  : 17
+  - arg : [valve_masking: UInt16, time_out_ms : UInt32, trigger : UInt16 ]
+  - ret : [success: Boolean]
+  - desc: Set aspirate valve on/off  
+          Parameter valve_masking ( 0x00 ~ 0x3F ) , time out value in milisecond, trigger (0-by timeout, 1-by rising edge, 2-by falling edge)
+          
+- write_valves:
+  - op  : 18
+  - arg : [valve_masking: UInt16, onoff : Boolean]
+  - ret : [success: Boolean]
+  - desc: write valve on/off  
+          Parameter valve_masking ( 0x00 ~ 0x3F ) , on/off 
+ 
+
+# ------------------------------- MOTION ABORT ------------------------------------
+
+- get_abort_config:
+  - op  : 90
+  - arg : [abort_id: Int16]
+  - ret : [trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - desc: please see AbortInputBitmask and AbortId
+
+- set_abort_config:
+  - op : 91
+  - arg: [abort_id: Int16, trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - ret: null
+  - desc: please see AbortInputBitmask and AbortId
+
+- clear_triggered_inputs:
+  - op : 92
+  - arg: [abort_id: Int16]
+  - ret: null
+
+- get_triggered_inputs:
+  - op : 93
+  - arg: [abort_id: Int16]
+  - ret: [input_mask: UInt32]
+
+- get_triggered_positions:
+  - op : 94
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c]
+ 
+- get_triggered_value:
+  - op : 95
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c] 
+
+- get_abort_threshold:
+  - op : 96
+  - arg: [abort_id: Int16]
+  - ret: [threshold: Double]
+
+- set_abort_threshold:
+  - op : 97
+  - arg: [abort_id: Int16, threshold: Double]
+  - ret: null
+
+#---------------------------------- LOGGER ---------------------------------------
+
+- get_log_items:
+  - op  : 111
+  - arg : null
+  - ret : [log_mask: UInt16]
+  - desc: |
+           Get data logger activation status. Each logger module has bitmasks to represent/activate which data is logged.
+           1: channel 1
+           2: challel 2
+           4: channel 3
+
+- set_log_items:
+  - op  : 112
+  - arg : [log_mask: UInt16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set data logger activation.  Check get_log_items opcode for furher explanation of bitmasks and modules.
+         
+- start_log:
+  - op  : 113
+  - arg : null
+  - ret : [started: Boolean]
+  - desc: Start data logger. started is False if unable to start (log items is not set yet).
+
+- stop_log:
+  - op  : 114
+  - arg : null
+  - ret : null
+  - desc: Stop data logger.
+
+- read_log_data:
+  - op  : 115
+  - arg : [start_index: Int16]
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: Read log data from a starting index, maximum data per command is 251 items.
+          Arguments
+          - start_index -> Starting index to be read
+
+          Returns
+          - num_items -> number of received data
+          - data      -> array of received data
+
+- get_log_status:
+  - op  : 116
+  - arg : null
+  - ret : [status: Int16, triggered_pos: UInt16]
+  - desc: | 
+          Get logger status. 
+
+- read_log_stream_data:
+  - op  : 117
+  - arg : null
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: | 
+          Read streaming of data from last read index, max 200 data per command. For example, first read_log_stream_data command will obtain
+          data 0-199, second command will obtain data 200-399, and so on.
+          Arguments
+          - num_items -> number of received data
+          - data      -> array of received data
+
+ ################################### EVENTS #################################################
+EVENTS:
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon input monitor changed
+  
+- on_sensor_out_of_bound:
+  - op  : 802
+  - ret: [id: UInt16, limit_type: UInt16, value: Double]
+  - desc: Fired upon sensor monitor out of counds
+
+- on_tare_done:
+  - op  : 803
+  - ret: [id: UInt16, ch: UInt16, offset: Int32 ]
+  - desc: Fired when tare scale done
+
+- on_calibrate_done:
+  - op  : 804
+  - ret: [id: UInt16, scale: Double]
+  - desc: Fired when tare scale done
+
+- on_timed_output_action_start:
+  - op  : 810
+  - ret: [id: UInt16, is_on: Boolean]
+  - desc: Fired when timed output with specified id and bit has started
+
+- on_timed_output_action_finish:
+  - op  : 811
+  - ret: [id: UInt16, is_on: Boolean]
+  - desc: Fired when timed output with specified id and bit has finished
+  
+- on_aspirate_done:
+  - op  : 820
+  - ret: [id: UInt16]
+  - desc: Fired when aspirate on specified id done
+
+- on_aspirate_timeout:
+  - op  : 821
+  - ret: [id: UInt16]
+  - desc: Fired when aspirate timeout on specified id 
+

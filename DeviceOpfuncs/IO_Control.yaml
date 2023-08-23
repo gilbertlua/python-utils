@@ -1,0 +1,113 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+- save_configuration:
+  - op : 3
+  - arg: null
+  - ret: null
+
+- get_valve_State:
+  - op : 10
+  - arg: [id: Int16]
+  - ret: [is_open: UInt16]
+
+- set_valve_State:
+  - op : 11
+  - arg: [id: Int16, value: UInt16]
+  - ret: null
+
+- set_RGB_LED:
+  - op : 13
+  - arg: [id: UInt16, count: UInt16, dataHighColorRGB: Array_UInt16_c]
+  - ret: [status: Boolean]
+
+- set_animator_frame_buffer:
+  - op : 15
+  - arg: [frameID: UInt16, offset: UInt16, delay: UInt16, led_count: UInt16, dataHighRGB: Array_UInt16_c]
+  - ret: [status: Boolean]
+
+- stop_animator:
+  - op : 16
+  - arg: null
+  - ret: null 
+ 
+- start_animator:
+  - op : 17
+  - arg: [min_index: UInt16, max_index: UInt16, isRepeat: Boolean]
+  - ret: [status: Boolean]
+
+- get_initial_led:
+  - op : 18
+  - arg: [id: UInt16]
+  - ret: [enable: Boolean, color: UInt16, led_count: UInt16]
+
+- set_initial_led:
+  - op : 19
+  - arg: [id: UInt16, enable: Boolean, color: UInt16, led_count: UInt16]
+  - ret: null 
+  
+- get_servo_period:
+  - op : 22
+  - arg: null
+  - ret: [period: UInt16]
+  
+- set_servo_period:
+  - op : 23
+  - arg: [period: UInt16]
+  - ret: null  
+
+- get_servo_initial_pos:
+  - op : 24
+  - arg: [id: UInt16]
+  - ret: [dutyCycle: Double]
+  
+- set_servo_initial_pos:
+  - op : 25
+  - arg: [id: UInt16, dutyCycle: Double]
+  - ret: null
+  
+- get_servo_current_pos:
+  - op : 26
+  - arg: [id: UInt16]
+  - ret: [dutyCycle: Double]
+  
+- set_servo_current_pos:
+  - op : 27
+  - arg: [id: UInt16, dutyCycle: Double]
+  - ret: null
+  
+- set_servo_pos:
+  - op : 28
+  - arg: [id: UInt16, dutyCycle: Double, speed: Double]
+  - ret: [canmove: Boolean]
+
+- read_aux_analog_input:
+  - op : 30
+  - arg: [id : UInt16]
+  - ret: [value: Double]
+  
+- read_all_aux_analog_input:
+  - op : 35
+  - arg: null
+  - ret: [value: Array_Double]
+  
+- read_adc_log:
+  - op : 36
+  - arg: null
+  - ret: [value: Array_UInt16]
+  
+- set_address:
+  - op : 100
+  - arg: [value: Int16]
+  - ret: null
+  
+EVENTS: 
+- move_servo_done:
+  - op : 512
+  - ret: [position: UInt16]
+
+- animator_done:
+  - op : 513
+  - ret: null
+  

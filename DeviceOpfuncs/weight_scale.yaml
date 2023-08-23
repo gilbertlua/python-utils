@@ -1,0 +1,576 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+
+
+- get_tick:
+  - op : 10
+  - arg: null
+  - ret: [time_milis : UInt32]
+  - desc: |
+            get the current time in millisecond on micro controller
+            
+            
+# ---------------------------Load cell with  ADS1231 ---------------
+- ads1231_read_weight:
+  - op : 12
+  - arg: [id: UInt16]
+  - ret: [status : Boolean, weight : Double,timestamp : UInt32]
+  - desc: |
+            status : if the load cell reading disabled, it will return false
+            and the data is not valid
+            weight : weight data that processed by moving average
+            timestamp : is the time in millisecond that show when the
+            data sampling happen.
+- ads1231_tare:
+  - op : 14
+  - arg: [id: UInt16, avgWindow: UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            If the return value is false it means there is ongoing
+            tare/calibration process, you need to wait it until its done.
+
+- ads1231_calibrate:
+  - op : 15
+  - arg: [id: UInt16, refWeight: Double, avgWindow: UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            before calibrating the scale, you must tare the scale first.
+            if the calibration process done, event will be sent with the
+            calibration (scale) value.
+            If the return value is false it means there is ongoing
+            tare/calibration process, you need to wait it until its done.
+            Need to call save configuration to save its scale value
+
+- ads1231_set_scale:
+  - op : 17
+  - arg: [id: UInt16, scale: Double]
+  - ret: null
+  - getter_op : 18
+  - desc: |
+            We can set the scale manually without calibration process,
+            set it to one to get raw ADC data
+
+- ads1231_get_scale:
+  - op : 18
+  - arg: [id: UInt16]
+  - ret: [scale: Double]
+  - eeprom : [id : 4]
+  - desc: |
+            Get current scale value
+
+- ads1231_set_avg_window:
+  - op : 24
+  - arg: [id: UInt16, avg_window: UInt16]  
+  - ret: [stat : Boolean]
+  - getter_op : 25
+
+- ads1231_get_avg_window:
+  - op : 25
+  - arg: [id: UInt16]
+  - ret: [avg_window: UInt16]
+  - eeprom : [id : 4]
+
+- ads1231_set_load_cell_enable:
+  - op : 26
+  - arg: [id: UInt16, enable: Boolean]
+  - ret: [enable : Boolean]
+  - getter_op : 27
+  - desc: |
+            to use ADS1235 instead of ADS1231, set it disable 
+            ADS1231 and ADS1235 share SPI communication, we should choose one of it.
+
+- ads1231_get_load_cell_enable:
+  - op : 27
+  - arg: [id: UInt16]
+  - ret: [enable : Boolean]
+  - eeprom : [id : 4]
+  
+
+- ads1231_set_offset:
+  - op : 28
+  - arg: [id: UInt16, offset: Int32]
+  - ret: null
+  - getter_op : 29
+  - desc: |
+
+- ads1231_get_offset:
+  - op : 29
+  - arg: [id: UInt16]
+  - ret: [offset: Int32]
+  - eeprom : [id : 4]
+  - desc: |
+            Get current offset
+
+- ads1231_set_high_sampling_rate:
+  - op : 30
+  - arg: [isHigh: Boolean]
+  - ret: null
+  - getter_op : 31
+  - desc: |
+            Set High Rate Sampling if true 80Hz, if false 10Hz
+
+- ads1231_get_high_sampling_rate:
+  - op : 31
+  - arg: null
+  - ret: [isHigh: Boolean]
+  - eeprom : 0
+  - desc: |
+            Set High Rate Sampling if true 80Hz, if false 10Hz
+
+#---------------------------- INPUT MONITOR ------------------------------------
+- get_debouch_time_ms:
+  - op  : 50
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : 0
+  - desc: get the debouch time in ms
+
+- set_debouch_time_ms:
+  - op  : 51
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 50
+  - desc: set the debouch time in ms
+
+- get_input_mask:
+  - op  : 52
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : 0
+  - desc: get the input mask please see InputMonitorMask
+
+- set_input_mask:
+  - op  : 53
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 52
+  - desc: set the input mask please see InputMonitorMask
+
+- read_input_monitor_port_value:
+  - op  : 54
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+  # ------------------------------- Digital Out ------------------------------------
+- get_digital_out_value:
+  - op  : 70
+  - arg : [abort_id: Int16]
+  - ret : [on: Boolean]
+  - eeprom : [abort_id: 3]
+  - desc: |
+           set the value of digital out ( id 0 - 2 )
+           0 = uV light
+           1 = refrigerator 0
+           2 = refrigerator 1
+
+- set_digital_out_value:
+  - op  : 71
+  - arg : [abort_id: Int16, on: Boolean]
+  - ret : null
+  - getter_op : 70
+  - desc: |
+           set the value of digital out ( id 0 - 2 )
+           0 = uV light
+           1 = refrigerator 0
+           2 = refrigerator 1
+ 
+#---------------------------- Auxs In ---------------------
+- get_aux_analog_in_params:
+  - op  : 60
+  - arg : [id: UInt16]  
+  - ret : [scale: Double, offset: Double]
+  - eeprom : [id: 8] 
+  - desc: get setting scale and offset for reading the analog in from ADC
+
+- set_aux_analog_in_params:
+  - op  : 61
+  - arg : [id: UInt16, scale: Double, offset: Double]
+  - ret : null
+  - getter_op : 60
+  - desc: setting scale and offset for reading the analog in from ADC
+
+- read_aux_analog_in_value:
+  - op  : 62
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read value aux input analog
+
+# ----------------- Auxs Out ------------
+- get_aux_analog_out_params:
+  - op  : 63
+  - arg : [id: UInt16]
+  - ret : [max_range: Double, min_range: Double]
+  - eeprom : [id: 3] 
+  - desc: get max range and min range of output in percentag
+
+- set_aux_analog_out_params:
+  - op  : 64
+  - arg : [id: UInt16, max_range: Double, min_range: Double]
+  - ret : null
+  - getter_op : 63
+  - desc: set max range and min range of output in percentage
+
+- get_aux_analog_out_value:
+  - op  : 65
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - eeprom : [id: 3]
+  - desc: get value in percentage from range
+
+- set_aux_analog_out_value:
+  - op  : 66
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - getter_op : 65
+  - desc: set value in percentage from range
+
+- get_aux_analog_out_pwm_freq:
+  - op  : 67
+  - arg : null
+  - ret : [value: UInt32]
+  - eeprom : 0
+  - desc: get freq analog out pwm in Hz
+
+- set_aux_analog_out_pwm_freq:
+  - op  : 68
+  - arg : [value: UInt32]
+  - ret : null
+  - getter_op : 67
+  - desc: set freq analog out pwm in Hz
+
+# ------------------------------- Timed Output ------------------------------------
+- timed_output_perform_set_clear:
+  - op  : 84
+  - arg : [id: UInt16, duration_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: Add set operation on output, followed with clear operation after duration timeouts
+
+- timed_output_perform_clear_set:
+  - op  : 85
+  - arg : [id: UInt16, duration_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: Add set operation on output, followed with clear operation after duration timeouts
+
+- timed_output_abort:
+  - op  : 86
+  - arg : [id: UInt16]
+  - ret : [success: Boolean]
+  - desc: Abort current action on timed output with specified bit
+
+
+# ------------------------------- MOTION ABORT ------------------------------------
+# *Note : currently only one motion abort driver, door interlock, is used
+- get_abort_config:
+  - op  : 90
+  - arg : [abort_id: Int16]
+  - ret : [trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - eeprom : [abort_id: 3]
+  - desc: please see AbortInputBitmask and AbortId
+
+- set_abort_config:
+  - op : 91
+  - arg: [abort_id: Int16, trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - ret: null
+  - getter_op : 90
+  - desc: please see AbortInputBitmask and AbortId
+
+- clear_triggered_inputs:
+  - op : 92
+  - arg: [abort_id: Int16]
+  - ret: null
+
+- get_triggered_inputs:
+  - op : 93
+  - arg: [abort_id: Int16]
+  - ret: [input_mask: UInt32]
+  
+- get_abort_threshold:
+  - op : 96
+  - arg: [abort_id: Int16]
+  - ret: [threshold: Double]
+  - eeprom :  [abort_id: 3]
+  
+- set_abort_threshold:
+  - op : 97
+  - arg: [abort_id: Int16, threshold: Double]
+  - ret: [success: Boolean]
+  - getter_op : 96
+ 
+
+# ------------------------------- SENSOR MONITOR ------------------------------------
+- sensor_monitor_get_enable_mask:
+  - op : 41
+  - arg: null
+  - ret: [enable_mask: UInt16]
+  - eeprom : 0
+  - desc: |
+            get sensor monitor enable mask
+
+- sensor_monitor_set_enable_mask:
+  - op : 42
+  - arg: [enable_mask: UInt16]
+  - ret: null
+  - getter_op : 41
+  - desc: |
+            set sensor monitor enable mask
+
+- sensor_monitor_get_debounce_ms:
+  - op : 43
+  - arg: null
+  - ret: [debounce_ms: UInt16]
+  - eeprom : 0
+  - desc: |
+            get sensor monitor debounce time in milisecond
+            
+- sensor_monitor_set_debounce_ms:
+  - op : 44
+  - arg: [debounce_ms: UInt16]
+  - ret: null
+  - getter_op : 43
+  - desc: |
+            set sensor monitor debounce time in milisecond
+            
+- sensor_monitor_get_threshold:
+  - op : 45
+  - arg: [id: UInt16]
+  - ret: [upper_limit: Double, lower_limit: Double]
+  - eeprom : [d: 8]
+  - desc: |
+            get sensor monitor upper and lower threshold for corresponding channel
+
+- sensor_monitor_set_threshold:
+  - op : 46
+  - arg: [id: UInt16, upper_limit: Double, lower_limit: Double]
+  - ret: [success : Boolean]
+  - getter_op : 45
+  - desc: |
+            set sensor monitor upper and lower threshold for corresponding channel
+
+
+#-------------------------------Load cell with ADS1235 ------------------        
+- ads1235_set_enable:
+  - op : 132    
+  - arg: [id : UInt16,  enable : UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            to use ADS1231 instead of ADS1235, set it disable 
+            ADS1231 and ADS1235 share SPI communication, we should choose one of it.
+            to get the status enable/disable we can use ads1235_get_status
+
+- ads1235_set_cutoff_freq:
+  - op : 133    
+  - arg: [id : UInt16,  cutoff_freq : Double]
+  - ret: [status: Boolean]
+  - desc: |
+            set cutoff freq   
+
+- ads1235_tare:
+  - op : 134    
+  - arg: [id : UInt16, avgWindow: UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            If the return value is false it means there is ongoing
+            tare/calibration process, you need to wait it until its done.
+
+- ads1235_calibrate:
+  - op : 135    
+  - arg: [id: UInt16, refWeight: Double, avgWindow: UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            before calibrating the scale, you must tare the scale first.
+            if the calibration process done, event will be sent with the
+            calibration (scale) value.
+            If the return value is false it means there is ongoing
+            tare/calibration process, you need to wait it until its done.
+            Need to call save configuration to save its scale value
+           
+           
+- ads1235_read_weight:
+  - op : 136
+  - arg: [id : UInt16]
+  - ret: [status : Boolean, weight : Double, timestamp : UInt32]
+  - desc: |
+            status : if the load cell reading disabled, it will return false
+            and the data is not valid
+            timestamp : is the time in millisecond that show when the
+            data sampling happen.
+            
+- ads1235_set_datarate_filter_delay_gain:
+  - op : 137    
+  - arg: [datarate : UInt16,  filter : UInt16, delay: UInt16, gain : UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+          Set Data rate, filter, delay, gain
+  
+- ads1235_get_status:
+  - op : 138
+  - arg: [id : UInt16]
+  - ret: [enable : UInt16, cutoff_freq : Double, offset : Double, scale : Double, data_rate : UInt16, filter : UInt16, delay : UInt16, gain : UInt16]
+  #- eeprom : 3
+  - desc: |
+            Get status enable, current cutoff_freq value, current offset value and current scale value
+  
+- ads1235_set_scale:
+  - op : 139
+  - arg: [id: UInt16, scale: Double]
+  - ret: null
+  - desc: |
+            We can set the scale manually without calibration process,
+            set it to one to get raw ADC data  
+            
+- ads1235_set_offset:
+  - op : 140
+  - arg: [id: UInt16, offset: Double] 
+  - ret: null
+  - desc: |
+            We can set the offset manually without tare process,
+            set it to zero to get raw ADC data  
+
+- ads1235_get_single_channel_mode:
+  - op : 141
+  - arg: null
+  - ret: [singleChannelMode : Boolean, channel : UInt16]
+  - desc: |
+
+- ads1235_set_single_channel_mode:
+  - op : 142
+  - arg: [singleChannelMode : Boolean, channel : UInt16]
+  - ret: null
+  - desc: |
+           if single channel mode is true, only one channel work
+  
+
+#Predictive Dispense
+
+- ads1235_get_predictive_dispense:
+  - op : 143
+  - arg: null
+  - ret: [flow : Double, weight : Double]
+  - desc: |
+          flow is actual flow rate * flowCoeficient
+          flow will be updated when dispense is running
+
+- ads1235_set_predictive_dispense:
+  - op : 144
+  - arg: [targetWeight: Double, flowCoeficient: Double, offset: Double, timeoutMs: UInt32]
+  - ret: null
+  - desc: |  
+           Target weight(g) = current weight + (flow rate * flow coeficient) + offset weight 
+           If target weight is not reached in timeout time(ms), event valve close and timeout will be raised 
+  
+- ads1235_get_noflow_dectection:
+  - op : 145
+  - arg: null
+  - ret: [enable :  UInt16, startTimeoutMs : UInt32, noFlowDetPeriodMs: UInt32, flowThreshold: Double]
+  - desc: |
+           predictive dispense will be closed if flow rate below the threshold for certain duration
+           
+- ads1235_set_noflow_dectection:
+  - op : 146
+  - arg: [enable :  UInt16, startTimeoutMs : UInt32, noFlowDetPeriodMs: UInt32, flowThreshold: Double]
+  - ret: null
+  - desc: |
+           predictive dispense will be closed if flow rate below the threshold for certain duration
+           startTimeout, in the beginning of dispense, if no flow rate for certain duration
+           noFlowDetPeriodMs, when dispensing, if flow rate < flowThreshold for certain duration
+
+#---------------------------------- LOGGER ---------------------------------------
+
+- get_log_items:
+  - op  : 111
+  - arg : null
+  - ret : [log_mask: UInt16]
+  - desc: |
+           Get data logger activation status. Each logger module has bitmasks to represent/activate which data is logged.
+           1: channel 1
+           2: challel 2
+           4: channel 3
+
+- set_log_items:
+  - op  : 112
+  - arg : [log_mask: UInt16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set data logger activation.  Check get_log_items opcode for furher explanation of bitmasks and modules.
+         
+- start_log:
+  - op  : 113
+  - arg : null
+  - ret : [started: Boolean]
+  - desc: Start data logger. started is False if unable to start (log items is not set yet).
+
+- stop_log:
+  - op  : 114
+  - arg : null
+  - ret : null
+  - desc: Stop data logger.
+
+- read_log_data:
+  - op  : 115
+  - arg : [start_index: Int16]
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: Read log data from a starting index, maximum data per command is 251 items.
+          Arguments
+          - start_index -> Starting index to be read
+
+          Returns
+          - num_items -> number of received data
+          - data      -> array of received data
+
+- get_log_status:
+  - op  : 116
+  - arg : null
+  - ret : [status: Int16, triggered_pos: UInt16]
+  - desc: | 
+          Get logger status. 
+
+- read_log_stream_data:
+  - op  : 117
+  - arg : null
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: | 
+          Read streaming of data from last read index, max 200 data per command. For example, first read_log_stream_data command will obtain
+          data 0-199, second command will obtain data 200-399, and so on.
+          Arguments
+          - num_items -> number of received data
+          - data      -> array of received data
+
+ ################################### EVENTS #################################################
+EVENTS:
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon input monitor changed
+  
+- on_sensor_out_of_bound:
+  - op  : 802
+  - ret: [id: UInt16, limit_type: UInt16, value: Double]
+  - desc: Fired upon sensor monitor out of counds
+
+- on_tare_done:
+  - op  : 803
+  - ret: [id: UInt16, offset: Double ]
+  - desc: Fired when tare scale done
+
+- on_calibrate_done:
+  - op  : 804
+  - ret: [id: UInt16, scale: Double]
+  - desc: Fired when tare scale done
+
+- on_timed_output_action_start:
+  - op  : 810
+  - ret: [id: UInt16, is_on: Boolean]
+  - desc: Fired when timed output with specified id and bit has started
+
+- on_timed_output_action_finish:
+  - op  : 811
+  - ret: [id: UInt16, is_on: Boolean]
+  - desc: Fired when timed output with specified id and bit has finished
+  
+- on_predictive_dispense_done:
+  - op  : 812
+  - ret: [status: UInt16, data: Double ]
+  - desc: Fired when predictive dispense done. status = 0,1,2 if normal, status=3 if timeout, status=4 if no flow detected

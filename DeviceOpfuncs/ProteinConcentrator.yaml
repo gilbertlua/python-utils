@@ -1,0 +1,667 @@
+APPNAME: ProCtrPReg
+VERSION: 2.1.28
+
+ENUMS:
+- AbortInputBitmask:
+  - desc : Bitmask for activating input of sequencer abort
+  - type : UInt32
+  - value:
+    - InputMonitor0 : [1, sensor 0 - chips sensor fault active high]
+    - InputMonitor1 : [2, sensor 1 - waste bottle fault active high]
+    - InputMonitor2 : [4, sensor 2 - waste slide fault active high]
+    - InputMonitor3 : [8, sensor 3 - tube sensor 0 fault active high]
+    - InputMonitor4 : [16, sensor 4 - tube sensor 1 fault active high]
+    - AnalogInput0 : [32, analog input load cell 0 min weight]
+    - AnalogInput1 : [64, analog input load cell 0 max weight]
+    - AnalogInput2 : [128, analog input load cell 1 min weight]
+    - AnalogInput3 : [256, analog input load cell 1 max weight]
+
+- AbortId:
+  - desc : Id for abort object
+  - type : Int16
+  - value:
+    - Sequencer0 : [0, sequemcer 0 it will stop on marker if aborted]
+
+- SensorId:
+  - desc : Id for loadcell sensor 
+  - type : Int16
+  - value:
+    - Load00 : [0, Loadcell 0 upper threshold]
+    - Load01 : [1, Loadcell 0 lower threshold]
+    - Load10 : [2, Loadcell 1 upper threshold]
+    - Load11 : [3, Loadcell 1 lower threshold]
+    
+
+COMMANDS:
+- save_configuration:
+  - op : 3
+  - arg: null
+  - ret: null
+
+- hang_firmware:
+  - op : 9
+  - arg: null
+  - ret: null
+
+- get_valve_State:
+  - op : 10
+  - arg: [id: Int16]
+  - ret: [is_open: UInt16]
+
+- set_valve_State:
+  - op : 11
+  - arg: [id: Int16, value: UInt16]
+  - ret: null
+
+- get_pressure_controller_params:
+  - op : 13
+  - arg: [id: Int16]
+  - ret: [source_on_th: Double, source_off_th: Double, drain_on_th: Double,
+      drain_off_th: Double, sensor_scale: Double, sensor_offset: Double]
+  - eeprom: 4
+
+
+- set_pressure_controller_params:
+  - op : 14
+  - arg: [id: Int16, source_on_th: Double, source_off_th: Double, drain_on_th: Double,
+      drain_off_th: Double, sensor_scale: Double, sensor_offset: Double]
+  - ret: null
+  - getter_op: 13
+
+
+- get_pressure_controller_state:
+  - op : 15
+  - arg: [id: UInt16]
+  - ret: [enabled: Boolean]
+
+- set_pressure_controller_state:
+  - op : 16
+  - arg: [id: UInt16, state: UInt16]
+  - ret: null
+
+- read_pressure_controller_sensor:
+  - op : 17
+  - arg: [id: Int16]
+  - ret: [Flags: Double]
+
+- get_pressure_controller_on_limit:
+  - op : 18
+  - arg: [id: Int16]
+  - ret: [is_limit: Int16, on_time: UInt32]
+
+- set_pressure_controller_on_limit:
+  - op : 19
+  - arg: [id: Int16, is_limit: Int16, on_time: UInt32]
+  - ret: null
+
+- read_FDC2214_register:
+  - op : 20
+  - arg: [reg: UInt16]
+  - ret: [value: UInt16]
+
+- write_FDC2214_register:
+  - op : 21
+  - arg: [reg: UInt16, value: UInt16]
+  - ret: null
+
+- set_sensor_config:
+  - op : 22
+  - arg: [channel : UInt16, cap_value: Double, induc_value: Double]
+  - ret: null
+  - getter_op: 23
+
+
+- get_sensor_config:
+  - op : 23
+  - arg: [channel : UInt16]
+  - ret: [cap_value: Double, induc_value: Double]
+  - eeprom: 3
+
+
+- read_capacitance:
+  - op : 24
+  - arg: null
+  - ret: [cap0: Double, cap1: Double, cap2: Double, cap3: Double, new_data: UInt16]
+
+- read_raw_capacitance:
+  - op : 25
+  - arg: null
+  - ret: [cap0: UInt32, cap1: UInt32, cap2: UInt32, cap3: UInt32, new_data: UInt16]
+
+- set_cap_enable_read:
+  - op : 26
+  - arg: [stat: Boolean]
+  - ret: null
+  
+- get_cap_enable_read:
+  - op : 27
+  - arg: null
+  - ret: [stat: Boolean]
+  
+- set_sensor_register:
+  - op : 28
+  - arg: [rcount: Array_UInt16, settle_count: Array_UInt16, clock_div: Array_UInt16, idrive: Array_UInt16, mux: UInt16, config: UInt16]
+  - ret: null
+  
+- get_sensor_register:
+  - op : 29
+  - arg: null
+  - ret: [count_rcount: UInt16, rcount: Array_UInt16_c, count_scount: UInt16, settle_count: Array_UInt16_c, count_cdiv: UInt16, clock_div: Array_UInt16_c, count_idrive: UInt16, idrive: Array_UInt16_c, mux: UInt16, config: UInt16]
+
+- read_aux_analog:
+  - op : 30
+  - arg: [channel: UInt16]
+  - ret: [value: Double]
+
+- get_aux_analog_params:
+  - op : 31
+  - arg: [channel: UInt16]
+  - ret: [scale: Double, offset: Double]
+  - eeprom: 2
+
+
+- set_aux_analog_params:
+  - op : 32
+  - arg: [channel: UInt16, scale: Double, offset: Double]
+  - ret: null
+  - getter_op: 31
+
+
+- get_aux_digital_out:
+  - op : 33
+  - arg: [id: UInt16]
+  - ret: [value: UInt16]
+
+- set_aux_digital_out:
+  - op : 34
+  - arg: [id: UInt16, value: UInt16]
+  - ret: null
+
+- set_sampling_setting:
+  - op : 35
+  - arg: [average_points: UInt16, sample_delay_ms : UInt32]
+  - ret: null
+
+- get_sampling_setting:
+  - op : 36
+  - arg: null
+  - ret: [average_points: UInt16, sample_delay_ms : UInt32]
+
+
+#---------------------------- TEMPERATURE SENSOR -------------------------------
+- get_temperature_offset:
+  - op : 40
+  - arg: [id: UInt16]
+  - ret: [offset: Double]
+
+- set_temperature_offset:
+  - op : 41
+  - arg: [id: UInt16, offset: Double]
+  - ret: null
+
+- get_steinhart_temperature_coeficient:
+  - op  : 42
+  - arg : [id: UInt16]
+  - ret : [A: Double, B: Double, C: Double]
+  - eeprom: 2
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- set_steinhart_temperature_coeficient:
+  - op  : 43
+  - arg : [id: UInt16, A: Double, B: Double, C: Double]
+  - ret : null
+  - getter_op: 42
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- read_temperature_sensor:
+  - op  : 44
+  - arg : [id: Int16]
+  - ret : [value: Double]
+  - desc: Read temperature sensor value
+
+ 
+#---------------------------- SPI Absolute pressure sensor ---------------------
+- read_absolute_pressure_sensor:
+  - op  : 45
+  - arg : [id: Int16]
+  - ret : [value: Double]
+  - desc: Read spi absolute pressure sensor value
+
+#---------------------------- Fan Control ---------------------
+- get_fan_control:
+  - op : 48
+  - arg: null
+  - ret: [state: Boolean]
+  - desc: Get Fan control state true on false off
+
+- set_fan_control:
+  - op : 49
+  - arg: [state: Boolean]
+  - ret: null
+  - desc: Set fan control state 
+
+
+#---------------------------- INPUT MONITOR ------------------------------------
+- get_debouch_time_ms:
+  - op  : 50
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the debouch time in ms
+
+- set_debouch_time_ms:
+  - op  : 51
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the debouch time in ms
+
+- get_input_mask:
+  - op  : 52
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the input mask please see InputMonitorMask
+
+- set_input_mask:
+  - op  : 53
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the input mask please see InputMonitorMask
+
+- read_inputs:
+  - op  : 54
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the value of input the value is describe on InputMonitorMask
+#---------------------------- SEQUENCER -------------------------------------
+- get_sequencer_info:
+  - op : 60
+  - arg: null
+  - ret: [Flags: UInt16, Size: UInt16, count: UInt16]
+
+- clear_sequencer:
+  - op : 61
+  - arg: null
+  - ret: [count: UInt16]
+
+- start_sequencer:
+  - op : 62
+  - arg: null
+  - ret: [count: UInt16]
+
+- stop_on_marker_sequence:
+  - op : 63
+  - arg: null
+  - ret: [count: UInt16]
+
+- abort_after_current_sequence_item:
+  - op : 64
+  - arg: null
+  - ret: [count: UInt16]
+
+- abort_current_sequence_item:
+  - op : 65
+  - arg: null
+  - ret: [count: UInt16]
+
+- queue_write_ppi_item:
+  - op : 66
+  - arg: [seq_id: Int16, duration: UInt16, index: Int16, count: Int16, value: UInt16]
+  - ret: [count: UInt16, error: UInt16]
+
+- queue_clear_ppi_item:
+  - op : 67
+  - arg: [seqId: Int16, duration_ms: UInt16, index: Int16, count: Int16, 
+        mask: UInt16]
+  - ret: [count: Int16, error: Int16]
+
+- queue_set_ppi_item:
+  - op : 68
+  - arg: [seqId: Int16, duration_ms: UInt16, index: Int16, count: Int16, 
+        mask: UInt16]
+  - ret: [count: Int16, error: Int16]
+
+- queue_stop_marker_item:
+  - op : 69
+  - arg: [seqId: Int16]
+  - ret: [count: Int16, error: Int16]
+
+- queue_set_clear_ppi_item:
+  - op : 70
+  - arg: [seqId: Int16, duration_ms: UInt16, index: Int16, count: Int16, 
+        mask: UInt16]
+  - ret: [count: Int16, error: Int16]
+
+- queue_clear_set_ppi_item:
+  - op : 71
+  - arg: [seqId: Int16, duration_ms: UInt16, index: Int16, count: Int16, 
+        mask: UInt16]
+  - ret: [count: Int16, error: Int16]
+
+- queue_toggle_ppi_item:
+  - op : 72
+  - arg: [seqId: Int16, duration_ms: UInt16, index: Int16, count: Int16, 
+        mask: UInt16]
+  - ret: [count: Int16, error: Int16]
+
+- queue_abort_item:
+  - op : 73
+  - arg: [seqId: Int16]
+  - ret: [count: Int16, error: Int16]
+
+- queue_reload_item:
+  - op : 74
+  - arg: [seqId: Int16, length: UInt16, infinite: Boolean, count: UInt16]
+  - ret: [count: Int16, error: Int16]
+
+#---------------------------- FDC2214 extended -------------------------------------
+- set_fdc_idrive_register:
+  - op : 81
+  - arg: [channel: UInt16, value: UInt16]
+  - ret: null
+  
+- get_fdc_idrive_register:
+  - op : 82
+  - arg: [channel: UInt16]
+  - ret: [value: UInt16]
+
+- set_fdc_rcount_register:
+  - op : 83
+  - arg: [channel: UInt16, value: UInt16]
+  - ret: null
+  
+- get_fdc_rcount_register:
+  - op : 84
+  - arg: [channel: UInt16]
+  - ret: [value: UInt16]
+
+- set_fdc_settle_count_register:
+  - op : 85
+  - arg: [channel: UInt16, value: UInt16]
+  - ret: null
+  
+- get_fdc_settle_count_register:
+  - op : 86
+  - arg: [channel: UInt16]
+  - ret: [value: UInt16]
+
+- set_fdc_clock_divider_register:
+  - op : 87
+  - arg: [channel: UInt16, value: UInt16]
+  - ret: null
+  
+- get_fdc_clock_divider_register:
+  - op : 88
+  - arg: [channel: UInt16]
+  - ret: [value: UInt16]
+
+- set_fdc_mux_register:
+  - op : 89
+  - arg: [value: UInt16]
+  - ret: null
+  
+- get_fdc_mux_register:
+  - op : 90
+  - arg: null
+  - ret: [value: UInt16]
+
+- set_fdc_config_register:
+  - op : 91
+  - arg: [value: UInt16]
+  - ret: null
+  
+- get_fdc_config_register:
+  - op : 92
+  - arg: null
+  - ret: [value: UInt16]
+
+
+#---------------------------- misc -------------------------------------
+- set_address:
+  - op : 100
+  - arg: [value: Int16]
+  - ret: null
+
+- set_board_sn:
+  - op  : 102
+  - arg : [boardsn : UInt32]
+  - ret : null
+  - getter_op: 103
+  - desc: Save Board SN to EEPROM
+  
+- get_board_sn:
+  - op  : 103
+  - arg : null
+  - ret : [boardsn : UInt32]
+  - eeprom: 1
+  - desc: Read Board SN from EEPROM
+
+# ------------------------------- Weight Scale ------------------------------------
+- get_tick:
+  - op : 110
+  - arg: null
+  - ret: [time_milis : UInt32]
+  - desc: |
+            get the current time in millisecond on micro controller
+
+- read_weight:
+  - op : 111
+  - arg: [id: UInt16]
+  - ret: [status : Boolean, weight : Double,timestamp : UInt32]
+  - desc: |
+            status : if the load cell reading disabled, it will return false
+            and the data is not valid
+            weight : weight data that processed by moving average
+            timestamp : is the time in millisecond that show when the
+            data sampling happen.
+- tare:
+  - op : 112
+  - arg: [id: UInt16, avgWindow: UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            If the return value is false it means there is ongoing
+            tare/calibration process, you need to wait it until its done.
+
+- calibrate:
+  - op : 113
+  - arg: [id: UInt16, refWeight: Double, avgWindow: UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            before calibrating the scale, you must tare the scale first.
+            if the calibration process done, event will be sent with the
+            calibration (scale) value.
+            If the return value is false it means there is ongoing
+            tare/calibration process, you need to wait it until its done.
+            Need to call save configuration to save its scale value
+
+- set_scale:
+  - op : 114
+  - arg: [id: UInt16, scale: Double]
+  - ret: null
+  - getter_op: 115
+  - desc: |
+            We can set the scale manually without calibration process,
+            set it to one to get raw ADC data
+
+- get_scale:
+  - op : 115
+  - arg: [id: UInt16]
+  - ret: [scale: Double]
+  - eeprom: 2
+  - desc: |
+            Get current scale value
+
+- set_avg_window:
+  - op : 116
+  - arg: [id: UInt16, avg_window: UInt16]
+  - ret: [stat : Boolean]
+  - getter_op: 117
+
+
+- get_avg_window:
+  - op : 117
+  - arg: [id: UInt16]
+  - ret: [avg_window: UInt16]
+  - eeprom: 2
+
+
+- set_load_cell_enable:
+  - op : 118
+  - arg: [id: UInt16, enable: Boolean]
+  - ret: [stat : Boolean]
+  - getter_op: 119
+
+- get_load_cell_enable:
+  - op : 119
+  - arg: [id: UInt16]
+  - ret: [stat : Boolean]
+  - eeprom: 2
+
+
+- set_offset:
+  - op : 120
+  - arg: [id: UInt16, offset: Int32]
+  - ret: null
+  - getter_op: 121
+  - desc: |
+
+- get_offset:
+  - op : 121
+  - arg: [id: UInt16]
+  - ret: [offset: Int32]
+  - eeprom: 2
+  - desc: |
+            Get current offset
+
+- set_high_sampling_rate:
+  - op : 122
+  - arg: [isHigh: Boolean]
+  - ret: null
+  - getter_op: 123
+  - desc: |
+            Set High Rate Sampling if true 80Hz, if false 10Hz
+
+- get_high_sampling_rate:
+  - op : 123
+  - arg: null
+  - ret: [isHigh: Boolean]
+  - eeprom: 2
+  - desc: |
+            Set High Rate Sampling if true 80Hz, if false 10Hz
+
+- read_updated_weight:
+  - op : 124
+  - arg: [id: UInt16]
+  - ret: [status : Boolean, weight : Double,timestamp : UInt32]
+  - desc: |
+            status : if the load cell reading disabled, or not yet updated value 
+            it will return false and the data is not valid
+            weight : weight data that processed by moving average
+            timestamp : is the time in millisecond that show when the
+            data sampling happen.
+- read_raw_weight:
+  - op : 125
+  - arg: [id: UInt16]
+  - ret: [status : Boolean, weight : UInt32, timestamp : UInt32]
+  - desc: |
+            status : if the load cell reading disabled, or not yet updated value 
+            it will return false and the data is not valid
+            weight : weight data that processed by moving average
+            timestamp : is the time in millisecond that show when the
+            data sampling happen.
+
+# ------------------------------- Sequencer Abort ------------------------------------
+
+- get_abort_config:
+  - op : 130
+  - arg : [id : Int16]
+  - ret : [triggerOnAll : Boolean, enableMask : UInt32, activeLowMask : UInt32]
+  - desc : Get Sequencer abort config
+
+- set_abort_config:
+  - op : 131
+  - arg : [id : Int16, triggerOnAll : Boolean, enableMask : UInt32, activeLowMask : UInt32]
+  - ret : null
+  - desc : Set sequencer abort config
+
+- clear_triggered_input:
+  - op : 132
+  - arg : [id : Int16]
+  - ret : null
+  - desc : Clear sequencer abort trigger
+
+- get_triggered_input:
+  - op : 133
+  - arg : [id : Int16]
+  - ret : [triggeredMask : UInt32]
+  - desc : Get Sequencer Abort trigger
+
+- get_triggered_seq_count:
+  - op : 134
+  - arg : [id : Int16, first_input: Int16, count: Int16]
+  - ret : [data: Array_Double_c]
+  - desc : Get sequencer abort count
+
+- get_triggered_value:
+  - op : 135
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c]
+  - desc : Get sequencer abort count
+
+- get_abort_threshold:
+  - op : 136
+  - arg: [sensor_id: Int16]
+  - ret: [threshold: Double]
+  - desc : Get sequencer abort treshold value min and max
+
+- set_abort_threshold:
+  - op : 137
+  - arg: [sensor_id: Int16, threshold: Double]
+  - ret: null
+  - desc : Set sequencer abort treshold value min and max
+
+
+
+EVENTS:
+- sequence_progress:
+  - op : 784
+  - ret: [seq_id: Int16, count: Int16, unused: Int16]
+
+- sequence_stopped:
+  - op : 785
+  - ret: [seq_id: Int16, count: Int16]
+
+- sequence_all_empty:
+  - op : 786
+  - ret: [count: Int16]
+
+- sequence_reload_progress:
+  - op : 787
+  - ret: [progress: Int16, count: Int16]
+
+
+- source_on_too_longtime:
+  - op : 800
+  - ret: [pres_cont_id: Int16, pressure: Double]
+
+- on_pressure_reach:
+  - op : 801
+  - ret: [pres_cont_id: Int16, pressure: Double]
+
+- on_input_changed:
+  - op  : 802
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon motor input monitor changed
+
+- on_tare_done:
+  - op  : 803
+  - ret: [id: UInt16, offset: Int32 ]
+  - desc: Fired when tare scale done
+
+- on_calibrate_done:
+  - op  : 804
+  - ret: [id: UInt16, scale: Double]
+  - desc: Fired when tare scale done
+  
+- on_loadcell_error:
+  - op  : 805
+  - ret: [id: UInt16, errorCode: UInt16]
+  - desc: Fired when loadcell got error during initialize or read

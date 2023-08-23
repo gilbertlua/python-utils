@@ -1,0 +1,139 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+#---------------------------- INPUT MONITOR ------------------------------------
+- get_debouch_time_ms:
+  - op  : 50
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null 
+  - desc: get the debouch time in ms
+
+- set_debouch_time_ms:
+  - op  : 51
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 50
+  - desc: set the debouch time in ms
+
+- get_input_mask:
+  - op  : 52
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null 
+  - desc: get the input mask please see InputMonitorMask
+
+- set_input_mask:
+  - op  : 53
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 52
+  - desc: set the input mask please see InputMonitorMask
+
+- read_input_monitor_port_value:
+  - op  : 54
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+  # ------------------------------- MOTION ABORT ------------------------------------
+- get_abort_config:
+  - op  : 90
+  - arg : [abort_id: Int16]
+  - ret : [trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - desc: please see AbortInputBitmask and AbortId
+
+- set_abort_config:
+  - op : 91
+  - arg: [abort_id: Int16, trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - ret: null
+  - desc: AbortId
+            0 = EStop
+            1 = TouchOff
+            2 = Valve
+          AbortInputBitmask
+            0 = EStop
+            1 = TouchOff
+            2 = Button Input 0
+            3 = Button Input 1
+            4 = Button Input 2
+            5 = Button Input 3
+            6 = Button Input 4
+            7 = Button Input 5
+            8 = Button Input 6
+            9 = Button Input 7
+            10 = Button Input 8
+            11 = Button Input 9
+          
+
+- clear_triggered_inputs:
+  - op : 92
+  - arg: [abort_id: Int16]
+  - ret: null
+
+- get_triggered_inputs:
+  - op : 93
+  - arg: [abort_id: Int16]
+  - ret: [input_mask: UInt32]
+
+- get_triggered_positions:
+  - op : 94
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c]
+
+# ---------------------------------- VALVE ----------------------------------------
+- get_valve_opened:
+  - op  : 10
+  - arg : null
+  - ret : [opened_valve_id: UInt16]
+  - desc: |  
+          get the opened valve
+
+- open_valve:
+  - op  : 11
+  - arg : [valve_id: UInt16, max_open_time_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: |
+          Open a valve. NOTE that the electronic is designed such that only 1 valve can be opened at a time.
+          It means, if 1 valve opened, it cannot open the other valve before it closed
+
+- close_valve:
+  - op  : 12
+  - arg : null
+  - ret : null
+  - desc: Close all valve. There is not any single valve closing, due to limitation explained in open_valve opcode.
+
+- get_valve_config:
+  - op  : 13
+  - arg : null
+  - ret : [pulse_voltage: Double, hold_voltage: Double, supply_voltage: Double, pulse_time_us: UInt32, user_open_max_time_us: UInt32]
+  - eeprom : null 
+  - desc: |
+          Get all valve config. Since one pulser is shared by all valve, this config represent all valve.
+          - pulse_duty    -> pulse voltage in volt
+          - hold_duty     -> hold voltage in volt
+          - supply_voltage -> supply PWM driver in volt
+          - pulse_time_us -> valve pulsing timing in micro seconds
+          - user_open_max_time_us -> maximum user open time manually using button in micro seconds
+
+- set_valve_config:
+  - op  : 14
+  - arg : [pulse_voltage: Double, hold_voltage: Double, supply_voltage: Double, pulse_time_us: UInt32, user_open_max_time_us: UInt32]
+  - ret : null
+  - getter_op : 13
+  - desc: Set all valve config. Please check get_valve_config opcode for arguments explanation.
+
+
+  ################################### EVENTS #################################################
+EVENTS:
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon input monitor changed
+  
+- on_valve_state_change:
+  - op  : 820
+  - ret: [valve_id: UInt16, is_open: Boolean]
+  - desc: Fired upon valve state changed
+

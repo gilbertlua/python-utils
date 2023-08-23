@@ -1,0 +1,376 @@
+APPNAME: RXStirrerTmcF4
+VERSION: 1.x.x
+
+COMMANDS:  
+#---------------------------- GENERAL ------------------------------------
+- save_configuration:
+  - op  : 3
+  - arg : null
+  - ret : null
+  - desc: Save configuration to EEPROM
+  
+- long_op:
+  - op  : 4
+  - arg : [dummy: String]
+  - ret : [dummy: String]
+  - desc: Save configuration to EEPROM
+
+- hang_firmware:
+  - op  : 8
+  - arg : null
+  - ret : null
+  - desc: hang device
+  
+- reset:
+  - op  : 9
+  - arg : null
+  - ret : null
+  - desc: reset device
+
+# ------------------------------- Atomic PPI ------------------------------------
+- ppi_set_bit:
+  - op  : 164
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: set bit IO value
+
+- ppi_clear_bit:
+  - op  : 165
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: clear bit IO value
+
+- ppi_toggle_bit:
+  - op  : 166
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: toggle bit IO value
+  
+- ppi_write_bit:
+  - op  : 167
+  - arg : [id: UInt16, value: UInt16]
+  - ret : null
+  - desc: write bit PPI IO value
+  
+#---------------------------------------- MOTOR ------------------------------------
+- get_motor_currents:
+  - op  : 12
+  - arg : [motor_id: Int16]
+  - ret : [boost: Double, travel: Double, hold: Double]
+  - desc: Get motor current (Ampere) setting. Boost is acceleration current, travel is moving current, hold is holding current
+
+- set_motor_currents:
+  - op  : 13
+  - arg : [motor_id: Int16, boost: Double, travel: Double, hold: Double]
+  - ret : null
+  - desc: Set motor current (Ampere). Boost is acceleration current, travel is moving current, hold is holding current
+
+- get_motor_config:
+  - op  : 14
+  - arg : [motor_id: Int16]
+  - ret : [invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16]
+  - desc: Get motor config. Invert_dir is motor direction inversion flag. Kp, Ki, Kd is PID gain. Currently, Kd and num_usteps cannot be changed.
+
+- set_motor_config:
+  - op  : 15
+  - arg : [motor_id: Int16, invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16]
+  - ret : null
+  - desc: Set motor config. Invert_dir is motor direction inversion flag. Kp, Ki, Kd is PID gain. num_usteps is number of substep for each step.
+
+- get_motor_status:
+  - op  : 20
+  - arg : [motor_id: Int16]
+  - ret : [motor_status: UInt16]
+  - desc: Get motor status. Check MotorStatusBitmask under ENUMS section.
+  
+- move_motor_abs:
+  - op  : 22
+  - arg : [motor_id: Int16, pos: Double, vel: Double, acc: Double]
+  - ret : [motor_error_code: UInt16]
+  - desc: |
+          Move motor to an absolute position
+          Arguments
+          - pos -> Target position, should be within position limit
+          - vel -> Motor Velocity
+          - acc -> Motor Acceleration
+          
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- move_motor_vel:
+  - op  : 23
+  - arg : [motor_id: Int16, forward: Boolean, vel: Double, accel: Double]
+  - ret : [motor_error_code: UInt16]
+  - desc: |
+          Move motor with certain velocity, stopped when position limit is reached.
+          Arguments
+          - forward -> Set to False to inverse direction.
+          - vel     -> Motor velocity
+          - acc     -> Motor Acceleration
+
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- stop_motor:
+  - op  : 24
+  - arg : [motor_id: Int16, accel: Double]
+  - ret : [motor_error_code: UInt16]
+  - desc: Stop motor, even if its moving, with inputed acceleration set in accel. Return MotorErrorCode enum.
+
+- abort_motor:
+  - op : 25
+  - arg : [motor_id: Int16]
+  - ret : [motor_error_code: UInt16]
+  - desc: Stop motor with predetermined acceleration (56000). Return MotorErrorCode enum.
+
+- get_motor_pos:
+  - op  : 27
+  - arg : [motor_id: Int16]
+  - ret : [curr_pos: Double, curr_vel: Double, curr_acc: Double]
+  - desc: Get current motor position.
+
+- set_motor_pos:
+  - op  : 28
+  - arg : [motor_id: Int16, pos: Double]
+  - ret : null
+  - desc: Manually set current motor position.
+
+- set_motor_duty_cycle:
+  - op  : 29
+  - arg : [motor_id: Int16, pct_a: Double, pct_b: Double]
+  - ret : null
+  - desc: Set the duty cycle of motor coil A and B (in percent/ 0-100). Only works on open loop mode. 
+  
+- set_motor_enabled:
+  - op  : 47
+  - arg : [motor_id: Int16, enable: Boolean]
+  - ret : null
+  - desc: Set enable to True to enable motor, False to disable.
+
+#---------------------------- INPUT MONITOR ------------------------------------
+- input_monitor_get_debouch_time_ms:
+  - op  : 60
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the debouch time in ms
+
+- input_monitor_set_debouch_time_ms:
+  - op  : 61
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the debouch time in ms
+
+- input_monitor_get_input_mask:
+  - op  : 62
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the input mask please see InputMonitorMask
+
+- input_monitor_set_input_mask:
+  - op  : 63
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the input mask please see InputMonitorMask
+
+- input_monitor_read_input:
+  - op  : 64
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+  
+# ------------------------------- MOTION ABORT ------------------------------------
+- motion_abort_get_config:
+  - op  : 80
+  - arg : [abort_id: Int16]
+  - ret : [trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - desc: please see AbortInputBitmask and AbortId
+
+- motion_abort_set_config:
+  - op : 81
+  - arg: [abort_id: Int16, trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - ret: null
+  - desc: please see AbortInputBitmask and AbortId
+
+- motion_abort_clear_triggered_inputs:
+  - op : 82
+  - arg: [abort_id: Int16]
+  - ret: null
+
+- motion_abort_get_triggered_inputs:
+  - op : 83
+  - arg: [abort_id: Int16]
+  - ret: [input_mask: UInt32]
+
+- motion_abort_get_threshold:
+  - op : 84
+  - arg: [abort_id: Int16]
+  - ret: [threshold: Double]
+
+- motion_abort_set_threshold:
+  - op : 85
+  - arg: [abort_id: Int16, threshold: Double]
+  - ret: [success: Boolean]
+  
+- get_triggered_value:
+  - op : 86
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c]
+
+- get_triggered_tick_us:
+  - op : 87
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_UInt32_c]
+
+#---------------------------- AUX ANALOG OUT PWM -----------------------------
+- aux_pwm_get_params:
+  - op  : 109
+  - arg : [id: UInt16]
+  - ret : [max_range: Double, min_range: Double]
+  - desc: get max range and min range of output in percentag
+
+- aux_pwm_set_params:
+  - op  : 110
+  - arg : [id: UInt16, max_range: Double, min_range: Double]
+  - ret : null
+  - desc: set max range and min range of output in percentage
+
+- aux_pwm_read_value:
+  - op  : 111
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: get value in percentage from range
+
+- aux_pwm_write_value:
+  - op  : 112
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - desc: set value in percentage from range
+
+- aux_pwm_get_freq:
+  - op  : 113
+  - arg : [id: UInt16]
+  - ret : [value: UInt32]
+  - desc: get freq analog out pwm in Hz
+
+- aux_pwm_set_freq:
+  - op  : 114
+  - arg : [id: UInt16, value: UInt32]
+  - ret : null
+  - desc: set freq analog out pwm in Hz
+            
+# ------------------------------- AUX ANALOG OUT PWM as SERVO MOTION ------------------------------------
+- servo_motion_set_position:
+  - op : 142
+  - arg: [id: UInt16, position: Double, speed: Double]
+  - ret: [success : Boolean]
+  - desc: |
+            Set servo position given by Id, position scale and speed scale (0 to 1)
+        
+- servo_motion_get_position:
+  - op : 143
+  - arg: [id: UInt16]
+  - ret: [position : Double]
+  - desc: | 
+            Get servo position given by Id, returns it's position scale (0 to 1)
+  
+- servo_motion_get_status:
+  - op : 144
+  - arg: [id: UInt16]
+  - ret: [status : UInt16]
+  - desc: |
+           Get servo status given by Id, returns (0: INVALID Id, 1: STANDBY, 2: INCREMENTING, 3: DECREMENTING)
+  
+- servo_motion_set_config:
+  - op : 145
+  - arg: [id: UInt16, period_us: UInt16, upper_limit: Double, lower_limit: Double]
+  - ret: null
+  - desc: |
+            set servo duty cycle limit
+            return false if upper_limit<lower limit and vice versa
+  
+- servo_motion_get_config:
+  - op : 146
+  - arg: [id: UInt16]
+  - ret: [period_us: UInt16,upper_limit: Double, lower_limit: Double]
+  - desc: |
+            get servo duty cycle limit
+
+- servo_motion_set_initial_position:
+  - op : 147
+  - arg: [id: UInt16, enable: Boolean, pos: Double]
+  - ret: [status: Boolean]
+  - desc: |  
+            set servo initial position
+            when device turn on
+
+- servo_motion_get_initial_position:
+  - op : 148
+  - arg: [id: UInt16]
+  - ret: [enable: Boolean, pos: Double]
+  - desc: |  
+            get servo initial position
+            when device turn on
+
+- servo_motion_abort:
+  - op : 149
+  - arg: [id : UInt16]
+  - ret: [position : Double]
+  - desc: |
+            Abort in motion servo given by id. Returns last position otherwise -1.0 if wrong id was given. 
+
+# ------------------------------- TRINAMIC SPECIFIC ------------------------------------
+- write_trinamic_register:
+  - op : 155
+  - arg: [id: Int16, address: UInt16, value: Int32]
+  - ret: null
+  
+- read_trinamic_register:
+  - op : 156
+  - arg: [id: Int16, address: UInt16]
+  - ret: [value: Int32]
+
+#---------------------------------- MISC ---------------------------------------
+- set_address:
+  - op  : 216
+  - arg : [addr : Int16]
+  - ret : null
+  - desc: Set device address
+  
+- get_packet_error_count:
+  - op  : 217
+  - arg : null
+  - ret : [count : Int16]
+  - desc: Set device address  
+
+  
+################################### EVENTS #################################################
+EVENTS:
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon input monitor changed
+  
+- on_servo_motion_finished:
+  - op  : 803
+  - ret: [id: UInt16, position: Double]
+  - desc: Fired when spesific servo finished motion job
+
+- motor_move_started:
+  - op  : 512
+  - ret: [motor_id: Int16]
+  - desc: Fired upon motor movement is started.
+
+- motor_move_done:
+  - op  : 513
+  - ret: [motor_id: Int16, status: UInt16, position: Double]
+  - desc: Fired upon motor movement is done, send the motor status and position. Check MotorStatusBitmask enum for motor status.
+
+- motor_home_done:
+  - op  : 514
+  - ret: [motor_id: Int16, home_pos: Double, pos: Double]
+  - desc: Fired upon motor homing is done, return abs_pos (absolute position), and pos (position after applying offset).
+
+- motor_error_occured:
+  - op  : 515
+  - ret: [motor_id: Int16, motor_error_code: UInt16]
+  - desc: Fired upon motor error is occured. Check MotorErrorCode enum for possible error code.

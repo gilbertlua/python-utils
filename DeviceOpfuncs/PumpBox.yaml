@@ -1,0 +1,430 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+
+- set_pressure_sensor_param:
+  - op : 10
+  - arg: [scale: Double, offset: Double]
+  - ret: null
+  - desc: |
+          set pressure sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- get_pressure_sensor_param:
+  - op : 11
+  - arg: null
+  - ret: [scale: Double, offset: Double]
+  - desc: |
+          get pressure sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- set_vacuum_sensor_param:
+  - op : 12
+  - arg: [scale: Double, offset: Double]
+  - ret: null
+  - desc: |
+          set pressure sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- get_vacuum_sensor_param:
+  - op : 13
+  - arg: null
+  - ret: [scale: Double, offset: Double]
+  - desc: |
+          get pressure sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- read_pressure_sensor:
+  - op : 14
+  - arg: null
+  - ret: [pressure: Double]
+  - desc: |
+          read the sensor pressure value in psi
+
+- read_vacuum_sensor:
+  - op : 15
+  - arg: null
+  - ret: [pressure: Double]
+  - desc: |
+          read the sensor pressure value in inchHg
+
+- set_pressure_pump_voltage:
+  - op : 21
+  - arg: [voltage: Double]
+  - ret: null
+  - desc: |
+          set supply voltage for pressure pump in volt
+
+- get_pressure_pump_voltage:
+  - op : 22
+  - arg: null
+  - ret: [voltage: Double]
+  - desc: |
+          get supply voltage for pressure pump in volt
+
+- set_vacuum_pump_voltage:
+  - op : 23
+  - arg: [voltage: Double]
+  - ret: null
+  - desc: |
+          set supply voltage for vacuum pump in volt
+
+- get_vacuum_pump_voltage:
+  - op : 24
+  - arg: null
+  - ret: [voltage: Double]
+  - desc: |
+          get supply voltage for vacuum pump in volt
+
+- set_pressure_controller_threshold:
+  - op : 31
+  - arg: [src_on_th: Double, src_off_th: Double, drain_on_th: Double, drain_off_th: Double]
+  - ret: null
+  - desc: |
+          set pressure controller threshold to achive target pressure
+          - src_on_th     -> threshold for pump to be ON
+          - src_off_th    -> threshold for pump to be OFF
+          - drain_on_th   -> threshold for drain to be ON ( active to reduce pressure )
+          - drain_off_th  -> threshold for drain to be OFF
+
+- get_pressure_controller_threshold:
+  - op : 32
+  - arg: null
+  - ret: [src_on_th: Double, src_off_th: Double, drain_on_th: Double, drain_off_th: Double]
+  - desc: |
+          get pressure controller threshold to achive target pressure
+          - src_on_th     -> threshold for pump to be ON
+          - src_off_th    -> threshold for pump to be OFF
+          - drain_on_th   -> threshold for drain to be ON ( active to reduce pressure )
+          - drain_off_th  -> threshold for drain to be OFF
+
+- set_vacuum_controller_threshold:
+  - op : 33
+  - arg: [src_on_th: Double, src_off_th: Double, drain_on_th: Double, drain_off_th: Double]
+  - ret: null
+  - desc: |
+          set vacuum controller threshold to achive target vacuum
+          - src_on_th     -> threshold for pump to be ON
+          - src_off_th    -> threshold for pump to be OFF
+          - drain_on_th   -> threshold for drain to be ON ( active to reduce vacuum )
+          - drain_off_th  -> threshold for drain to be OFF
+
+- get_vacuum_controller_threshold:
+  - op : 34
+  - arg: null
+  - ret: [src_on_th: Double, src_off_th: Double, drain_on_th: Double, drain_off_th: Double]
+  - desc: |
+          get vacuum controller threshold to achive target vacuum
+          - src_on_th     -> threshold for pump to be ON
+          - src_off_th    -> threshold for pump to be OFF
+          - drain_on_th   -> threshold for drain to be ON ( active to reduce vacuum )
+          - drain_off_th  -> threshold for drain to be OFF
+
+- set_pressure_controller_state:
+  - op : 35
+  - arg: [state: UInt16]
+  - ret: null
+  - desc: |
+          set pressure controller state
+          0. off
+          1. on
+          2. idle
+          3. manual
+
+- get_pressure_controller_state:
+  - op : 36
+  - arg: null
+  - ret: [state: UInt16]
+  - desc: |
+          get pressure controller state
+          0. off
+          1. on
+          2. idle
+          3. manual
+
+- set_vacuum_controller_state:
+  - op : 37
+  - arg: [state: UInt16]
+  - ret: null
+  - desc: |
+          set vacuum controller state
+          0. off
+          1. on
+          2. idle
+          3. manual
+
+- get_vacuum_controller_state:
+  - op : 38
+  - arg: null
+  - ret: [state: UInt16]
+  - desc: |
+          get vacuum controller state
+          0. off
+          1. on
+          2. idle
+          3. manual
+
+- get_pressure_controller_limit:
+  - op : 39
+  - arg: null
+  - ret: [isOnTimeLimit: Boolean, timeMs: UInt32]
+  - desc: |
+          to set pressure pump timeout, if isOnTimeLimit True, the timeout will active after timeMs
+
+- set_pressure_controller_limit:
+  - op : 40
+  - arg: [isOnTimeLimit: Boolean, timeMs: UInt32]
+  - ret: null
+  - desc: |
+          to get pressure pump timeout, if isOnTimeLimit True, the timeout will active after timeMs
+
+- get_vacuum_controller_limit:
+  - op : 41
+  - arg: null
+  - ret: [isOnTimeLimit: Boolean, timeMs: UInt32]
+  - desc: |
+          to set vacuum pump timeout, if isOnTimeLimit True, the timeout will active after timeMs
+
+- set_vacuum_controller_limit:
+  - op : 42
+  - arg: [isOnTimeLimit: Boolean, timeMs: UInt32]
+  - ret: null
+  - desc: |
+          to get vacuum pump timeout, if isOnTimeLimit True, the timeout will active after timeMs
+#purge
+- set_condensor_purge_on:
+  - op : 43
+  - arg: [timeMs: UInt32]
+  - ret: null
+  - desc: turn on condenser purge as long timesMS milisecond
+
+#timer pump
+- get_pressure_controller_timer_pump:
+  - op : 44
+  - arg: null
+  - ret: [timeMs: UInt32]
+  - desc: |
+          to get pressure pump timer 
+          
+- set_pressure_controller_timer_pump:
+  - op : 45
+  - arg: [timeMs: UInt32]
+  - ret: null
+  - desc: |
+          to set pressure pump timer
+
+- get_vacuum_controller_timer_pump:
+  - op : 46
+  - arg: null
+  - ret: [timeMs: UInt32]
+  - desc: |
+          to get vacuum pump timer 
+
+- set_vacuum_controller_timer_pump:
+  - op : 47
+  - arg: [timeMs: UInt32]
+  - ret: null
+  - desc: |
+          to set vacuum pump timer
+ 
+#purge interval
+- get_pressure_controller_purge_interval:
+  - op : 48
+  - arg: null
+  - ret: [isAutoPurge: UInt16, purgeInterval: UInt32, purgeTime: UInt32]
+  - desc: |
+          to get purge interval setting
+
+- set_pressure_controller_purge_interval:
+  - op : 49
+  - arg: [isAutoPurge: UInt16, purgeInterval: UInt32, purgeTime: UInt32]
+  - ret: null
+  - desc: |
+          to set purge interval setting
+#pump state
+- set_pressure_pump_state:
+  - op : 51
+  - arg: [state: UInt16]
+  - ret: null
+  - desc: |
+          to set pressure pump on 1 and off 0, but before must set pressure controller state to manual
+
+- set_drain_pressure_valve_state:
+  - op : 52
+  - arg: [state: UInt16]
+  - ret: null
+  - desc: |
+          to set pressure drain valve on 1 and off 0, but before must set pressure controller state to manual
+
+- set_vacuum_pump_state:
+  - op : 53
+  - arg: [state: UInt16]
+  - ret: null
+  - desc: |
+          to set vacuum pump on 1 and off 0, but before must set vacuum controller state to manual
+
+- set_drain_vacuum_valve_state:
+  - op : 54
+  - arg: [state: UInt16]
+  - ret: null
+  - desc: |
+          to set vacuum drain valve on 1 and off 0, but before must set vacuum controller state to manual
+
+
+#Tracelog
+- get_log_items:
+  - op  : 62
+  - arg : null
+  - ret : [log_mask: UInt16]
+  - desc: |
+           Get data logger activation status. Each logger module has bitmasks to represent/activate which data is logged.
+           1: channel 1
+           2: challel 2
+           4: channel 3
+
+- set_log_items:
+  - op  : 63
+  - arg : [log_mask: UInt16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set data logger activation.  Check get_log_items opcode for furher explanation of bitmasks and modules.
+         
+- start_log:
+  - op  : 64
+  - arg : null
+  - ret : [started: Boolean]
+  - desc: Start data logger. started is False if unable to start (log items is not set yet).
+
+- stop_log:
+  - op  : 65
+  - arg : null
+  - ret : null
+  - desc: Stop data logger.
+  
+- set_log_trigger:
+  - op  : 66
+  - arg : [module_id: UInt16, signal_mask: UInt16, level: UInt16, trigger_type: Int16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set a signal from a module to simulate osciloscope-like trigger. If trigger activated, the logger will automatically setup data such that
+          trigger position is in the middle of logged data. You should read the data using read_log_data command on trigger mode.
+          See https://community.keysight.com/community/keysight-blogs/oscilloscopes/blog/2016/09/01/understanding-oscilloscope-trigger-system-basics-why-you-should-care
+          to understand trigger in detail.
+          Arguments
+          - module_id    -> id of logger module, 0 is log tick, 1 is aux_analog_in_mask
+          - signal_mask  -> data/signal activation mask for each module, similar to masks in set_log_items. Please check enum section for mask list
+          - level        -> level of selected data/signal that activate the triggers
+          - trigger_type -> trigger type, 0 is disable trigger, 1 is rising signal trigger, 2 is falling signal trigger, 3 is both rising and falling signal trigger
+
+
+- get_log_status:
+  - op  : 67
+  - arg : null
+  - ret : [status: Int16, triggered_pos: UInt16]
+  - desc: | 
+          Get logger status. If trigger is activated, trigger_pos contain the index of data where trigger is activated. status is enums that consist of
+          - 0 -> logger is running
+          - 1 -> logger is stopped by user
+          - 2 -> logger is stopped by trigger
+          - 3 -> logger has not been started at all
+- read_log_data:
+  - op  : 68
+  - arg : [start_index: Int16]
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: Read log data from a starting index, maximum data per command is 251 items.
+          Arguments
+          - start_index -> Starting index to be read
+
+          Returns
+          - num_items -> number of received data
+          - data      -> array of received data
+
+          Note
+          - Pump and Valves data will be sent as bitmask in one UInt16 data, check PumpValveLogDatamask
+
+
+
+- read_log_stream_data:
+  - op  : 69
+  - arg : null
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: | 
+          Read streaming of data from last read index, max 200 data per command. For example, first read_log_stream_data command will obtain
+          data 0-199, second command will obtain data 200-399, and so on.
+          Arguments
+          - num_items -> number of received data
+          - data      -> array of received data
+
+ 
+#Lpf sensor
+- set_pressure_sensor_lpf_enable:
+  - op  : 86
+  - arg : [enable : Boolean]
+  - ret : null
+  - desc: Set lpf enable 
+
+- get_pressure_sensor_lpf_enable:
+  - op  : 87
+  - arg : null
+  - ret : [enable : Boolean]
+  - desc: get lpf enable 
+  
+- set_vacuum_sensor_lpf_enable:
+  - op  : 88
+  - arg : [enable : Boolean]
+  - ret : null
+  - desc: Set lpf enable 
+
+- get_vacuum_sensor_lpf_enable:
+  - op  : 89
+  - arg : null
+  - ret : [enable : Boolean]
+  - desc: get lpf enable
+  
+- set_pressure_sensor_lpf_freq:
+  - op  : 90
+  - arg : [freq : Double]
+  - ret : null
+  - desc: Set lpf efreq
+
+- get_pressure_sensor_lpf_freq:
+  - op  : 91
+  - arg : null
+  - ret : [freq : Double]
+  - desc: get lpf efreq  
+  
+- set_vacuum_sensor_lpf_freq:
+  - op  : 92
+  - arg : [freq : Double]
+  - ret : null
+  - desc: Set lpf efreq
+
+- get_vacuum_sensor_lpf_freq:
+  - op  : 93
+  - arg : null
+  - ret : [freq : Double]
+  - desc: get lpf efreq  
+ 
+
+
+EVENTS:
+- controller_reach_limit:
+  - op : 512
+  - ret: [id: Int16, source_drain: UInt16]
+  
+- on_pressure_reach:
+  - op : 801
+  - ret: [id: Int16, pressure: Double]
+  
+- on_source_on_too_long:
+  - op : 800
+  - ret: [id: Int16, pressure: Double]

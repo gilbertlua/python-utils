@@ -1,0 +1,434 @@
+APPNAME: QCHeater
+VERSION: 4.x.x
+
+COMMANDS:  
+#---------------------------- GENERAL ------------------------------------
+- save_configuration:
+  - op  : 3
+  - arg : null
+  - ret : null
+  - desc: Save configuration to EEPROM
+
+- hang_firmware:
+  - op  : 8
+  - arg : null
+  - ret : null
+  - desc: hang device
+  
+- reset:
+  - op  : 9
+  - arg : null
+  - ret : null
+  - desc: reset device
+ 
+            
+- get_input_mask:
+  - op  : 52
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the input mask please see InputMonitorMask
+
+- set_input_mask:
+  - op  : 53
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the input mask please see InputMonitorMask  
+
+#---------------------------- AUX ANALOG IN ADC -----------------------------
+- aux_adc_get_params:
+  - op  : 103
+  - arg : [id: UInt16]  
+  - ret : [scale: Double, offset: Double]
+  - desc: get setting scale and offset for reading the analog in from ADC
+
+- aux_adc_set_params:
+  - op  : 104
+  - arg : [id: UInt16, scale: Double, offset: Double]
+  - ret : null
+  - desc: setting scale and offset for reading the analog in from ADC
+
+- aux_adc_read_value:
+  - op  : 105
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read value aux input analog
+
+  
+# ------------------------------- AUX ANALOG IN ADC as Temp Sensor ------------------------------------
+- set_temp_offset:
+  - op  : 123
+  - arg : [id: UInt16, offset: Double]
+  - ret : null
+  - desc: Set temperature offset for correcting the reading of temperature in celcius
+
+- get_temp_offset:
+  - op  : 124
+  - arg : [id: UInt16]
+  - ret : [offset: Double]
+  - desc: Get temperature offset for correcting the reading of temperature in celcius
+  
+- set_steinhart_temperature_coeficient:
+  - op  : 125
+  - arg : [id: UInt16, A: Double, B: Double, C: Double]
+  - ret : null
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_steinhart_temperature_coeficient:
+  - op  : 126
+  - arg : [id: UInt16]
+  - ret : [A: Double, B: Double, C: Double]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- set_thermistor_coefficient:
+  - op  : 127
+  - arg : [id: UInt16, r_divider: Double, v_offset: Double, gain_amplifier: Double, voltage_divider: Double]
+  - ret : null
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_thermistor_coefficient:
+  - op  : 128
+  - arg : [id: UInt16]
+  - ret : [r_divider: Double, v_offset: Double, gain_amplifier: Double, voltage_divider: Double]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- read_temperature_sensor:
+  - op  : 129
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: Read temperature sensor value
+
+# ------------------------------- AUX ANALOG IN ADC SENSOR MONITOR ------------------------------------
+- sensor_monitor_get_enable_mask:
+  - op : 133
+  - arg: null
+  - ret: [enable_mask: UInt16]
+  - desc: |
+            get sensor monitor enable mask
+
+- sensor_monitor_set_enable_mask:
+  - op : 134
+  - arg: [enable_mask: UInt16]
+  - ret: null
+  - desc: |
+            set sensor monitor enable mask
+
+- sensor_monitor_get_debounce_ms:
+  - op : 135
+  - arg: null
+  - ret: [debounce_ms: UInt16]
+  - desc: |
+            get sensor monitor debounce time in milisecond
+            
+- sensor_monitor_set_debounce_ms:
+  - op : 136
+  - arg: [debounce_ms: UInt16]
+  - ret: null
+  - desc: |
+            set sensor monitor debounce time in milisecond
+            
+- sensor_monitor_get_threshold:
+  - op : 137
+  - arg: [id: UInt16]
+  - ret: [upper_limit: Double, lower_limit: Double]
+  - desc: |
+            get sensor monitor upper and lower threshold for corresponding channel
+
+- sensor_monitor_set_threshold:
+  - op : 138
+  - arg: [id: UInt16, upper_limit: Double, lower_limit: Double]
+  - ret: [success : Boolean]
+  - desc: |
+            set sensor monitor upper and lower threshold for corresponding channel
+            
+
+# ==================== Temperature Controller =====================================================
+- set_temp_controller_target:
+  - op  : 142
+  - arg : [value: Double]
+  - ret : null
+  - desc: Set temperature target in celcius
+
+- get_temp_controller_target:
+  - op  : 143
+  - arg : null
+  - ret : [value: Double]
+  - desc: Get temperature target in celcius
+
+- set_temp_controller_enable:
+  - op  : 144
+  - arg : [value: Boolean]
+  - ret : [status: Boolean]
+  - desc: Set temperature control enabled 0 = disabled, 1 = enabled
+
+- get_temp_controller_enable:
+  - op  : 145
+  - arg : null
+  - ret : [enabled: Boolean]
+  - desc: Get temperature control enabled 0 = disabled, 1 = enabled
+
+- set_temp_controller_pid:
+  - op  : 146
+  - arg : [p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - ret : null
+  - desc: Set temperature control pid gains
+
+- get_temp_controller_pid:
+  - op  : 147
+  - arg : null
+  - ret : [p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - desc: Get temperature control pid gains
+
+- set_temp_controller_deadband:
+  - op  : 148
+  - arg : [lower: Double, upper: Double]
+  - ret : null
+  - desc: Set temperature control pid deadband in Celcius relative from target
+
+- get_temp_controller_deadband:
+  - op  : 149
+  - arg : null
+  - ret : [lower: Double, upper: Double]
+  - desc: Get temperature control pid deadband
+
+- read_temp_controller_feedback:
+  - op : 150
+  - arg: null
+  - ret: [value: Double]
+  - desc: Get temperature sensor feedback with exact same period sampling with controller
+
+- set_temp_controller_out:
+   - op  : 151
+   - arg : [value: Double]
+   - ret : null
+   - desc: set temperature controller pwm out in percentage
+
+- get_temp_controller_out:
+  - op  : 152
+  - arg : null
+  - ret : [value: Double]
+  - desc: Get temperature controller pwm out in percentage
+
+- set_temp_controller_auto:
+  - op  : 153
+  - arg : [auto: Boolean]
+  - ret : null
+  - desc: Set temperature control auto, if 0 = we can manually control the actuator, if 1 we cannot control manually actuator output
+
+- get_temp_controller_auto:
+  - op  : 154
+  - arg : null
+  - ret : [auto: Boolean]
+  - desc: Get temperature controller auto
+
+- set_temp_controller_period:
+  - op  : 155
+  - arg : [period: UInt32]
+  - ret : null
+  - desc: Set temperature controller period in micro seconds
+
+- get_temp_controller_period:
+  - op  : 156
+  - arg : null
+  - ret : [period: UInt32]
+  - desc: Get temperature controller period in micro seconds  
+
+- set_temp_bang2_threshold:
+  - op  : 157
+  - arg : [id: UInt16, upper: Double, lower: Double]
+  - ret : null
+  - desc: Set temperature controller bang2 threshold in celcius
+
+- get_temp_bang2_threshold:
+  - op  : 158
+  - arg : [id: UInt16]
+  - ret : [upper: Double, lower: Double]
+  - desc: Get temperature controller bang2 threshold in celcius
+
+- set_temp_controller_type:
+  - op  : 159
+  - arg : [id: UInt16, type: UInt16]
+  - ret : [status: Boolean]
+  - desc: 0 = bang2, 1 = pid
+
+- get_temp_controller_type:
+  - op  : 160
+  - arg : [id: UInt16]
+  - ret : [type: UInt16]
+  - desc: 0 = bang2, 1 = pid
+
+- set_temp_controller_thermistor_id:
+  - op  : 161
+  - arg : [id: UInt16, thermistor_id: UInt16]
+  - ret : null
+  - desc: if thermistor_id > 1 = average all thermistor
+
+- get_temp_controller_thermistor_id:
+  - op  : 162
+  - arg : [id: UInt16]
+  - ret : [thermistor_id: UInt16]
+  - desc: if thermistor_id > 1 = average all thermistor
+
+- set_temp_controller_limiter_timeout:
+  - op  : 163
+  - arg : [timeout: UInt16]
+  - ret : null
+  - desc: set time limiter for timebased heater in ms
+
+- get_temp_controller_limiter_timeout:
+  - op  : 164
+  - arg : null
+  - ret : [timeout: UInt16]
+  - desc: get time limiter for timebased heater in ms
+
+- set_temp_controller_limiter_enable:
+  - op  : 165
+  - arg : [enable: Boolean]
+  - ret : null
+  - desc: set time limiter enable for timebased heater in ms
+
+- get_temp_controller_limiter_enable:
+  - op  : 166
+  - arg : null
+  - ret : [enable: Boolean]
+  - desc: get time limiter enable status for timebased heater in ms
+
+#---------------------------------- Heater ---------------------------------------
+- set_heater_enable:
+  - op : 178
+  - arg: [enable : Boolean]
+  - ret: null
+  - desc: Set Heater Enable
+- get_heater_enable:
+  - op : 179
+  - arg: null
+  - ret: [status : Boolean]
+  - desc: Get Heater Enable
+
+- set_heater_pwm_range:
+  - op  : 180
+  - arg : [max: Double, min: Double]
+  - ret : null
+  - desc: Set heater for temperature control working range in percentage pwm min and max
+
+- get_heater_pwm_range:
+  - op  : 181
+  - arg : null
+  - ret : [max: Double, min: Double]
+  - desc: Get heater for temperature control working range in percentage pwm min and max
+
+- set_heater_pwm_out:
+  - op  : 182
+  - arg : [value: Double]
+  - ret : [status: Boolean]
+  - desc: Set Heater output for temperature control in percentage of PWM, this opcode only work if the temp auto control is set to 0, return false if there are fault condition or the output type isn't pwm
+
+- get_heater_pwm_out:
+  - op  : 183
+  - arg : null
+  - ret : [value: Double]
+  - desc: Get Heater output for temperature control in percentage of PWM
+
+- set_heater_digital_out:
+  - op  : 184
+  - arg : [is_on: Boolean]
+  - ret : [status: Boolean]
+  - desc: Set heater gpio output level
+
+- get_heater_digital_out:
+  - op  : 185
+  - arg : null
+  - ret : [is_on: Boolean]
+  - desc: Get Heater gpio output
+
+- set_heater_pwm_enable:
+  - op  : 186
+  - arg : [enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: switch between IO or PWM, , return false if the controller still enabled
+
+- get_heater_pwm_enable:
+  - op  : 187
+  - arg : null
+  - ret : [enable: Boolean]
+  - desc: switch between IO or PWM
+
+- get_heater_error:
+  - op  : 188
+  - arg : null
+  - ret : [status: Boolean, error_type: UInt16]
+  - desc: get heater error status
+
+- clear_heater_error:
+  - op  : 189
+  - arg : null
+  - ret : null
+  - desc: clear heater error status, so we can use it again
+
+- get_heater_control_type:
+  - op  : 193
+  - arg : null
+  - ret : [control_type: UInt16]
+  - desc: 0 = bang2, 1 = pid
+
+- get_heater_timelimiter:
+  - op  : 194
+  - arg : null
+  - ret : [status: Boolean]
+  - desc: get timelimiter status
+
+#---------------------------------- MISC ---------------------------------------
+- set_address:
+  - op  : 216
+  - arg : [addr : Int16]
+  - ret : null
+  - desc: Set device address
+  
+- get_packet_error_count:
+  - op  : 217
+  - arg : null
+  - ret : [count : Int16]
+  - desc: Set device address  
+  
+- read_i2c:
+  - op  : 218
+  - arg : [device_addr : UInt32, word_addr : UInt16, length : UInt16]
+  - ret : [errcode : UInt16, count : UInt16,respon : Array_UInt16_c]
+  - desc: Set device address
+- write_i2c:
+  - op  : 219
+  - arg : [device_addr : UInt32, word_addr : UInt16, length : UInt16, data : Array_UInt16_c]
+  - ret : [errcode : UInt16]
+  - desc: Set device address
+- reset_i2c:
+  - op  : 220
+  - arg : null
+  - ret : null
+  - desc: Set device address
+- stop_i2c:
+  - op  : 221
+  - arg : null
+  - ret : null
+  - desc: Set device address     
+
+
+################################### EVENTS #################################################
+EVENTS:
+- on_heater_error:
+  - op  : 812
+  - ret: [id: UInt16, errorType : UInt16]
+  - desc: Fired when heater error occured detected by diags pin
+
+- on_heater_timeout:
+  - op  : 813
+  - ret: [id: UInt16, errorType : UInt16]
+  - desc: Fired when heater timeout to reach target temperature set point
+
+- on_heater_turned_on:
+  - op  : 814
+  - ret: [id: UInt16, status : UInt16]
+  - desc: Fired when heater enable - disable
+
+- on_test_event_triggered:
+  - op  : 888
+  - ret: [id: UInt16, triggered : Boolean]
+  - desc: Fired when heater enable - disable

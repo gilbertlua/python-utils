@@ -1,0 +1,280 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>kvamemolibxmlCLSNET</name>
+    </assembly>
+    <members>
+        <member name="T:Kvaser.MemoLibXML.KvaXmlStatus">
+            <summary>
+                Generally, a return code greater than or equal to zero means success. A
+                value less than zero means failure.
+            </summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.OK">
+            <summary>OK.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.FAIL">
+            <summary>Generic error.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_ATTR_NOT_FOUND">
+            <summary>Failed to find an attribute in a node.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_ATTR_VALUE">
+            <summary>The attribute value is not correct, e.g. whitespace after a number.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_ELEM_NOT_FOUND">
+            <summary>Could not find a required element.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_VALUE_RANGE">
+            <summary>The value is outside the allowed range.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_VALUE_UNIQUE">
+            <summary>The value is not unique; usually idx attributes.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_VALUE_CONSECUTIVE">
+            <summary>The values are not consecutive; usually idx attributes.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_EXPRESSION">
+            <summary>The trigger expression could not be parsed.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_XML_PARSER">
+            <summary>The XML settings contain syntax errors.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_DTD_VALIDATION">
+            <summary>The XML settings do not follow the DTD.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_SCRIPT_ERROR">
+            <summary>t-script related errors, e.g. file not found.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlStatus.ERR_INTERNAL">
+            <summary>Internal errors, e.g. null pointers.</summary>
+        </member>
+        <member name="T:Kvaser.MemoLibXML.KvaXmlValidationStatus">
+            <summary>
+                Generally, a return code greater than or equal to zero means success. A
+                value less than zero means failure.
+            </summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.OK">
+            <summary>OK.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.FAIL">
+            <summary>Generic error.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_ABORT">
+            <summary>Too many errors, validation aborted.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_SILENT_TRANSMIT">
+            <summary>Transmit lists used in silent mode.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_UNDEFINED_TRIGGER">
+            <summary>An undefined trigger is used in an expression.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_MULTIPLE_EXT_TRIGGER">
+            <summary>There are more than one external trigger defined.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_MULTIPLE_START_TRIGGER">
+            <summary>There are more than one start up trigger defined.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_DISK_FULL_STARTS_LOG">
+            <summary>A trigger on disk full starts the logging.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_NUM_OUT_OF_RANGE">
+            <summary>A numerical value is out of range.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_SCRIPT_NOT_FOUND">
+            <summary>A t-script file could not be opened.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_SCRIPT_TOO_LARGE">
+            <summary>A t-script is too large for the configuration.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_SCRIPT_TOO_MANY">
+            <summary>Too many active t-scripts for selected device.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_SCRIPT_CONFLICT">
+            <summary>More than one active script is set as 'primary'.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_ELEMENT_COUNT">
+            <summary>Too many or too few elements of this type.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_PARSER">
+            <summary>A general error found during parsing.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_SCRIPT">
+            <summary>A general t-script error found during parsing.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.ERR_EXPRESSION">
+            <summary>A general trigger expression found during parsing.</summary>
+            <summary>A general trigger expression found during parsing.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.WARN_ABORT">
+            <summary>Too many warnings, validation aborted.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.WARN_NO_ACTIVE_LOG">
+            <summary>No active logging detected.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.WARN_DISK_FULL_AND_FIFO">
+            <summary>A trigger on disk full used with FIFO mode.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.WARN_IGNORED_ELEMENT">
+            <summary>This XML element was ignored.</summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaXmlValidationStatus.WARN_MULTIPLE_EXT_TRIGGER">
+            <summary>Using more than one external trigger requires firmware version 3.7 or better.</summary>
+        </member>
+        <member name="T:Kvaser.MemoLibXML.KvaMemoLibXML">
+            <summary>
+                The kvaMemoLibXML DLL is a library for converting XML logger settings into a
+                binary param.lif for Kvaser Memorator 2nd Generation devices.
+                The XML conversion results in a binary settings file, param.lif, that can be
+                downloaded to a Kvaser Memorator 2nd Generation with the KvmLib API call
+            </summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaMemoLibXML.XML_ERROR_MESSAGE_LENGTH">
+            <summary>
+                Maximum length of the xml error message string.
+                <see cref="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlGetLastError(System.String@,Kvaser.MemoLibXML.KvaXmlStatus@)" />
+                Defined in <i>common_inc/inc/memolib_mhydra/kvaMemoLibXML.h</i>.
+            </summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaMemoLibXML.XML_BUFFER_SIZE">
+            <summary>
+                Maximum length of generated xml.
+                Defined in <i>src\dll\memolibxml\memolibxml_mhydra\kvaMemoLibXML.cpp</i>.
+            </summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaMemoLibXML.PARAM_FILE_SIZE">
+            <summary>
+                Maximum size of parameter file.
+                Defined in <i>common_inc\inc\logger_config_file.h</i>.
+            </summary>
+        </member>
+        <member name="F:Kvaser.MemoLibXML.KvaMemoLibXML.MAX_ERROR_STRING_SIZE">
+            <summary>
+                Ad hoc maximum size of error message returned from.
+                <see cref="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlGetErrorText(Kvaser.MemoLibXML.KvaXmlStatus,System.String@)" />
+                <see cref="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlGetValidationText(Kvaser.MemoLibXML.KvaXmlValidationStatus,System.String@)" />
+            </summary>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.GetUTF8Bytes(System.String)">
+            <summary>
+                Create a byte[] containing the utf-8 representation of string s and a terminating'\0' character.
+            </summary>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.GetUTF8String(System.Byte[])">
+            <summary>
+                Convert byte[] contents to a string object using the utf-8 decoder.
+            </summary>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlInitialize">
+            <summary>
+                This function must be called before any other functions are used. It will initialize the native
+                kvamemolibxml library.
+            </summary>
+            <returns>KvaXmlStatus.OK if success else KvaXmlStatus.ERR_XXX.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlGetLastError(System.String@,Kvaser.MemoLibXML.KvaXmlStatus@)">
+            <summary>
+                Get the last conversion error message (if any) in human readable format.
+            </summary>
+            <param name="buf">Error message associated with err.</param>
+            <param name="err">Error code.</param>
+            <returns>KvaXmlStatus.OK if success else KvaXmlStatus.ERR_XXX.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlGetVersion">
+            <summary>
+                Return the version of the kvaMemoLibXML DLL.  The most significant byte is
+                the major version number and the least significant byte is the
+                minor version number.
+            </summary>
+            <returns>Version of the kvaMemoLibXML DLL.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlToBuffer(System.String,System.Byte[]@,System.Int32@)">
+            <summary>
+                Convert XML settings to param.lif buffer.
+                The version of the XML settings is returned in version (Upper 16 bits: major, lower 16 bits: minor)
+            </summary>
+            <remarks>The version parameter isn't used.</remarks>
+            <param name="xmlbuf">XML settings to convert.</param>
+            <param name="outbuf">Buffer containing the param.lif settings</param>
+            <param name="version">XML version</param>
+            <returns>KvaXmlStatus.OK if success else KvaXmlStatus.ERR_XXX.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaBufferToXml(System.Byte[],System.String@,System.Int32@,System.String)">
+            <summary>
+                Convert a buffer containing param.lif to XML settings.
+                The version of the XML settings is returned in version (Upper 16 bits: major, lower 16 bits: minor).
+                Scripts from the param.lif will be written to scriptpath.
+            </summary>
+            <param name="inbuf">Buffer containing contents of a parameter file ('.lif').</param>
+            <param name="xmlbuf">Contains XML representation of parameters if successful else null.</param>
+            <param name="version">XML version.</param>
+            <param name="scriptpath">Path to destination of scripts.</param>
+            <returns>KvaXmlStatus.OK if success else KvaXmlStatus.ERR_XXX.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlToFile(System.String,System.String)">
+            <summary>
+                Convert XML file to binary configuration file.
+            </summary>
+            <param name="infile">Filename of file containing the XML settings.</param>
+            <param name="outfile">Filename of binary configuration.</param>
+            <returns>KvaXmlStatus.OK if success else KvaXmlStatus.ERR_XXX.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaFileToXml(System.String,System.String)">
+            <summary>
+                Convert the binary configuration file and write XML settings to xmlfile.
+            </summary>
+            <param name="parfile">Path and name of the file containing the param.lif settings.</param>
+            <param name="xmlfile">Path and name of the file to receive the XML settings.</param>
+            <returns>KvaXmlStatus.OK if success else KvaXmlStatus.ERR_XXX.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlValidate(System.String)">
+            <summary>
+                Validate a buffer with XML settings.
+            </summary>
+            <param name="xmlbuf">String containing the XML settings to validate.</param>
+            <returns>KvaXmlStatus.OK if success else KvaXmlStatus.ERR_XXX.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlGetErrorText(Kvaser.MemoLibXML.KvaXmlStatus,System.String@)">
+            <summary>
+                Get a human readable description of error with supplied error code.
+            </summary>
+            <param name="error">KvaXmlStatus error code.</param>
+            <param name="buf">Error message.</param>
+            <returns>KvaXmlStatus.OK if success else KvaXmlStatus.ERR_XXX.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlGetValidationStatusCount(System.Int32@,System.Int32@)">
+            <summary>
+                Get the number of validation statuses (if any). Call after <see cref="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlValidate(System.String)" />
+            </summary>
+            <param name="countErr">Number of XML validation errors.</param>
+            <param name="countWarn">Number of XML validation warnings.</param>
+            <returns>KvaXmlStatus.OK if success else KvaXmlStatus.ERR_XXX.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlGetValidationError(Kvaser.MemoLibXML.KvaXmlValidationStatus@,System.String@)">
+            <summary>
+                Get the validation errors (if any). Call after <see cref="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlValidate(System.String)" /> until KvaXmlValidationStatus.OK.
+            </summary>
+            <param name="status">Validation status code.</param>
+            <param name="buf">Validation error message.</param>
+            <returns>KvaXmlStatus.OK if success else KvaXmlStatus.ERR_XXX.</returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlGetValidationWarning(Kvaser.MemoLibXML.KvaXmlValidationStatus@,System.String@)">
+            <summary>
+                Get the validation warnings (if any). Call after <see cref="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlValidate(System.String)" /> until KvaXmlValidationStatus.OK.
+            </summary>
+            <param name="status">Valdiation status code.</param>
+            <param name="buf">Buffer containing the validation warning message.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Kvaser.MemoLibXML.KvaMemoLibXML.KvaXmlGetValidationText(Kvaser.MemoLibXML.KvaXmlValidationStatus,System.String@)">
+            <summary>
+                Get a human readable description of validation error with supplied error
+                code.
+            </summary>
+            <param name="status">KvaXmlValidationStatus error code.</param>
+            <param name="buf">Error message</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

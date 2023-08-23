@@ -1,0 +1,243 @@
+APPNAME : General
+VERSION : null
+
+ENUMS:
+- SystemState:
+  - desc : System State
+  - type : UInt16
+  - value:
+    - sysStInitialize       : [0, system is initializing]
+    - sysStNoOperational    : [1, system finish initializing, need to set to operational for normal operation]
+    - sysStOperational      : [2, system is ready for normal operation]
+    - sysStError            : [3, system error, must clear each error for back to no operational state]
+    - sysStFailsafe         : [4, system error during operational ]
+
+- SystemError:
+  - desc : System Error
+  - type : UInt32
+  - value:
+    - sysErrorStorage       : [0, error on setting storage or eeprom]
+    - sysErrorSensor        : [1, error on sensor]
+    - sysErrorActuator      : [2, error on actuator]
+    - sysErrorComm          : [3, error on communication]
+    - sysErrorDefaultVal    : [4, error eeprom on default value]
+
+COMMANDS:
+- get_version:
+  - op  : 1
+  - arg : null
+  - ret : [version : String]
+  - desc: |
+          Obtain firmware version of the device.
+          Args:
+            - None
+          Returns:
+            - version : firmware version
+
+- get_app_name:
+  - op  : 2
+  - arg : null
+  - ret : [name : String]
+  - desc: |
+          Obtain device application name
+          Args:
+            - None
+          Returns:
+            - name : application name
+
+- save_configuration:
+  - op : 3
+  - arg: null
+  - ret: null
+  - desc: |
+          Save all settings on EEPROM
+
+- read_mem16:
+  - op  : 5
+  - arg : [addr : UInt32]
+  - ret : [value : UInt16]
+  - desc: |
+          Read 16-bit value from a memory address
+          Args:
+            - addr : memory address
+          Returns:
+            - value : value from the memory
+
+- write_mem16:
+  - op  : 6
+  - arg : [addr : UInt32, value : UInt16]
+  - ret : null
+  - desc: |
+          Write 16-bit value to a memory address
+          Args:
+            - addr : memory address
+            - value: value to be written
+- get_dog_alarm:
+  - op  : 7
+  - arg : null
+  - ret : [rpc : UInt32, last_pos : UInt32]
+  - desc: get the address of watchdog triggered position
+
+- reset_dog_alarm:
+  - op  : 8
+  - arg : null
+  - ret : null
+  - desc: reset watchdog triggered position
+
+- firmware_reset:
+  - op  : 9
+  - arg : null
+  - ret : null
+  - desc: to reset firmware
+
+#--------------------------------- Address -----------------------------------------
+- set_address:
+  - op : 100
+  - arg: [addr: UInt16]
+  - ret: null
+  - desc: |
+            set CAN address on eeprom, note if the firmware support physical pin addressing, it will ignore this value
+
+- get_packet_error_count:
+  - op : 101
+  - arg: null
+  - ret: [err_count: UInt16]
+  - desc: |
+            set CAN address
+
+- set_board_sn:
+  - op  : 102
+  - arg : [boardsn : UInt32]
+  - ret : null
+  - getter_op: 103
+  - desc: Save Board SN to EEPROM
+  
+- get_board_sn:
+  - op  : 103
+  - arg : null
+  - ret : [boardsn : UInt32]
+  - eeprom: null
+  - desc: Read Board SN from EEPROM
+
+- get_address:
+  - op : 104
+  - arg: null
+  - ret: [addr: UInt16]
+  - desc: |
+            set CAN address on eeprom, note if the firmware support physical pin addressing, it will ignore this value
+
+- set_single_precision_enable:
+  - op  : 105
+  - arg : [enable : Boolean]
+  - ret : null
+  - getter_op : 106
+  - desc: Set single precision ( float ) data enable or use Double precision instead  
+
+- get_single_precision_enable:
+  - op  : 106
+  - arg : null
+  - ret : [enable : Boolean]
+  - eeprom : null
+  - desc: get single precision ( float ) data enable or use Double precision instead 
+
+- set_system_state:
+  - op  : 400
+  - arg : [enable : UInt16]
+  - ret : null
+  - desc: set system state please see SystemState for enums
+
+- get_system_state:
+  - op  : 401
+  - arg : null
+  - ret : [enable : UInt16]
+  - desc: get system state please see SystemState for enums
+
+- get_sys_error_mask:
+  - op  : 402
+  - arg : null
+  - ret : [error_mask : UInt32]
+  - desc: get system error mask, please see SystemError for enums
+  
+- clr_sys_error:
+  - op  : 403
+  - arg : [error_bit : UInt32]
+  - ret : null
+  - desc: clear error bit, please see SystemError for enums
+
+EVENTS:
+- on_system_finish_boot:
+  - op : 900
+  - ret : [rpc : UInt32, last_pos : UInt32]
+  - desc: |
+           Fired upon bootup finish
+           - rpc: return call pointer
+           - last_pos:last position before hang up happen
+
+# publisher opcode are offseted by 2048
+PUBLISHER:
+- move_motor_abs:
+  - op  : 0
+  - arg : [motor_id: Int16, pos: Double, vel: Double, acc: Double, jrk: Double]
+  - desc: |
+          Move motor to an absolute position
+          Arguments
+          - pos -> Target position, should be within position limit
+          - vel -> Motor Velocity
+          - acc -> Motor Acceleration
+          - jrk -> Motor Jerk (optional, depends on profile type)
+
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- stop_motor:
+  - op  : 1
+  - arg : [motor_id: Int16, accel: Double, jrk: Double]
+  - desc: Stop motor, even if its moving, with inputed acceleration set in accel. Return MotorErrorCode enum.
+
+- stop_motor_hardbrake:
+  - op  : 2
+  - arg : [motor_id: Int16]
+  - desc: Stop motor, even if its moving, with inputed acceleration set in accel. Return MotorErrorCode enum.
+
+- move_motor_rel:
+  - op  : 3
+  - arg : [motor_id: Int16, pos: Double, vel: Double, acc: Double, jrk: Double]
+  - desc: |
+          Move motor to an absolute position
+          Arguments
+          - pos -> Target position, should be within position limit
+          - vel -> Motor Velocity
+          - acc -> Motor Acceleration
+          - jrk     -> Motor Jerk (optional, depends on profile type)
+
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- move_multi_motor_abs:
+  - op  : 4
+  - arg : [motor_count: UInt16, motor_id: Array_Int16, pos: Array_Double, vel: Array_Double, acc: Array_Double]
+  - desc: |
+          Move motor to an absolute position
+          Arguments
+          - motor_id --> network id list of the motor
+          - pos -> Target position, should be within position limit
+          - vel -> Motor Velocity
+          - acc -> Motor Acceleration
+          
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- sequencer_go:
+  - op  : 10
+  - arg : null
+  - desc: Publish the sequencer go queue
+         
+- sequencer_abort:
+  - op  : 11
+  - arg : null
+  - desc: Publish the sequencer go queue
+
+- sequencer_abort_immidiately:
+  - op  : 12
+  - arg : null
+  - desc: Publish the sequencer go queue

@@ -1,0 +1,1753 @@
+APPNAME: FloV2
+VERSION: v1.0.48
+
+################################### ENUMS & BITMASKS #################################################-
+ENUMS:
+- MotorErrorCode:
+  - desc : Motor error code
+  - type : UInt16
+  - value:
+    - mecodeNone : [0, No Error]
+    - mecodeInvalidID : [1, Invalid Motor ID]
+    - mecodeLowerLimit : [2, Motor hit Lower Limit switch]
+    - mecodeUpperLimit : [3, Motor hit Upper Limit switch]
+    - mecodeIllegalPos : [4, Illegal Position]
+    - mecodeIllegalVel : [5, Illegal Velocity]
+    - mecodeIllegalAcc : [6, Illegal Acceleration]
+    - mecodeAborted : [7, Motor Stopped by Motion Abort]
+    - mecodeFolErrorIdle : [8, Encoder doesn't match Motor position while Idle]
+    - mecodeFolErrorMoving : [9, Encoder doesn't match Motor position while Moving]
+    - mecodeEncoderError : [10, Encoder error]
+    - mecodeDisabled : [11, Motor is disabled]
+    - mecodeHoming : [12, Motor is homing]
+    - mecodeEmergencyStop : [13, Emergency Stop is activated]
+    - mecodeHardBrake : [14, Hard Brake is activated]
+    - mecodeDriverFault : [15, Motor driver fault signal is triggered]
+    - mecNoMove : [16, Motor move to the same position]
+    - mecMoveNotSupported : [17, some movement can't b overidden ( s-curve)]
+    - mecIllegalJrk : [18, illegal jerk (s-curve)]
+    - mecStalled : [19, motor stalled detected using trinamic stallguard]
+
+- MotorStatusBitmask:
+  - desc : Bitmask for motor status code (e.g. value 1 is bit 0, value 2 is bit 1, etc)
+  - type : UInt16
+  - value:
+    - msbitMoving : [1, Motor is moving]
+    - msbitHoming : [2, Motor is homing]
+    - msbitHomed : [4, Motor is already homed]
+    - msbitLowerLimit : [8, LowerLimit switch is hit]
+    - msbitUpperLimit : [16, UpperLimit switch is hit]
+    - msbitOverCurrent : [32, Motor overcurrent]
+    - msbitAborted : [64, Motor motion abort is triggered]
+    - msbitFolErrorIdle : [128, Following Error while motor is idle]
+    - msbitFolErrorMoving : [256, Following Error while motor is moving]
+    - msbitEncoderError : [512, Encode Error]
+    - msbitDisabled : [1024, Motor is Disabled]
+    - msbitEmergencyStop : [2048, Emergency Stop is triggered]
+    - msbitHardBrake : [4096, HardBrake is triggered]
+    - msbitDriverFault : [8192, Motor driver fault signal is triggered]
+
+#  Sensor id
+#  0 = DLLT  -> in ADC counts
+#  1 = Collision -> in ADC counts
+#  2 = NTC temp 1 -> in celcius
+#  3 = NTC temp 2 -> in celcius
+#  4 = Temp on pressure sensor 1 -> in celcius
+#  5 = temp on pressure sensor 2 -> in celcius
+#  6 = Pressure on P1 -> in mBar
+#  7 = Pressure on P2 -> in mBar
+#  8 = Breach capacitance -> in Amto Farads
+
+#  liquid tracking mode
+#  0 = mode resistance
+#  1 = mode linear equation pos vs volume
+#  2 = mode lookup table pos vs volume
+
+# liquid level tracker stop status
+# 0 = user stop
+# 1 = motor fault
+
+# Input map for trinamic motion abort:
+# 0 - Motor 0 Fault
+# 1 - E-Stop
+# 2 - Touch off
+# 3 - Breach Detect pin
+# 4 = Liquid Resistance
+# 5 = Collision
+# 6 = Collision
+# 7 = NTC temp 1
+# 8 = NTC temp 2
+# 9 = Temp on pressure sensor 1
+# 10 = temp on pressure sensor 2
+# 11 = Pressure on sensor 1
+# 12 = Pressure on sensor 2
+
+#  Abort ID
+#  0 = motor with decel
+#  1 = motor with hardbrake
+#  2 = Estop
+#  3 = TouchOff
+#  4 = Valve Release / drain
+#  5 = Valve In
+#  6 = Abort pipetting ( breach detect )
+#  7 = motor with release ( Emergency stop )
+
+# SENSOR LOG BIT MASK
+# dlcDlltResistance   = 0,
+# dlcCollision        = 1,
+# dlcNTCTemp1         = 2,
+# dlcNTCTemp2         = 3,
+# dlcPressureP1       = 4,
+# dlcPressureP2       = 5,
+# dlcTempP1           = 6,
+# dlcTempP2           = 7,
+# dlcPipRun           = 8,
+# dlcValveIn          = 9,
+# dlcPipFlow          = 10,
+# dlcRegContOut       = 11,
+# dlcTargetFlow       = 12,
+# dlcVolDisplacement  = 13,
+# dlcActualFlow       = 14,
+# VolumeError         = 15,
+# dlcSensedVolume     = 16
+
+# MOTOR LOG BIT MASK
+# dlcNone            = 0,
+# dlcVelocity        = 1,
+# dlcPosCommand      = 2,
+# dlcPosEncoder      = 4,
+# dlcPosError        = 8
+
+# Pipettor running function
+# funIdle             = 0,
+# funTarePressure     = 1,
+# funCalibrate        = 2,
+# funCountVolume      = 3,
+# funPipetting        = 4,
+# funRegulatePress    = 5,
+# funAborting         = 6
+
+# Pipetting function return code
+# rcNone                  = 0,
+# rcBusy                  = 1,
+# rcInvalidPressure       = 2,
+# rcAborted               = 3,
+# rcTimeOut               = 4,
+
+# Pipetting error event
+# errNone                 = 0,
+# errAborted              = 1,
+# errTauNotFound          = 2,
+# errTimeout              = 3,
+# errAirTrasferDetect     = 4,
+# errClogDetect           = 5,
+# errBreachDetected       = 6,
+# errPressureReading      = 7
+
+# Pipetting pip_state
+# stPipInit                 = 0,    initialize all variables
+# stPipWaitValveOpen        = 1,    delay time before next step using get/set_valve_open_response_ms settings
+# stPipWaitHighDP           = 2,    waiting dp > alc_config->DpHighThreshold
+# stPipWaitVolReach         = 3,    waiting the sensed volume is reached target
+# stPipCalculateThreshold   = 4,    detect where tau is calculated from
+# stPipGetTauP1             = 5,    get the tau from p1
+# stPipGetTauP2             = 6,    get the tau from p2
+# stPipResetSlope           = 7,    reset the slope value for detect end of alc
+# stPipWaitTauMultiply      = 8,    waiting for tau time x multiply
+# stPipWaitSlope            = 9,    wait for slope reach threshold
+# stPipFinish               = 10,   pipetting finish
+# stPipWaitClogAverage      = 11    calculating p1 and p2 average value for detect clog on SW 
+
+################################### COMMANDS #################################################
+COMMANDS:
+#---------------------------------------- MOTOR ------------------------------------
+- get_motor_limits:
+  - op  : 10
+  - arg : [motor_id: Int16]
+  - ret : [min_limit: Double, max_limit: Double]
+  - eeprom : [motor_id: 1]
+  - desc: Get motor position limits
+
+- set_motor_limits:
+  - op  : 11
+  - arg : [motor_id: Int16, min_limit: Double, max_limit: Double]
+  - ret : null
+  - getter_op : 10
+  - desc: Set motor position limits (e.g. min -4000 max 4000)   
+
+- get_motor_currents:
+  - op  : 12
+  - arg : [motor_id: Int16]
+  - ret : [boost: Double, travel: Double, hold: Double]
+  - eeprom : [motor_id: 1]
+  - desc: Get motor current (Ampere) setting. Boost is acceleration current, travel is moving current, hold is holding current
+
+- set_motor_currents:
+  - op  : 13
+  - arg : [motor_id: Int16, boost: Double, travel: Double, hold: Double]
+  - ret : null
+  - getter_op : 12
+  - desc: Set motor current (Ampere). Boost is acceleration current, travel is moving current, hold is holding current
+
+- get_motor_config:
+  - op  : 14
+  - arg : [motor_id: Int16]
+  - ret : [invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16]
+  - eeprom : [motor_id: 1]
+  - desc: Get motor config. Invert_dir is motor direction inversion flag. Kp, Ki, Kd is PID gain. Currently, Kd and num_usteps cannot be changed.
+
+- set_motor_config:
+  - op  : 15
+  - arg : [motor_id: Int16, invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16]
+  - ret : null
+  - getter_op : 14
+  - desc: Set motor config. Invert_dir is motor direction inversion flag. Kp, Ki, Kd is PID gain. num_usteps is number of substep for each step.
+
+- read_motor_inputs:
+  - op  : 16
+  - arg : [motor_id: Int16]
+  - ret : [motor_inputs: Int16]
+  - desc: Read various motor inputs, collected as bitmasks (1 is Active). Check MotorInputBitmask for the bitmask details.
+
+- clear_motor_fault:
+  - op  : 17
+  - arg : [motor_id: Int16]
+  - ret : null
+  - desc: Clear motor faults. You should send this before moving motor, every time motor failure occurs.
+
+- get_motor_open_loop:
+  - op  : 18
+  - arg : [motor_id: Int16]
+  - ret : [is_open_loop: Boolean]
+  - desc: Returns false if motor is not in open loop control mode, true otherwise.
+
+- set_motor_open_loop:
+  - op  : 19
+  - arg : [motor_id: Int16, is_open_loop: Boolean]
+  - ret : null
+  - desc: Set use_openloop to True, to activate open loop control mode. is_error will be True if motor mode cannot be set (e.g. while still moving).
+
+- get_motor_status:
+  - op  : 20
+  - arg : [motor_id: Int16]
+  - ret : [motor_status: UInt16]
+  - desc: Get motor status. Check MotorStatusBitmask under ENUMS section.
+
+- home_motor:
+  - op  : 21
+  - arg : [motor_id: Int16, flag: UInt16, pos_edge: Boolean, pos_dir: Boolean, slow_vel: Double, fast_vel: Double, accel: Double, jerk: Double]
+  - ret : [motor_error_code: UInt16]
+  - desc: |
+          Home motor. Automatically set motor position to 0 upon finished. Delidder used home switch only for homing
+          Arguments
+          - flag     -> Always set this to 0 for now. 
+          - pos_edge -> False to detect falling edge homing sensor signal, True to detect rising edge
+          - pos_dir  -> Movement direction, set False to reverse.
+          - slow_vel -> Initial velocity before home switch is activated.
+          - fast_vel -> Velocity after home switch is activated (finding precise home location).
+          - accel    -> Motor motion acceleration.
+          - jerk     -> Motor jerk.
+
+          Returns
+          - motor_error -> Check MotorErrorCode in ENUMS section
+
+
+- move_motor_abs:
+  - op  : 22
+  - arg : [motor_id: Int16, pos: Double, vel: Double, acc: Double, jrk: Double]
+  - ret : [motor_error_code: UInt16]
+  - desc: |
+          Move motor to an absolute position
+          Arguments
+          - pos -> Target position, should be within position limit
+          - vel -> Motor Velocity
+          - acc -> Motor Acceleration
+          - jrk     -> Motor Jerk (optional, depends on profile type)
+
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- move_motor_vel:
+  - op  : 23
+  - arg : [motor_id: Int16, forward: Boolean, vel: Double, accel: Double, jrk: Double, is_cont: Boolean]
+  - ret : [motor_error_code: UInt16]
+  - desc: |
+          Move motor with certain velocity, stopped when position limit is reached.
+          Arguments
+          - forward -> Set to False to inverse direction.
+          - vel     -> Motor velocity
+          - acc     -> Motor Acceleration
+          - jrk     -> Motor Jerk (optional, depends on profile type)
+          - is_cont -> if true, motor will continues running without any limit pos
+
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- stop_motor:
+  - op  : 24
+  - arg : [motor_id: Int16, accel: Double, jrk: Double]
+  - ret : [motor_error_code: UInt16]
+  - desc: Stop motor, even if its moving, with inputed acceleration set in accel. Return MotorErrorCode enum.
+
+- abort_motor:
+  - op : 25
+  - arg : [motor_id: Int16]
+  - ret : [motor_error_code: UInt16]
+  - desc: Stop motor with predetermined acceleration (56000). Return MotorErrorCode enum.
+
+- get_motor_pos:
+  - op  : 27
+  - arg : [motor_id: Int16]
+  - ret : [curr_pos: Double, curr_vel: Double, curr_acc: Double]
+  - desc: Get current motor position.
+
+- set_motor_pos:
+  - op  : 28
+  - arg : [motor_id: Int16, pos: Double]
+  - ret : null
+  - desc: Manually set current motor position.
+ 
+- set_clear_homed_config:
+  - op  : 34
+  - arg : [motor_id: Int16, on_foll_error: Boolean, on_motor_disable: Boolean]
+  - ret : null
+  - getter_op : 35
+  - desc: setting the homed flag cleared on
+
+- get_clear_homed_config:
+  - op  : 35
+  - arg : [motor_id: Int16]
+  - ret : [on_foll_error: Boolean, on_motor_disable: Boolean]
+  - eeprom : [motor_id: 1]
+  - desc: get the homed flag cleared on
+
+#-------------------------------- PUB SUB ----------------------------------------------
+- set_subscribe_address:
+  - op : 40
+  - arg: [value: Int16]
+  - ret: null
+
+- get_subscribe_address:
+  - op : 41
+  - arg: null
+  - ret: [value: Int16]
+
+- set_publish_motor_enable:
+  - op : 42
+  - arg: [id: Int16, enable: Boolean]
+  - ret: null
+
+- get_publish_motor_enable:
+  - op : 43
+  - arg: [id: Int16]
+  - ret: [enable: Boolean]
+
+- set_event_motor_inhibit:
+  - op : 44
+  - arg: [id: Int16, inhibit: Boolean]
+  - ret: null
+
+- get_event_motor_inhibit:
+  - op : 45
+  - arg: [id: Int16]
+  - ret: [inhibit: Boolean]
+
+#---------------------------- INPUT MONITOR ------------------------------------
+- get_debouch_time_ms:
+  - op  : 50
+  - arg : [id: UInt16]
+  - ret : [mask: UInt32]
+  - eeprom : [id: 3]
+  - desc: get the debouch time in ms
+
+- set_debouch_time_ms:
+  - op  : 51
+  - arg : [id: UInt16, mask: UInt32]
+  - ret : null
+  - getter_op : 50
+  - desc: set the debouch time in ms
+
+- get_input_mask:
+  - op  : 52
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null
+  - desc: get the input mask please see InputMonitorMask
+
+- set_input_mask:
+  - op  : 53
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 52
+  - desc: set the input mask please see InputMonitorMask
+
+- read_input_monitor_port_value:
+  - op  : 54
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+#---------------------------------- LOGGING ---------------------------------------
+- get_log_items:
+  - op  : 60
+  - arg : null
+  - ret : [motor0_mask: UInt32, sensor_mask: UInt32]
+  - desc: |
+           Get data logger activation status. Each logger module has bitmasks to represent/activate which data is logged.
+           - sensor_mask   -> log sensor value see SensorLoggerBitMask .
+           - motor0   -> log motor 0 related data. Check LoggerMotorBitmask.
+
+- set_log_items:
+  - op  : 61
+  - arg : [motor0_mask: UInt32, sensor_mask: UInt32]
+  - ret : [success: Boolean]
+  - desc: |
+          Set data logger activation.  Check get_log_items opcode for furher explanation of bitmasks and modules.
+          Success will be False if device fails to activate all given masks, 
+          which happen when number of logging channel is insufficient (MAX NUM of channel is 9).
+
+- start_log:
+  - op  : 62
+  - arg : null
+  - ret : [started: Boolean]
+  - desc: Start data logger. started is False if unable to start (log items is not set yet).
+
+- stop_log:
+  - op  : 63
+  - arg : null
+  - ret : null
+  - desc: Stop data logger.
+
+- read_log_data:
+  - op  : 64
+  - arg : [start_index: Int16]
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: Read log data from a starting index, maximum data per command is 251 items.
+          Arguments
+          - start_index -> Starting index to be read
+
+          Returns
+          - num_items -> number of received data
+          - data      -> array of received data
+
+          Note
+          - Pump and Valves data will be sent as bitmask in one UInt16 data, check PumpValveLogDatamask
+
+- get_log_status:
+  - op  : 65
+  - arg : null
+  - ret : [status: Int16, triggered_pos: UInt16]
+  - desc: | 
+          Get logger status. If trigger is activated, trigger_pos contain the index of data where trigger is activated. status is enums that consist of
+          - 0 -> logger is running
+          - 1 -> logger is stopped by user
+          - 2 -> logger is stopped by trigger
+          - 3 -> logger has not been started at all
+
+- read_log_stream_data:
+  - op  : 66
+  - arg : null
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: | 
+          Read streaming of data from last read index, max 200 data per command. For example, first read_log_stream_data command will obtain
+          data 0-199, second command will obtain data 200-399, and so on.
+          Arguments
+          - num_items -> number of received data
+          - data      -> array of received data
+
+- set_log_trigger:
+  - op  : 67
+  - arg : [module_id: UInt16, signal_mask: UInt16, level: UInt16, trigger_type: Int16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set a signal from a module to simulate osciloscope-like trigger. If trigger activated, the logger will automatically setup data such that
+          trigger position is in the middle of logged data. You should read the data using read_log_data command on trigger mode.
+          See https://community.keysight.com/community/keysight-blogs/oscilloscopes/blog/2016/09/01/understanding-oscilloscope-trigger-system-basics-why-you-should-care
+          to understand trigger in detail.
+          Arguments
+          - module_id    -> id of logger module, 0 is log tick, 1 is motor module, 1 is delidder module
+          - signal_mask  -> data/signal activation mask for each module, similar to masks in set_log_items. Please check enum section for mask list
+          - level        -> level of selected data/signal that activate the triggers
+          - trigger_type -> trigger type, 0 is disable trigger, 1 is rising signal trigger, 2 is falling signal trigger, 3 is both rising and falling signal trigger
+
+- get_log_period:
+  - op  : 68
+  - arg : null
+  - ret : [period_us: UInt32]
+  - desc: get logger sampling period is Us
+
+- set_log_period:
+  - op  : 69
+  - arg : [period_us: UInt32]
+  - ret : null
+  - desc: get logger sampling period is Us
+
+#---------------------------------- BREACH SENSOR --------------------------------------------
+- set_breach_threshold:
+  - op : 70
+  - arg: [value: UInt32]
+  - ret: null
+  - getter_op : 71
+  - desc: set the breach threshold
+
+- get_breach_threshold:
+  - op : 71
+  - arg: null
+  - ret: [value: UInt32]
+  - eeprom : null
+  - desc: get the breach threshold
+
+- get_breach_version:
+  - op  : 72
+  - arg : null
+  - ret : [name : String]
+  - desc: get the breach module version
+
+# -------------------------- ENCODER ------------------------------------
+- get_encoder_config:
+  - op  : 80
+  - arg : [motor_id: Int16]
+  - ret : [inverted: Boolean, count_per_step: Double]
+  - eeprom : [motor_id: 1]
+  - desc: Get encoder inversion status (True if inverted) and encoder count per step.
+
+- set_encoder_config:
+  - op  : 81
+  - arg : [motor_id: Int16, inverted: Boolean, count_per_step: Double]
+  - ret : null
+  - getter_op : 80
+  - desc: Set encoder inversion status (True if inverted) and encoder count per step.
+
+- get_fol_error_config:
+  - op  : 82
+  - arg : [motor_id: Int16]
+  - ret : [is_tracking_enabled: Boolean, max_fol_error: Double]
+  - eeprom : [motor_id: 1]
+  - desc: |
+          Get following error (encoder count != motor position) config
+          Returns
+          - is_tracking_enabled -> True if following error is enabled
+          - max_fol_error     -> Encoder count and motor position difference threshold that trigger the error.
+
+- set_fol_error_config:
+  - op  : 83
+  - arg : [motor_id: Int16, is_tracking_enabled: Boolean, max_fol_error: Double]
+  - ret : null
+  - getter_op : 82
+  - desc: |
+          Set following error (encoder count != motor position) config
+          Returns
+          - is_tracking_enabled -> set to True to enable following error
+          - max_fol_error     -> Encoder count and motor position difference threshold that trigger the error.
+
+- get_encoder_position:
+  - op  : 84
+  - arg : [motor_id: Int16]
+  - ret : [position: Double]
+  - desc: get encoder position/counts
+  
+- get_encoder_correction_enable:
+  - op : 86
+  - arg : [id: Int16]
+  - ret : [error_code: Int16, enable: Boolean]
+  - eeprom : [id: 1]
+  - exclude_eeprom : [error_code : Int16] # excluded return data, must be the same as name as the ret arguments
+  - desc: |
+          Get encoder correction enable
+          - id -> motor id
+          - enable -> enable the encoder correction
+          - error_code -> success if 0
+
+- set_encoder_correction_enable:
+  - op : 87
+  - arg : [id: Int16, enable: Boolean]
+  - ret : [error_code: Int16]
+  - getter_op : 86
+  - desc: |
+          Get encoder correction enable
+          - id -> motor id
+          - enable -> enable the encoder correction
+          - error_code -> success if 0
+
+- get_encoder_correction_config:
+  - op : 88
+  - arg : [id: Int16]
+  - ret : [error_code: Int16, ECp: Double, ECi: Double, ECd: Double, max_step_rate: Double, dead_band: Double, EC_integral_limit: Double]
+  - eeprom : [id: 1]
+  - exclude_eeprom : [error_code : Int16] # excluded return data, must be the same as name as the ret arguments
+  - desc: |
+          Get encoder correction config
+          - id -> motor id
+          - ECp -> error correction proportional value
+          - ECd -> error correction differential value
+          - ECi -> error correction integral value
+          - max_step_rate -> maximum correction step / second
+          - dead_band -> correction only occur on outside of this area
+          - EC_integral_limit -> maximum commulative integral value
+          - error_code -> success if 0
+
+- set_encoder_correction_config:
+  - op : 89
+  - arg : [id: Int16, ECp: Double, ECi: Double, ECd: Double, max_step_rate: Double, dead_band: Double, EC_integral_limit: Double]
+  - ret : [error_code: Int16]
+  - getter_op : 88
+  - desc: |
+          Set encoder correction config
+          see get_encoder_correction_config for params
+
+# ------------------------------- MOTION ABORT ------------------------------------
+- get_abort_config:
+  - op  : 90
+  - arg : [abort_id: Int16]
+  - ret : [trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - desc: please see AbortInputBitmask and AbortId
+
+- set_abort_config:
+  - op : 91
+  - arg: [abort_id: Int16, trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - ret: null
+  - desc: please see AbortInputBitmask and AbortId
+
+- clear_triggered_inputs:
+  - op : 92
+  - arg: [abort_id: Int16]
+  - ret: null
+
+- get_triggered_inputs:
+  - op : 93
+  - arg: [abort_id: Int16]
+  - ret: [input_mask: UInt32]
+
+- get_triggered_positions:
+  - op : 94
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c]
+
+- get_triggered_value:
+  - op : 95
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c]
+  
+- get_abort_threshold:
+  - op : 96
+  - arg: [abort_id: Int16]
+  - ret: [threshold: Double]
+
+- set_abort_threshold:
+  - op : 97
+  - arg: [abort_id: Int16, threshold: Double]
+  - ret: null
+
+# ------------------------------- SENSOR MONITOR ------------------------------------
+- get_sensor_monitor_enable_mask:
+  - op : 110
+  - arg: null
+  - ret: [enable_mask: UInt16]
+  - eeprom : null
+  - desc: |
+            get sensor monitor enable mask
+
+- set_sensor_monitor_enable_mask:
+  - op : 111
+  - arg: [enable_mask: UInt16]
+  - ret: null
+  - getter_op : 110
+  - desc: |
+            set sensor monitor enable mask
+
+- get_sensor_monitor_debounce_ms:
+  - op : 112
+  - arg: null
+  - ret: [debounce_ms: UInt16]
+  - eeprom : null
+  - desc: |
+            get sensor monitor debounce time in milisecond
+            
+- set_sensor_monitor_debounce_ms:
+  - op : 113
+  - arg: [debounce_ms: UInt16]
+  - ret: null
+  - getter_op : 112
+  - desc: |
+            set sensor monitor debounce time in milisecond
+            
+- get_sensor_monitor_threshold:
+  - op : 114
+  - arg: [id: UInt16]
+  - ret: [upper_limit: Double, lower_limit: Double]
+  - eeprom : [id: 8]
+  - desc: |
+            get sensor monitor upper and lower threshold for corresponding channel
+
+- set_sensor_monitor_threshold:
+  - op : 115
+  - arg: [id: UInt16, upper_limit: Double, lower_limit: Double]
+  - ret: [success : Boolean]
+  - getter_op : 114
+  - desc: |
+            set sensor monitor upper and lower threshold for corresponding channel
+
+#---------------------------------- MOTOR BRAKE -----------------------------------
+- get_motor_brake_params:
+  - op : 120
+  - arg: [id: Int16]
+  - ret: [brake_on_fault : Boolean, inverted : Boolean, pulse_period_us: UInt32, pulse_voltage: Double, hold_voltage: Double, supply_voltage: Double]
+  - eeprom : [id: 1]
+  - desc: |
+            get solenoid motor brake params
+
+- set_motor_brake_params:
+  - op : 121
+  - arg: [id: Int16, brake_on_fault : Boolean, inverted : Boolean , pulse_period_us: UInt32, pulse_voltage: Double, hold_voltage: Double, supply_voltage: Double]
+  - ret: null
+  - getter_op : 120
+  - desc: |
+            set solenoid motor brake params
+
+- get_motor_brake_pwm_period_us:
+  - op : 122
+  - arg: null
+  - ret: [pwm_period_us: UInt32]
+  - eeprom : null
+  - desc: |
+            get motor brake PWM period in Us
+
+- set_motor_brake_pwm_period_us:
+  - op : 123
+  - arg: [pwm_period_us: UInt32]
+  - ret: null
+  - getter_op : 122
+  - desc: |
+            set motor brake PWM period in Us, the freq will affect after FW reboot
+
+- set_brake_hold:
+  - op : 124
+  - arg: [id: Int16, hold: Boolean]
+  - ret: null
+  - desc: |
+            set motor motor brake holding
+
+- get_brake_hold:
+  - op : 125
+  - arg: [id: Int16]
+  - ret: [hold: Boolean]
+  - desc: |
+            get motor motor brake holding
+
+#---------------------------------- MOTOR EXTENSION -----------------------------------
+- get_profile_list:
+  - op  : 130
+  - arg : [motor_id: Int16]
+  - ret : [count: Int16, data: Array_Int16_c]
+  - desc: Obtain list of available motion profile types
+
+- get_active_profile:
+  - op  : 131
+  - arg : [motor_id: Int16]
+  - ret : [profile_type: Int16]
+  - eeprom : [motor_id: 1]
+  - desc: Get the currently active profile
+  
+- set_active_profile:
+  - op  : 132
+  - arg : [motor_id: Int16, profile_type: Int16]
+  - ret : [ret_code: Int16]
+  - getter_op : 131
+  - desc: Set active profile, returns 0 if success
+
+- move_multi_motor_abs:
+  - op  : 133
+  - arg : [motor_count: UInt16, motor_id: Array_Int16, pos: Array_Double, vel: Array_Double, acc: Array_Double]
+  - ret : [motor_error_code: Array_UInt16]
+  - desc: |
+          Move motor to an absolute position
+          Arguments
+          - pos -> Target position, should be within position limit
+          - vel -> Motor Velocity
+          - acc -> Motor Acceleration
+          
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- get_motor_enabled:
+  - op  : 136
+  - arg : [id: UInt16]
+  - ret : [isEnabled: Boolean]
+  - desc: get motor enabled
+
+- get_motor_enabled:
+  - op  : 136
+  - arg : [id: UInt16]
+  - ret : [isEnabled: Boolean]
+  - desc: get motor enabled
+
+- set_motor_enabled:
+  - op  : 137
+  - arg : [id: UInt16, isEnabled: Boolean]
+  - ret : null
+  - desc: set motor enabled
+
+- get_motor_deceleration:
+  - op  : 138
+  - arg : [motor_id: Int16]
+  - ret : [stop_decel: Double, abort_decel: Double, stop_abort_jerk: Double]
+  - eeprom : [motor_id: 1]
+  - desc: Get enable stop and abort deceleration in step/sec^2, and jerk in step/sec^3
+
+- set_motor_deceleration:
+  - op  : 139
+  - arg : [motor_id: Int16, stop_decel: Double, abort_decel: Double, stop_abort_jerk: Double]
+  - ret : null
+  - getter_op : 138
+  - desc: Set enable stop and abort deceleration in step/sec^2, and jerk in step/sec^3
+
+#---------------------------------- DLLT Related --------------------------------------
+- set_liquid_tracking_move_profile:
+  - op : 140
+  - arg: [vel: Double, acc: Double, move_thres: Double, inverted: Boolean]
+  - ret: null
+  - getter_op : 141
+  - desc: set move profile on liquid level tracking
+
+- get_liquid_tracking_move_profile:
+  - op : 141
+  - arg: null
+  - ret: [vel: Double, acc: Double, move_thres: Double, inverted: Boolean]
+  - eeprom : null
+  - desc: get move profile on liquid level tracking
+
+- set_liquid_tracking_limit:
+  - op : 142
+  - arg: [is_limit: Boolean, upper_limit: Double, lower_limit: Double]
+  - ret: null
+  - desc: set limit movement on liquid level tracking movement
+
+- get_liquid_tracking_limit:
+  - op : 143
+  - arg: null
+  - ret: [is_limit: Boolean, upper_limit: Double, lower_limit: Double]
+  - desc: get limit movement on liquid level tracking movement
+
+- set_liquid_tracking_resistance_params:
+  - op : 144
+  - arg: [kp: Double, ki: Double, kd: Double, res_thres: Double, step_size: Double, big_step: Double, pid_period_ms: UInt32]
+  - ret: null
+  - desc: set parameters for resistance dllt
+
+- get_liquid_tracking_resistance_params:
+  - op : 145
+  - arg: null
+  - ret: [kp: Double, ki: Double, kd: Double, res_thres: Double, step_size: Double, big_step: Double, pid_period_ms: UInt32]
+  - desc: get parameters for resistance dllt
+
+- set_liquid_tracking_volume_linear_params:
+  - op : 146
+  - arg: [track_factor: Double, vol_thres: Double]
+  - ret: null
+  - desc: set parameters for volume linear dllt
+
+- get_liquid_tracking_volume_linear_params:
+  - op : 147
+  - arg: null
+  - ret: [track_factor: Double, vol_thres: Double]
+  - desc: set parameters for volume linear dllt
+
+- get_liquid_tracking_table_position:
+  - op : 148
+  - arg: [index: UInt16]
+  - ret: [size : UInt16, weight : Array_Double_c]
+  - desc: get lookup table for tracker position vs volume
+
+- set_liquid_tracking_table_position:
+  - op : 149
+  - arg: [index: UInt16, size : UInt16, weight : Array_Double_c]
+  - ret: null
+  - desc: set lookup table for tracker position vs volume
+
+- start_liquid_tracker:
+  - op : 150
+  - arg: [mode: UInt16]
+  - ret: [success: Boolean]
+  - desc: start tracker with specific mode, see tracking mode
+
+- get_liquid_tracker_run:
+  - op : 151
+  - arg: null
+  - ret: [is_run: Boolean]
+  - desc: get is liquid tracker running
+
+- stop_liquid_tracker:
+  - op : 152
+  - arg: null
+  - ret: null
+  - desc: get is liquid tracker running
+
+- get_AD9833_Frequency:
+  - op : 153
+  - arg: null
+  - ret: [Frequency: Double]
+  - eeprom : null
+  - desc: get AD9833 frequency set in Hz
+
+- set_AD9833_Frequency:
+  - op : 154
+  - arg: [Frequency: Double]
+  - ret: null
+  - getter_op : 153
+  - desc: set AD9833 frequency set in Hz
+
+- get_mux_dllt_pin_switch:
+  - op : 155
+  - arg: null
+  - ret: [switch_on: Boolean]
+  - desc: get the dllt mux pin is switched
+
+- set_mux_dllt_pin_switch:
+  - op : 156
+  - arg: [switch_on: Boolean]
+  - ret: null
+  - desc: set the dllt mux pin switched
+
+- set_scale_volume_table:
+  - op : 157
+  - arg: [scale: Double]
+  - ret: null
+  - desc: set divider scale for volume position lookup table
+
+- get_scale_volume_table:
+  - op : 158
+  - arg: null
+  - ret: [scale: Double]
+  - desc: get divider scale for volume position lookup table
+  
+#---------------------------------- SENSOR --------------------------------------------
+- read_sensor:
+  - op  : 160
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read sensor value check sensor ID
+
+- set_sensor_lpf_cutoff:
+  - op  : 161
+  - arg : [id: UInt16, enable: Boolean, cut_off_hz: Double]
+  - ret : null
+  - getter_op : 162
+  - desc: set sensor lpf freq in hz
+
+- get_sensor_lpf_cutoff:
+  - op  : 162
+  - arg : [id: UInt16]
+  - ret : [enable: Boolean, cut_off_hz: Double]
+  - eeprom : [id: 8]
+  - desc: get sensor lpf freq in hz
+
+- set_temp_offset:
+  - op  : 163
+  - arg : [id: UInt16, offset: Double]
+  - ret : null
+  - getter_op : 164
+  - desc: Set temperature offset for correcting the reading of temperature in celcius
+
+- get_temp_offset:
+  - op  : 164
+  - arg : [id: UInt16]
+  - ret : [offset: Double]
+  - eeprom : [id: 2]
+  - desc: Get temperature offset for correcting the reading of temperature in celcius
+  
+- set_steinhart_temperature_coeficient:
+  - op  : 165
+  - arg : [id: UInt16, A: Double, B: Double, C: Double]
+  - ret : null
+  - getter_op : 166
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_steinhart_temperature_coeficient:
+  - op  : 166
+  - arg : [id: UInt16]
+  - ret : [A: Double, B: Double, C: Double]
+  - eeprom : [id: 2]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- set_thermistor_coefficient:
+  - op  : 167
+  - arg : [id: UInt16, r_divider: Double, v_offset: Double, gain_amplifier: Double, voltage_divider: Double]
+  - ret : null
+  - getter_op : 168
+  - desc: Set schematic design value for the NTC circuit
+
+- get_thermistor_coefficient:
+  - op  : 168
+  - arg : [id: UInt16]
+  - ret : [r_divider: Double, v_offset: Double, gain_amplifier: Double, voltage_divider: Double]
+  - eeprom : [id: 2]
+  - desc: Get schematic design value for the NTC circuit
+
+#------------------------------ EJECTOR ----------------------------------------------------
+- start_eject_tip:
+  - op  : 170
+  - arg : [voltage: Double, timeout_us: UInt32]
+  - ret : [ok: Boolean]
+  - desc: |
+          start ejecting the tip, if the eject done or timeout, it will give event eject done
+          arg: 
+                - voltage: the voltage to run the DC motor
+                - timeout_us: the maximum time to do eject
+          ret:
+                - ok: if this false, the ejecting still on process and cannot do double eject
+
+#------------------------------ FLO Pipetting ----------------------------------------------
+- get_flow_running_status:
+  - op : 180
+  - arg: null
+  - ret: [running_funct: UInt16]
+  - desc: |
+          get the running function, see running function enum
+
+- get_sensor_config:
+  - op : 181
+  - arg: [id: UInt16]
+  - ret: [cal_static_asp: Double, cal_static_dsp: Double, flow_drift_asp: Double, flow_drift_dsp: Double,
+      DpHighThreshold: Double, DpLowThreshold: Double, ExtraOffsetAsp: Double,
+      ExtraOffsetDsp: Double, ExtraScaleAsp: Double, ExtraScaleDsp: Double,
+      SlopeThreshold: Double, vicous_scale: Double, viscous_offset: Double, SensorId: UInt32, air_col: Double]
+  - eeprom : [id: 2]
+  - desc: |
+          get the flow sensor config
+          ======== equation on flow sensor ===========================================
+          cal_compensate = cal_static / ((vicous_scale x TemKelvin) + viscous_offset)
+          dp = (sq(SensorP1 - DpOffset) - sq(SensorP2)) / (2 x SensorP2);
+          flow = ( dp x cal_compensate ) + flow_drift
+          flow_compensate = flow x (SensorP2 / Atm)
+          sensed_volume = integral flow_compensate over time
+          extra_vol = ( ( ( SensorP1 - DpOffset) - Atm ) x ExtraScale ) + ExtraOffset
+          total_volume = sensed_volume + extra_vol
+          -----------------------------------------------------------------------------
+          Argument:
+          - id --> 0 for low flow, 1 for high flow
+          Return
+          - cal_static_asp  -> calibration value of restriction flow sensor on aspirate
+          - cal_static_dsp  -> calibration value of restriction flow sensor on dispense
+          - flow_drift_asp  -> non linearity (offset) on calibration response for aspirate
+          - flow_drift_dsp  -> non linearity (offset) on calibration response for dispense
+          - DpHighThreshold -> threshold for start sequence on pipetting, calibrate and count volume function
+          - DpLowThreshold  -> threshold for stop on count volume function
+          - ExtraOffsetAsp  -> offset for extra volume aspirate
+          - ExtraOffsetDsp  -> offset for extra volume dispense
+          - ExtraScaleAsp   -> scale fro counting extra volume aspirate, see above equation
+          - ExtraScaleDsp   -> scale fro counting extra volume dispense, see above equation
+          - SlopeThreshold  -> slope threshold for ending calibrate and count volume function
+          - vicous_scale    -> value for calculate cal_compensate see equation above 
+          - viscous_offset  -> value for calculate cal_compensate see equation above
+          - SensorId        -> id for production tracking purpose, this id should be set during calibration and should not changed
+          - air_col         -> the system air column in uL ( exclude the tip )
+
+- set_sensor_config:
+  - op : 182
+  - arg: [id: UInt16, cal_static_asp: Double, cal_static_dsp: Double, flow_drift_asp: Double, flow_drift_dsp: Double,
+      DpHighThreshold: Double, DpLowThreshold: Double, ExtraOffsetAsp: Double,
+      ExtraOffsetDsp: Double, ExtraScaleAsp: Double, ExtraScaleDsp: Double,
+      SlopeThreshold: Double, vicous_scale: Double, viscous_offset: Double, SensorId: UInt32, air_col: Double]
+  - ret: null
+  - getter_op : 181
+  - desc: |
+          set the flow sensor config
+          please see get_sensor_config
+
+- tare_pressure:
+  - op : 183
+  - arg: null
+  - ret: [status: UInt16]
+  - desc: |
+          function for calculating offset difference between p2 and p1
+          if the process is done event on_tare_done will raise
+          Returns
+          - status -> please see Pipetting function return code
+
+- calibrate:
+  - op : 184
+  - arg: null
+  - ret: [status: UInt16]
+  - desc: |
+          function do the calibration
+          if the process is done event on_calibrate_finish will raise
+          Returns
+          - status -> please see Pipetting function return code
+
+
+- count_volume:
+  - op : 185
+  - arg: [mode: UInt16]
+  - ret: [status: UInt16]
+  - desc: |
+          function to calculte volume flowing on sensor, this if to verify the calibrated value on flow sensor
+          if the process is done event on_count_vol_done will raise
+          Returns
+          - status -> please see Pipetting function return code
+
+- start_pipetting:
+  - op : 186
+  - arg: [with_predicted: UInt16, with_temp_compensate: UInt16, volume: Double,
+      max_flow: Double, min_flow: Double, decel_vol: Double, residual_press_offset: Double, 
+      air_column: Double, p2_rel_thres_upper: Double, p2_rel_thres_lower: Double, 
+      start_ave_t2_ms: UInt32, ave_window_t2: UInt16]
+  - ret: [status: UInt16]
+  - desc: |
+          function to start aspirate or dispense
+          Arguments
+          - with_predicted          -> if true it will calculate using predicted extra volume, dont use it on calibrate extra volume, use it on actual pipetting
+          - with_temp_compensate    -> if need to compensate with temperature use this
+          - volume                  -> target volume
+          - max_flow                -> trajectory maximum flow ( stating flow )
+          - min_flow                -> trajectory maximum flow ( ending flow )
+          - decel_vol               -> volume threshold for start deceleration of flow from max flow to min flow
+          - residual_press_offset   -> predicted residual vacuum or pressure, value is relative to atmosphere, if aspirate it will be negative and vise versa
+          - air_column              -> total air column including tip, if theres liquid on tip air colunm also need to adjust base on the liquid on the tip 
+                                       (air_column = total_volume - liquid_volume_on_tip)
+          - p2_rel_thres_upper      -> maximum p2 relative to ATM, value is absolute ( aspirate and dispense same ) --> if p2 is reach this value, 
+                                       it will enter limit mode, and target pressure = p2_rel_thres_upper
+          - p2_rel_thres_lower      --> unused, just for SW backward compatibility
+          - start_ave_t2_ms         -> time to start averaging pressure t2 after valve closed
+          - ave_window_t2           -> averaging point on t2
+          start_ave_t2_ms and ave_window_t2 is for prediction whether tip is cloged during ALC or not
+          Returns
+          - status -> please see Pipetting function return code
+
+- abort_flow_func:
+  - op : 187
+  - arg: null
+  - ret: [status: UInt16]
+  - desc: |
+          it will abort all pipetting function
+          Returns
+          - status -> please see Pipetting function return code
+
+- read_tubing_temp:
+  - op : 188
+  - arg: null
+  - ret: [temp: Double]
+  - desc: |
+          it will read the temperature on tubing near tip
+          Returns
+          - temp -> temperature on celcius
+
+- averaging_pressure:
+  - op : 189
+  - arg: [sample: UInt16]
+  - ret: [status: UInt16]
+  - desc: |
+          average pressure based on sample point, if the average is done it will raise on_average_done event
+          Returns
+          - status -> please see Pipetting function return code
+
+- get_alc_config:
+  - op : 190
+  - arg: null
+  - ret: [tau_threshold: Double,
+      tau_time_multiply: Double, thres_pres_select: Double, thres_vac_select: Double,
+      avg_window_scale: Double, avg_window_offset: Int16, avg_window_low_limit: UInt16, 
+      slope_window_scale: Double,slope_window_offset: Int16, slope_window_low_limit: UInt16,
+      threshold_scale: Double, threshold_offset: Double, threshold_low_limit: Double,
+      threshold_max_limit: Double, alc_timeout_ms: UInt32]
+  - desc: |
+          get alc parameters
+          ================ calculation for ALC ===========================================
+          pres_thres_rel = abs(( p2 - (atm - predicted residual pressure) ) x tau_threshold)
+          tau_time = time_pressure_reach_thres_rel -  vale_closed_time
+          avg_window_pressure = ( tau_time x  avg_window_scale ) + avg_window_offset
+          avg_window_pressure = max(avg_window_pressure, avg_window_low_limit)
+          slope_window_pressure = ( tau_time x  slope_window_scale ) + slope_window_offset
+          slope_window_pressure =  max(slope_window_pressure, slope_window_low_limit)
+          slope_threshold = ( tau_time x  threshold_scale ) + threshold_offset
+          slope_threshold = max(slope_threshold, threshold_low_limit)
+          slope_threshold = min(slope_threshold, threshold_max_limit)
+          alc_done = if (time > (tautime * tau_time_multiply) && ( slope_value < slope_threshold))
+          --------------------------------------------------------------------------------
+          Returns
+          - tau_threshold           -> threshold value for pressure to decrease relative from ATM in percentage, ussually value is 0.63
+          - tau_time_multiply       -> multiplier of tau time, this time is to give threshold when the alc is done
+          - thres_pres_select       -> relative threshold for select p2 or p1 for calculate ALC, if p2 > thres_pres_select then it will use p2 else use p1, 
+                                       for dispense pipetting, value must be positive
+          - thres_vac_select        -> relative threshold for select p2 or p1 for calculate ALC, if p2 > thres_pres_select then it will use p2 else use p1, 
+                                       for aspirate pipetting, value must be negative
+          - avg_window_scale        -> scale to calculate avg_window_pressure
+          - avg_window_offset       -> offset to calculate avg_window_pressure
+          - avg_window_low_limit    -> minimum avg_window_pressure
+          - slope_window_scale      -> scale to calculate slope_window_pressure
+          - slope_window_offset     -> offset to calculate slope_window_pressure
+          - slope_window_low_limit  -> minimum slope_window_pressure
+          - threshold_scale         -> scale to calculate slope_threshold
+          - threshold_offset        -> offset to calculate slope_threshold
+          - threshold_low_limit     -> minimum slope threshold
+          - threshold_max_limit     -> maximum slope threshold
+          - alc_timeout_ms          -> timeout for ALC, if time spent more than this limit the ALC will aborted and raise pipetting error
+
+- set_alc_config:
+  - op : 191
+  - arg: [tau_threshold: Double,
+      tau_time_multiply: Double, thres_pres_select: Double, thres_vac_select: Double,
+      avg_window_scale: Double, avg_window_offset: Int16, avg_window_low_limit: UInt16, 
+      slope_window_scale: Double,slope_window_offset: Int16, slope_window_low_limit: UInt16,
+      threshold_scale: Double, threshold_offset: Double, threshold_low_limit: Double,
+      threshold_max_limit: Double, total_timeout_ms: UInt32]
+  - ret: null
+  - desc: |
+          set alc parameters, please see get_alc_config for params
+
+- get_regulator_pid:
+  - op : 192
+  - arg: [sens_id: UInt16, id: UInt16]
+  - ret: [kp: Double, ki: Double, kd: Double, i_limit: Double]
+  - eeprom : [sens_id: 2, id: 4]
+  - desc: |
+          sens_id:
+          0 = low flow sensor
+          1 = high flow sensor
+          pid id
+          0 = pid aspirate
+          1 = pid dispense
+          2 = pid dpc
+          3 = pid volume --> closed loop pipetting
+          4 = pid p2 limit
+
+- set_regulator_pid:
+  - op : 193
+  - arg: [sens_id: UInt16, id: UInt16, kp: Double, ki: Double, kd: Double, i_limit: Double]
+  - ret: null
+  - getter_op : 192
+  - desc: |
+          pid id
+          please see get_regulator_pid return
+
+- start_regulator_mode:
+  - op : 194
+  - arg: [mode: UInt16, target: Double, pid_select: UInt16, limit_sel: UInt16, lim_ignored_flow: Double, volume_limit: Double, timeoutMs: UInt32, use_acc_comp: Boolean, comp_factor: Double]
+  - ret: [status: UInt16]
+  - desc: |
+          mode
+          0 = regulate p1 --> target in mbar
+          1 = regulate p2 --> target in mbar
+          2 = regulate flow --> target in uL/sec
+          3 = regulate p1 filtered --> target in mbar
+          4 = regulate p2 filtered --> target in mbar
+          pid select
+          0 = pid aspirate
+          1 = pid dispense
+          2 = pid dpc
+          limit select
+          0 = no limit
+          1 = limit less than
+          2 = limit more than
+          3 = limit absolute
+          lim_ignored_flow --> if the absolute flow is lower than this setting it will be ignored ( not count )
+          volume_limit --> limited volume in uL
+          timeoutMs --> if the process took longer than this settings, it will abort, if this set to 0 it will never abort
+          use_acc_comp --> if this true, it will compensate the reading pressure on p2 
+          comp_factor --> press comp = acc x comp_factor
+
+- set_tubing_sens_override:
+  - op : 195
+  - arg: [is_override: UInt16, value: Double]
+  - ret: null
+  - desc: |
+          for set if we need to override tubing temperature sensor value, ussualy need for system that doesn't have tubing temperature sensor
+          but using temperature to compensate flow
+
+- get_valve_open_response_ms:
+  - op : 196
+  - arg: null
+  - ret: [value: UInt32]
+  - eeprom : null
+  - desc: |
+          get valve opening response in milisecond
+
+- set_valve_open_response_ms:
+  - op : 197
+  - arg: [value: UInt32]
+  - ret: null
+  - getter_op : 196
+  - desc: |
+          set valve opening response in milisecond, this value is get from pressure response, we can see it using pressure logger
+
+- get_regulator_p1_limits:
+  - op : 198
+  - arg: null
+  - ret: [upper: Double, lower: Double]
+  - eeprom : null
+  - desc: |
+          get the regulator limit pressure in absolute, if p1 exeed this limit prop valve will closed and wait until below the limit
+
+- set_regulator_p1_limits:
+  - op : 199
+  - arg: [upper: Double, lower: Double]
+  - ret: null
+  - getter_op : 198
+  - desc: |
+          set the regulator limit pressure in absolute, if p1 exeed this limit prop valve will closed and wait until below the limit
+
+- set_air_transfer_detect_params:
+  - op : 200
+  - arg: [enable: Boolean, threshold1_ulps: Double, threshold2_ulps: Double, start_detect_ms: UInt32, stop_pipetting: Boolean]
+  - ret: null
+  - desc: |
+          set air transfer detect param, please see get_air_transfer_detect_params for detail
+
+- get_air_transfer_detect_params:
+  - op : 201
+  - arg: null
+  - ret: [enable: Boolean, threshold1_ulps: Double, threshold2_ulps: Double, start_detect_ms: UInt32, stop_pipetting: Boolean]
+  - desc: |
+          get the air transfer detect param
+          the air transfer detetected if (actual_flow - sensed_flow) > threshold
+          Returns
+          - enable          -> enable for detection
+          - threshold1_ulps -> threshold before valve closed
+          - threshold2_ulps -> threshold after valve closed ( ALC period )
+          - start_detect_ms -> starting detection after (valve open + valve response time )
+          - stop_pipetting  -> if true and air aspirate detected it will abort pipetting
+
+- set_clog_detect_params:
+  - op : 202
+  - arg: [enable: Boolean, threshold_percentage: Double, start_detect_ms: UInt32, clog_det_period_ms: UInt32, stop_pipetting: Boolean]
+  - ret: null
+  - desc: |
+          set air clog detect param, please see get_clog_detect_params for detail
+
+- get_clog_detect_params:
+  - op : 203
+  - arg: null
+  - ret: [enable: Boolean, threshold_percentage: Double, start_detect_ms: UInt32, clog_det_period_ms: UInt32, stop_pipetting: Boolean]
+  - desc: |
+          get the air clog detect param
+          the clog detetected if (sensed_flow x threshold_percentage) < threshold
+          Returns
+          - enable                  -> enable for detection
+          - threshold_percentage    -> threshold percentage of sensed flow
+          - start_detect_ms         -> starting detection after (valve open + valve response time )
+          - clog_det_period_ms -> minimum drop flow period for detecting clog
+          - stop_pipetting          -> if true and clog detected it will abort pipetting
+
+- select_flow_sensor:
+  - op : 204
+  - arg: [use_high_flow: Boolean]
+  - ret: null
+  - desc: |
+          select between high flow and low flow
+
+- get_selected_flow_sensor:
+  - op : 205
+  - arg: null
+  - ret: [use_high_flow: Boolean]
+  - desc: |
+          get selected flow sensor
+
+- start_pipettingV2:
+  - op : 206
+  - arg: [volume: Double,  air_column: Double, max_flow: Double, min_flow: Double, decel_vol: Double,
+          cutoff_freq: Double, settling_tolerance: Double, settling_time_us: UInt32, p2Limit: Double,
+          extra_vol_limit: Double, ph2_vol_limit: Double, timeout_ms: UInt32, mixingCycle: UInt16]
+  - ret: [status: UInt16]
+  - desc: |
+          closed loop pipetting 
+          - volume              -> target volume
+          - air_column          -> total air column including tip, if theres liquid on tip air colunm also need to adjust base on the liquid on the tip 
+                                   (air_column = total_volume - liquid_volume_on_tip)
+          - max_flow            -> trajectory maximum flow ( stating flow )
+          - min_flow            -> trajectory maximum flow ( ending flow )
+          - decel_vol           -> volume threshold for start deceleration of flow from max flow to min flow
+          - cutoff_freq         -> actual volume filtering to reduce noise
+          - settling_tolerance  -> maximum error allowed
+          - settling_time_us    -> settling period to decide pipetting done ( if error < settling_tolerance for more than this value then pipetting is done )
+          - p2Limit             -> maximum p2 relative to ATM, value is absolute ( aspirate and dispense same )
+          - extra_vol_limit     -> maximum difference between sensed volume and actual volume or abs(sensed - actual_volume)
+          - ph2_vol_limit       -> volume threshold for change to phase 2 (use PID for volume)
+          - timeout_ms          -> maximum time for do pipetting
+          - mixingCycle         -> if more than 0 it will do mixing, if not it will use normal pipetting
+
+
+- start_calib_prop_valve:
+  - op : 207
+  - arg: [start_off_vacc: Double, start_off_press: Double, increment: Double, dp_threshold: Double, step_delay_ms: UInt16]
+  - ret: [status: UInt16]
+  - desc: |
+          start calibrate prop valve
+          - start_off_vacc  -> start offset voltage in percentage of power supply on vacuum valve
+          - start_off_press -> start offset voltage in percentage of power supply on pressure valve
+          - increment       -> increment for every cycle in percentage
+          - dp_threshold    -> threshold to detect valve already open
+          - step_delay_ms   -> delay in every cycle
+
+- set_regulator_deadband:
+  - op : 208
+  - arg: [sens_id: UInt16, id: UInt16, deadBand: Double]
+  - ret: null
+  - getter_op : 209
+  - desc: |
+          sens_id:
+          0 = low flow sensor
+          1 = high flow sensor
+          pid id
+          0 = pid aspirate
+          1 = pid dispense
+          2 = pid dpc
+          3 = pid volume --> closed loop pipetting
+          4 = pid p2 limit
+          set regulator deadband PID, if error is inside deadband the output controller is zero
+          and no adding on integral value
+
+- get_regulator_deadband:
+  - op : 209
+  - arg: [sens_id: UInt16, id: UInt16]
+  - ret: [deadBand: Double]
+  - eeprom : [sens_id: 2, id: 5]
+  - desc: |
+          get regulator deadband see set_regulator_deadband
+          
+ # ----------------------------- VALVE TESTING ---------------------------------------
+- set_valve:
+  - op : 210
+  - arg: [open: Boolean]
+  - ret: null
+  - desc: |
+          if true the valve will active and open the connection between ereg and P1 chamber
+
+- get_valve:
+  - op : 211
+  - arg: null
+  - ret: [open: Boolean]
+  - desc: |
+          if true the valve will active and open the connection between ereg and P1 chamber
+
+- set_drain:
+  - op : 212
+  - arg: [open: Boolean]
+  - ret: null
+  - desc: |
+          if true the drain valve is deactivate and it will open the drain
+
+- get_drain:
+  - op : 213
+  - arg: null
+  - ret: [open: Boolean]
+  - desc: |
+          if true the drain valve is deactivate and it will open the drain
+
+- get_prop_valve_range:
+  - op : 214
+  - arg: [id: UInt16]
+  - eeprom : [id: 2]
+  - ret: [min_duty: Double, max_duty: Double]
+
+- set_prop_valve_range:
+  - op : 215
+  - arg: [id: UInt16, min_duty: Double, max_duty: Double]
+  - getter_op : 214
+  - ret: null
+
+ 
+- set_prop_valve_out:
+  - op : 216
+  - arg: [id: UInt16, value: Double]
+  - ret: null
+  - desc: |
+          see get_prop_valve_out for arguments and out
+
+- get_prop_valve_out:
+  - op : 217
+  - arg: [id: UInt16]
+  - ret: [value: Double]
+  - desc: |
+          valve ID
+          0 = vacuum
+          1 = pressure
+          value in percentage 0 - 1
+          
+- clr_prop_valve:
+  - op : 218
+  - arg: [id: UInt16]
+  - ret: null
+
+# ------------------------------- TRINAMIC SPECIFIC ------------------------------------
+- write_trinamic_register:
+  - op : 260
+  - arg: [id: Int16, address: UInt16, value: UInt32]
+  - ret: null
+  
+- read_trinamic_register:
+  - op : 261
+  - arg: [id: Int16, address: UInt16]
+  - ret: [value: Int32]
+
+- write_driver_register:
+  - op : 262
+  - arg: [id: Int16, address: UInt16, value: UInt32]
+  - ret: null
+  
+- read_driver_register:
+  - op : 263
+  - arg: [id: Int16, address: UInt16]
+  - ret: [value: Int32]
+
+- write_spi_encoder_register:
+  - op : 264
+  - arg: [id: Int16, address: UInt16, value: UInt32]
+  - ret: null
+  
+- read_spi_encoder_register:
+  - op : 265
+  - arg: [id: Int16, address: UInt16]
+  - ret: [value: Int32]
+
+- set_stallguard_config:
+  - op : 266
+  - arg: [id: Int16, enable: Boolean, vel_threshold : Double, stall_offset : Int16]
+  - ret: null
+  
+- get_stallguard_config:
+  - op : 267
+  - arg: [id: Int16]
+  - ret: [enable: Boolean, vel_threshold : Double, stall_offset : Int16]
+  
+- read_stallguard_result:
+  - op : 268
+  - arg: [id: Int16]
+  - ret: [result : Int16]
+  
+- set_stealthchop_config:
+  - op : 269
+  - arg: [id: Int16, enable: Boolean, use_spreadcycle: Boolean, vel_threshold: Double]
+  - ret: null
+  - getter_op : 270
+
+- get_stealthchop_config:
+  - op : 270
+  - arg: [id: Int16]
+  - ret: [enable: Boolean, use_spreadcycle: Boolean, vel_threshold: Double]
+  - eeprom : [id: 1]
+  
+- set_stealthchop_params:
+  - op : 271
+  - arg: [id: Int16, pwm_ofs: UInt16, pwm_grad: UInt16]
+  - ret: null
+
+- get_stealthchop_params:
+  - op : 272
+  - arg: [id: Int16]
+  - ret: [pwm_ofs: UInt16, pwm_grad: UInt16]
+  
+- set_auto_pwm_enable:
+  - op : 273
+  - arg: [id: Int16, enable : Boolean]
+  - ret: null
+
+- get_auto_pwm_enable:
+  - op : 274
+  - arg: [id: Int16]
+  - ret: [enable : Boolean]
+
+- set_trinamic_hardware_config:
+  - op : 275
+  - arg: [id: Int16, rsense : Double, clk_mhz : UInt16]
+  - ret: null
+  - getter_op : 276
+
+- get_trinamic_hardware_config:
+  - op : 276
+  - arg: [id: Int16]
+  - ret: [rsense : Double, clk_mhz : UInt16]
+  - eeprom : [id: 1]
+
+- set_trinamic_driver_type:
+  - op : 277
+  - arg: [id: Int16, type : UInt16]
+  - ret: null
+  - getter_op : 278
+  - desc: |
+            0 == xx60
+            1 == xx30
+            
+- get_trinamic_driver_type:
+  - op : 278
+  - arg: [id: Int16]
+  - ret: [type : UInt16]
+  - eeprom : [id: 1]
+  - desc: |
+            0 == xx60
+            1 == xx30
+
+- read_driver_status:
+  - op : 279
+  - arg: [id: Int16]
+  - ret: [type : UInt32]
+  - desc: |
+            get the all driver error status, see the ENUM Driver Status Code
+
+# ------------------------------- TRINAMIC Extended ------------------------------------
+- set_current_loop_enable:
+  - op : 300
+  - arg: [id: Int16, enable : Boolean]
+  - ret: null
+
+- get_current_loop_enable:
+  - op : 301
+  - arg: [id: Int16]
+  - ret: [enable : Boolean]
+  - desc : Enable the Adaptive current based on the encoder deviation, must use with encoder
+
+- set_current_loop_config:
+  - op : 302
+  - arg: [id: Int16, i_max : Double, i_min : Double, deadband : Double]
+  - ret: null
+  - desc : Adaptive current setting based on the encoder deviation, must use with encoder
+
+- get_current_loop_config:
+  - op : 303
+  - arg: [id: Int16]
+  - ret: [i_max : Double, i_min : Double, deadband : Double]
+  - desc : Adaptive current setting based on the encoder deviation, must use with encoder
+
+- set_encoder_correction_type:
+  - op : 306
+  - arg: [id: Int16, type : UInt16]
+  - ret: null
+  - getter_op : 307
+  - desc: |
+            0 == Closed Loop
+            1 == PID regulation
+            
+- get_encoder_correction_type:
+  - op : 307
+  - arg: [id: Int16]
+  - ret: [type : UInt16]
+  - eeprom : [id: 1]
+  - desc: |
+            0 == Closed Loop
+            1 == PID regulation
+
+- set_chopconf:
+  - op : 308
+  - arg: [id: Int16, tbl : UInt16, toff : UInt16, hstart : UInt16, hend : UInt16]
+  - ret: null
+  - desc : See chopconf register on TMC xx60/xx30 datasheet
+
+- get_chopconf:
+  - op : 309
+  - arg: [id: Int16]
+  - ret: [tbl : UInt16, toff : UInt16, hstart : UInt16, hend : UInt16]
+  - desc : See chopconf register on TMC xx60/xx30 datasheet
+
+################################### EVENTS #################################################
+EVENTS:
+# -------------------- Motor --------------------------------------------------------------------------------------------------
+- motor_move_started:
+  - op  : 512
+  - ret: [motor_id: Int16]
+  - desc: Fired upon motor movement is started.
+
+- motor_move_done:
+  - op  : 513
+  - ret: [motor_id: Int16, status: UInt16, position: Double]
+  - desc: Fired upon motor movement is done, send the motor status and position. Check MotorStatusBitmask enum for motor status.
+
+- motor_home_done:
+  - op  : 514
+  - ret: [motor_id: Int16, home_pos: Double, pos: Double]
+  - desc: Fired upon motor homing is done, return abs_pos (absolute position), and pos (position after applying offset).
+
+- motor_error_occured:
+  - op  : 515
+  - ret: [motor_id: Int16, motor_error_code: UInt16]
+  - desc: Fired upon motor error is occured. Check MotorErrorCode enum for possible error code.
+#--------------------- Input monitor ------------------------------------------------------------------------------------------
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon motor input monitor changed
+#-------------------- Sensor Monitor ------------------------------------------------------------------------------------------
+- on_sensor_out_of_bound:
+  - op  : 802
+  - ret: [id: UInt16, limit_type: UInt16, value: Double]
+  - desc: Fired upon sensor monitor out of bounds
+#------------------- FLO Pipetting ---------------------------------------------------------------------------------------------
+- on_tare_done:
+  - op : 600
+  - ret: [atm_pressure: Double, dp_offset: Double, temp1: Double, temp2: Double, cal_asp_low: Double, cal_dsp_low: Double, cal_asp_high: Double, cal_dsp_high: Double]
+
+- on_calibrate_finish:
+  - op : 601
+  - ret: [is_found: UInt16, press1: Double, press2: Double, dp: Double]
+
+- on_count_vol_done:
+  - op : 602
+  - ret: [total_time_ms: UInt16, sens_vol: Double]
+
+- on_pipetting_done:
+  - op : 603
+  - ret: [total_time_ms: UInt32, alc_time_ms: UInt32, sampling_vol: UInt32,
+      total_sampling: UInt32, last_flow: Double, p1_off: Double, p2_off: Double,
+      res_vacuum: Double, selected_p2: UInt16, tau_time: UInt32, pressure_peak: Double,
+      avg_window: UInt16, slope_window: UInt16, threshold: Double, 
+      sens_volume: Double]
+
+- on_average_done:
+  - op : 604
+  - ret: [pressure1: Double, pressure2: Double, temp1: Double, temp2: Double, min_P1: Double, max_P1: Double, min_P2: Double, max_P2: Double]
+
+- on_pipetting_error:
+  - op : 605
+  - ret: [error_code: UInt16, sampling_vol: UInt32,
+      total_sampling: UInt32, last_flow: Double, p1_off: Double, p2_off: Double,
+      res_vacuum: Double, selected_p2: Boolean, tau_time: UInt32, pressure_peak: Double,
+      avg_window: UInt16, slope_window: UInt16, threshold: Double, sens_volume: Double,
+      pip_state: UInt16]
+
+- on_valve_closed:
+  - op : 607
+  - ret: [closed_time: UInt32]
+
+- on_regulate_pressure_limit_reach:
+  - op : 608
+  - ret: null
+
+- on_average_clog_detect_finish:
+  - op : 609
+  - ret: [p1_valve_close: Double, p2_valve_close: Double, p1_t2: Double, p2_t2: Double]
+  - desc: Fired upon averaging p1t2 and p2t2 is done after pipetting finish
+
+- on_air_transfer_detected:
+  - op : 610
+  - ret: [flow: Double, time_ms: UInt32]
+  - desc: Fired upon clog detected, flow in uLpS and time is count from valve opening time
+
+- on_clog_detected:
+  - op : 611
+  - ret: [flow: Double, time_ms: UInt32]
+  - desc: Fired upon clog detected, flow in uLpS and time is count from valve opening time
+
+- on_pipettingV2_done:
+  - op : 612
+  - ret: [error: UInt16, total_time_ms: UInt32, total_sampling: UInt32, p2_start: Double, res_pressure: Double, sens_volume: Double, calculated_volume: Double]
+  - desc: Fired upon pipetting V2 done
+
+- on_calib_valve_done:
+  - op : 613
+  - ret: [off_vac: Double, off_press: Double, vacc_succ: Boolean, press_succ: Boolean]
+  - desc: Fired upon caibrate prop valve done
+
+- on_regulate_pressure_timeout:
+  - op : 614
+  - ret: null
+
+#-------------------- Liquid Level Tracker ------------------------------------------------------------------------------------------
+- on_eject_done:
+  - op : 630
+  - ret: [is_timeout: Boolean]
+  - desc: Fired upon eject done or timeout
+
+#-------------------- Liquid Level Tracker ------------------------------------------------------------------------------------------
+- on_liquid_level_tracker_stop:
+  - op : 620
+  - ret: [mode: UInt16, status: UInt16]
+  - desc: Fired upon liquid level tracker stopped, mode-> see tracking mode, status -> see liquid level tracker stop status
+
+

@@ -1,0 +1,393 @@
+APPNAME: FloV2PressureRegulator
+VERSION: 1.3.9
+
+COMMANDS:
+#---------------------------------------- Pressure regulator ------------------------------------
+- set_target:
+  - op : 10
+  - arg: [id: Int16, target_pressure: Double]
+  - ret: null
+  - getter_op : 11
+  - desc: Set pressure regulator target in mbar absolute
+
+- get_target:
+  - op : 11
+  - arg: [id: Int16]
+  - ret: [target_pressure: Double]
+  - eeprom : [id: 2]
+  - desc: Get pressure regulator target in mbar absolute
+
+- set_controller_enable:
+  - op : 12
+  - arg: [id: Int16, value: UInt16]
+  - ret: null
+  - desc: Set pressure regulator enable
+
+- get_controller_enable:
+  - op : 13
+  - arg: [id: Int16]
+  - ret: [enabled: UInt16]
+  - desc: Get pressure regulator enable
+
+- set_controller_pid:
+  - op : 14
+  - arg: [id: Int16, p: Double, i: Double, d: Double]
+  - ret: null
+  - getter_op : 15
+  - desc: Set pressure regulator PID value
+
+- get_controller_pid:
+  - op : 15
+  - arg: [id: Int16]
+  - ret: [p: Double, i: Double, d: Double]
+  - eeprom : [id: 2]
+  - desc: Get pressure regulator PID value
+
+- set_deadband:
+  - op : 16
+  - arg: [id: Int16, lower: Double, upper: Double]
+  - ret: null
+  - getter_op : 17
+  - desc: Set pressure regulator deadband in mbar
+
+- get_deadband:
+  - op : 17
+  - arg: [id: Int16]
+  - ret: [lower: Double, upper: Double]
+  - eeprom : [id: 2]
+  - desc: Get pressure regulator deadband in mbar
+
+- read_feedback_sensor:
+  - op : 18
+  - arg: [id: Int16]
+  - ret: [value: Double]
+  - desc: read pressure sensor in mbar absolute
+
+- get_controller_out:
+  - op : 19
+  - arg: [id: Int16]
+  - ret: [value: Double]
+  - desc: get pressure controller output control in percentage (0 - 1)
+
+- set_auto:
+  - op : 22
+  - arg: [id: Int16, auto: Int16]
+  - ret: null
+  - desc: set pressure regulator in auto mode, if true regulator will run normally, if false we can control valves manually for debugging purpose
+
+- get_auto:
+  - op : 23
+  - arg: [id: Int16]
+  - ret: [auto: Int16]
+  - desc: get pressure regulator in auto mode, if true regulator will run normally, if false we can control valves manually for debugging purpose
+
+- read_temperature_sensor:
+  - op : 24
+  - arg: [id: Int16]
+  - ret: [value: Double]
+  - desc: read pressure sensor temperature ( internal tempereature sensor on pressure sensor )
+
+- set_controller_limit:
+  - op : 25
+  - arg: [id: Int16, source_limit: Double, drain_limit: Double, time_limit_ms: UInt32]
+  - ret: null
+  - getter_op : 26
+  - desc: Set pressure regulator limit, this is for protecting proportional valve for opening too long ( can cause overheat ), if timeout reach regulator will shutdown
+
+- get_controller_limit:
+  - op : 26
+  - arg: [id: Int16]
+  - ret: [source_limit: Double, drain_limit: Double, time_limit_ms: UInt32]
+  - eeprom : [id: 2]
+  - desc: Get pressure regulator limit, this is for protecting proportional valve for opening too long ( can cause overheat ), if timeout reach regulator will shutdown
+
+- set_source_range:
+  - op : 41
+  - arg: [id: Int16, max: Double, min: Double]
+  - ret: null
+  - getter_op : 42
+  - desc: Set source proportional valve PWM percentage input, we need to set min value to get the valve start opening, and max value for maximum voltage valve spec
+
+- get_source_range:
+  - op : 42
+  - arg: [id: Int16]
+  - ret: [max: Double, min: Double]
+  - eeprom : [id: 2]
+  - desc: Set source proportional valve PWM percentage input, we need to set min value to get the valve start opening, and max value for maximum voltage valve spec
+
+- set_drain_range:
+  - op : 43
+  - arg: [id: Int16, max: Double, min: Double]
+  - ret: null
+  - getter_op : 44
+  - desc: Set drain proportional valve PWM percentage input, we need to set min value to get the valve start opening, and max value for maximum voltage valve spec
+
+- get_drain_range:
+  - op : 44
+  - arg: [id: Int16]
+  - ret: [max: Double, min: Double]
+  - eeprom : [id: 2]
+  - desc: Get drain proportional valve PWM percentage input, we need to set min value to get the valve start opening, and max value for maximum voltage valve spec
+
+- set_source_out:
+  - op : 45
+  - arg: [id: Int16, value: Double]
+  - ret: null
+  - desc: Set source proportional valve PWM in percentage ( 0 -1 ), this anly work if regulator auto is false
+
+- get_source_out:
+  - op : 46
+  - arg: [id: Int16]
+  - ret: [value: Double]
+  - desc: Get source proportional valve PWM in percentage ( 0 -1 )
+
+- set_drain_out:
+  - op : 47
+  - arg: [id: Int16, value: Double]
+  - ret: null
+  - desc: Set drain proportional valve PWM in percentage ( 0 -1 ), this anly work if regulator auto is false
+
+- get_drain_out:
+  - op : 48
+  - arg: [id: Int16]
+  - ret: [value: Double]
+  - desc: Get drain proportional valve PWM in percentage ( 0 -1 )
+
+- set_source_enable:
+  - op : 49
+  - arg: [id: Int16, enable: UInt16]
+  - ret: null
+  - desc: Set source proportional valve enable, this anly work if regulator auto is false
+
+- get_source_enable:
+  - op : 50
+  - arg: [id: Int16]
+  - ret: [enable: UInt16]
+  - desc: Get source proportional valve enable
+
+- set_drain_enable:
+  - op : 51
+  - arg: [id: Int16, enable: UInt16]
+  - ret: null
+  - desc: Set drain proportional valve enable, this anly work if regulator auto is false
+
+- get_drain_enable:
+  - op : 52
+  - arg: [id: Int16]
+  - ret: [enable: UInt16]
+  - desc: Get drain proportional valve enable
+
+- get_aux_drain_state:
+  - op : 53
+  - arg: null
+  - ret: [on: UInt16]
+  - desc: Get aux drain valve state if true valve is on
+
+- set_aux_drain_state:
+  - op : 54
+  - arg: [on: UInt16]
+  - ret: null
+  - desc: Set aux drain valve state if true valve is on
+
+- set_log_prescaler:
+  - op : 61
+  - arg: [value: UInt16]
+  - ret: null
+
+- get_log_items:
+  - op : 62
+  - arg: null
+  - ret: [mask1: UInt32, mask2: UInt32, mask3: UInt32]
+
+- set_log_items:
+  - op : 63
+  - arg: [mask1: UInt32, mask2: UInt32, mask3: UInt32]
+  - ret: [error_code: UInt16]
+
+- start_log:
+  - op : 64
+  - arg: null
+  - ret: [started: Boolean]
+
+- stop_log:
+  - op : 65
+  - arg: null
+  - ret: [stopped: Boolean]
+
+- set_trigger:
+  - op : 66
+  - arg: [module_id: Int16, signal_id: Int16, level: Int16, type: Int16]
+  - ret: [succeeded: Boolean]
+
+- get_log_status:
+  - op : 67
+  - arg: null
+  - ret: [status: Int16, triggered_pos: UInt16]
+
+- read_log_data:
+  - op : 68
+  - arg: [first_item: Int16]
+  - ret: [num_items: Int16, data: Array_UInt16_c]
+
+- read_log_stream_data:
+  - op : 69
+  - arg: null
+  - ret: [num_items: Int16, data: Array_UInt16_c]
+
+- set_address:
+  - op : 100
+  - arg: [address: Int16]
+  - ret: null
+
+#--------------- PUMP CONTROL ---------------------------------------------------------
+- set_pump_sensor_param:
+  - op : 71
+  - arg: [id: UInt16, scale: Double, offset: Double]
+  - ret: null
+  - getter_op : 72
+  - desc: |
+          set pressure sensor scale and offset
+          Arguments
+          - id -> 0 = pressure, 1 = vacuum
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- get_pump_sensor_param:
+  - op : 72
+  - arg: [id: UInt16]
+  - ret: [scale: Double, offset: Double]
+  - eeprom : [id: 2]
+  - desc: |
+          get pressure sensor scale and offset
+          Arguments
+          - id -> 0 = pressure, 1 = vacuum
+          returns
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+
+- read_pump_sensor:
+  - op : 73
+  - arg: [id: UInt16]
+  - ret: [pressure: Double]
+  - desc: |
+          Arguments
+          - id -> 0 = pressure, 1 = vacuum
+          Return
+          - read the sensor value in psi for pressure, InHg for vacuum
+
+- set_pump_controller_threshold:
+  - op : 74
+  - arg: [id: UInt16, src_on_th: Double, src_off_th: Double]
+  - ret: null
+  - getter_op : 75
+  - desc: |
+          set pressure controller threshold to achive target pressure
+          Arguments
+          - id -> 0 = pressure, 1 = vacuum
+          - src_on_th     -> threshold for pump to be ON
+          - src_off_th    -> threshold for pump to be OFF
+
+- get_pump_controller_threshold:
+  - op : 75
+  - arg: [id: UInt16]
+  - ret: [src_on_th: Double, src_off_th: Double]
+  - eeprom : [id: 2]
+  - desc: |
+          get pressure controller threshold to achive target pressure
+          Arguments
+          - id -> 0 = pressure, 1 = vacuum
+          Return
+          - src_on_th     -> threshold for pump to be ON
+          - src_off_th    -> threshold for pump to be OFF
+
+- set_pump_controller_state:
+  - op : 76
+  - arg: [id: UInt16, state: UInt16]
+  - ret: null
+  - desc: |
+          set pressure controller state
+          id -> 0 = pressure, 1 = vacuum
+          state
+          0. off
+          1. on
+          2. idle
+          3. manual
+
+- get_pump_controller_state:
+  - op : 77
+  - arg: [id: UInt16]
+  - ret: [state: UInt16]
+  - desc: |
+          set pressure controller state
+          id -> 0 = pressure, 1 = vacuum
+          state
+          0. off
+          1. on
+          2. idle
+          3. manual
+
+- get_pump_controller_limit:
+  - op : 78
+  - arg: [id: UInt16]
+  - ret: [isOnTimeLimit: Boolean, timeMs: UInt32]
+  - eeprom : [id: 2]
+  - desc: |
+          id -> 0 = pressure, 1 = vacuum
+          isOnTimeLimit -> active or deactive limiter
+          timeMs -> time limiter in mili seconds
+
+- set_pump_controller_limit:
+  - op : 79
+  - arg: [id: UInt16, isOnTimeLimit: Boolean, timeMs: UInt32]
+  - ret: null
+  - getter_op : 78
+  - desc: |
+          id -> 0 = pressure, 1 = vacuum
+          isOnTimeLimit -> active or deactive limiter
+          timeMs -> time limiter in mili seconds
+
+- set_pump_state:
+  - op : 80
+  - arg: [id: UInt16, isOn: Boolean]
+  - ret: null
+  - desc: |
+          to set pressure pump on / off but before must set pressure controller state to manual
+
+- get_pump_state:
+  - op : 81
+  - arg: [id: UInt16]
+  - ret: [isOn: Boolean]
+  - desc: |
+          get pressure pump on / off
+
+- set_pump_sensor_lpf_cutoff:
+  - op : 82
+  - arg: [id: UInt16, enable: Boolean, cut_off_hz: Double]
+  - ret: null
+  - getter_op : 83
+  - desc: |
+          set lpf cutoff for pump sensor
+
+- get_pump_sensor_lpf_cutoff:
+  - op : 83
+  - arg: [id: UInt16]
+  - ret: [enable: Boolean, cut_off_hz: Double]
+  - eeprom : [id: 2]
+  - desc: |
+          get lpf cutoff for pump sensor
+
+EVENTS:
+- controller_reach_limit:
+  - op : 512
+  - ret: [id: Int16, source_drain: UInt16]
+  - desc: Fired upon pressure regulator source or drain opening for than setting duty for more than setting time threshold
+
+- on_pump_pressure_reach:
+  - op : 801
+  - ret: [id: Int16, pressure: Double]
+  - desc: Fired upon pump pressure or vacuum reach
+
+- on_pump_on_too_long:
+  - op : 800
+  - ret: [id: Int16, pressure: Double]
+  - desc: Fired upon pump pressure or vacuum turning on too long this can indicate the leak of tubbing

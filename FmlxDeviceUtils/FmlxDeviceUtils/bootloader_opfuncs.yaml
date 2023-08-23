@@ -1,0 +1,75 @@
+APPNAME : Bootloader
+VERSION : v0.0.1
+
+COMMANDS:
+- get_version_bootloader:
+  - op  : 0x7F00
+  - arg : null
+  - ret : [version : String]
+  - desc: |
+          Obtain firmware version of the device.
+          Args:
+            - None
+          Returns:
+            - version : firmware version
+
+- get_app_name_bootloader:
+  - op  : 0x7F01
+  - arg : null
+  - ret : [name : String]
+  - desc: |
+          Obtain device application name
+          Args:
+            - None
+          Returns:
+            - name : application name
+
+- write_memory:
+  - op : 0x7F02
+  - arg: [addr : UInt32, value : UInt16]
+  - ret: null
+  - desc: |
+          Write 16 bit value to specific memory address
+
+- read_memory:
+  - op  : 0x7f03
+  - arg : [addr : UInt32, length : UInt32]
+  - ret : [values : Array_UInt16]
+  - desc: |
+          Read 16-bit value from a memory address
+
+- jump_to_memory:
+  - op  : 0x7f04
+  - arg : null
+  - ret : null
+  - desc: not implemented
+
+- erase_flash:
+  - op  : 0x7f05
+  - arg : [addr: UInt32,length : Int32]
+  - ret : [is_success : Boolean, flash_status : UInt16, failed_address : UInt32, expected_data : UInt16, actual_data : UInt16]
+  - desc: reset watchdog triggered position
+
+- program_flash:
+  - op  : 0x7f06
+  - arg : [addr: UInt32,length : Int32, do_verify : Boolean, buffer : Array_UInt16]
+  - ret : [is_success : Boolean, flash_status : UInt16, failed_address : UInt32, expected_data : UInt16, actual_data : UInt16]
+  - desc: to reset firmware
+
+- verify_flash:
+  - op : 0x7f07
+  - arg: [addr: UInt32,length : Int32, buffer : Array_UInt16]
+  - ret: [is_success : Boolean, flash_status : UInt16, failed_address : UInt32, expected_data : UInt16, actual_data : UInt16]
+  - desc: check whether the send data is the same as the specific address
+
+- start_user_app:
+  - op : 0x7f08
+  - arg: null
+  - ret: null
+  - desc: start the application, will raise timeout error if it's succesfully jumped
+
+EVENTS:
+- on_bootloader_entry:
+  - op  : 0x7ff
+  - ret: null
+  - desc: Fired when entering bootloader.

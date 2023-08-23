@@ -1,0 +1,305 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+
+
+#---------------------------- INPUT MONITOR ------------------------------------
+- get_debouch_time_ms:
+  - op  : 50
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : 0
+  - desc: get the debouch time in ms
+
+- set_debouch_time_ms:
+  - op  : 51
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 50
+  - desc: set the debouch time in ms
+
+- get_input_mask:
+  - op  : 52
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : 0
+  - desc: get the input mask please see InputMonitorMask
+
+- set_input_mask:
+  - op  : 53
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 52
+  - desc: set the input mask please see InputMonitorMask
+
+- read_input_monitor_port_value:
+  - op  : 54
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+
+#---------------------------- Auxs ---------------------------------------------
+- get_aux_analog_in_params:
+  - op  : 60
+  - arg : [id: UInt16]  
+  - ret : [scale: Double, offset: Double]
+  - eeprom : 8
+  - desc: get setting scale and offset for reading the analog in from ADC
+
+- set_aux_analog_in_params:
+  - op  : 61
+  - arg : [id: UInt16, scale: Double, offset: Double]
+  - ret : null
+  - getter_op : 60
+  - desc: setting scale and offset for reading the analog in from ADC
+
+- read_aux_analog_in_value:
+  - op  : 62
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read value aux input analog
+
+- get_aux_analog_out_params:
+  - op  : 63
+  - arg : [id: UInt16]
+  - ret : [max_range: Double, min_range: Double]
+  - eeprom : 8
+  - desc: get max range and min range of output in percentag
+
+- set_aux_analog_out_params:
+  - op  : 64
+  - arg : [id: UInt16, max_range: Double, min_range: Double]
+  - ret : null
+  - getter_op : 63
+  - desc: set max range and min range of output in percentage
+
+- get_aux_analog_out_value:
+  - op  : 65
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: get value in percentage from range
+
+- set_aux_analog_out_value:
+  - op  : 66
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - desc: set value in percentage from range
+
+- get_aux_analog_out_pwm_freq:
+  - op  : 67
+  - arg : null
+  - ret : [value: UInt32]
+  - eeprom : 0
+  - desc: get freq analog out pwm in Hz
+
+- set_aux_analog_out_pwm_freq:
+  - op  : 68
+  - arg : [value: UInt32]
+  - ret : null
+  - getter_op : 67
+  - desc: set freq analog out pwm in Hz
+
+
+# ------------------------------- SENSOR MONITOR ------------------------------------
+- sensor_monitor_get_enable_mask:
+  - op : 41
+  - arg: null
+  - ret: [enable_mask: UInt16]
+  - getter_op : 8
+  - desc: |
+            get sensor monitor enable mask
+
+- sensor_monitor_set_enable_mask:
+  - op : 42
+  - arg: [enable_mask: UInt16]
+  - ret: null
+  - getter_op : 41
+  - desc: |
+            set sensor monitor enable mask
+
+- sensor_monitor_get_debounce_ms:
+  - op : 43
+  - arg: null
+  - ret: [debounce_ms: UInt16]
+  - eeprom : 0
+  - desc: |
+            get sensor monitor debounce time in milisecond
+            
+- sensor_monitor_set_debounce_ms:
+  - op : 44
+  - arg: [debounce_ms: UInt16]
+  - ret: null
+  - getter_op : 43
+  - desc: |
+            set sensor monitor debounce time in milisecond
+            
+- sensor_monitor_get_threshold:
+  - op : 45
+  - arg: [id: UInt16]
+  - ret: [upper_limit: Double, lower_limit: Double]
+  - eeprom : 8
+  - desc: |
+            get sensor monitor upper and lower threshold for corresponding channel
+
+- sensor_monitor_set_threshold:
+  - op : 46
+  - arg: [id: UInt16, upper_limit: Double, lower_limit: Double]
+  - ret: [success : Boolean]
+  - getter_op : 45
+  - desc: |
+            set sensor monitor upper and lower threshold for corresponding channel
+
+
+#------------------------------- WaterLevelSensor ----------------------------           
+
+- waterlevel_calibrate_scale:
+  - op : 10
+  - arg: [id: UInt16, avgWindow: UInt16, level: Double]
+  - ret: [status: Boolean]
+  - desc: |
+            before calibrating the scale, you must tare the scale first.
+            if the calibration process done, event will be sent with the
+            calibration (scale) value.
+            If the return value is false it means there is ongoing
+            tare/calibration process, you need to wait it until its done.
+            Need to call save configuration to save its scale value
+
+- waterlevel_tare_offset:
+  - op : 11    
+  - arg: [id : UInt16,  avgwindow : UInt16]
+  - ret: [status: Boolean]
+  - desc: |
+            set offset           
+           
+- waterlevel_set_scale:
+  - op : 12  
+  - arg: [id : UInt16, scale : Double]
+  - ret: [status : Boolean]
+  - getter_op : 13
+  - desc: |
+            set scale
+            
+- waterlevel_get_scale:
+  - op : 13    
+  - arg: [id : UInt16]
+  - ret: [scale : Double]
+  - eeprom : 5
+  - desc: get sacle
+ 
+- waterlevel_set_offset:
+  - op : 14  
+  - arg: [id : UInt16, offset : Double]
+  - ret: [status : Boolean]
+  - getter_op : 15
+  - desc: |
+            set offset
+  
+- waterlevel_get_offset:
+  - op : 15    
+  - arg: [id : UInt16]
+  - ret: [offset: Double]
+  - eeprom : 5  
+  - desc: |
+            get offset 
+            
+- waterlevel_read_level:
+  - op  : 16
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read sensor value check sensor ID
+ 
+- waterlevel_set_level_limit:
+  - op : 17    
+  - arg: [id : UInt16, low_limit : Double, high_limit : Double]
+  - ret: [status : Boolean]
+  - getter_op : 18
+  - desc: |
+            set limit
+            
+- waterlevel_get_level_limit:
+  - op : 18    
+  - arg: [id : UInt16]
+  - ret: [low_limit : Double, high_limit : Double]
+  - eeprom : 5
+  - desc: |
+            get limit
+ 
+- waterlevel_set_enable:
+  - op : 19
+  - arg: [id : UInt16, enable : Boolean]
+  - ret: [status : Boolean]
+  - getter_op : 20
+  - desc: |
+            set enable water pump
+  
+- waterlevel_get_enable:
+  - op : 20    
+  - arg: [id : UInt16]
+  - ret: [enable : Boolean]
+  - eeprom : 5
+  - desc: |
+            get enable water pump
+  
+
+# Pressure sensor 
+- pressure_sensor_read_pressure:
+  - op  : 31
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read sensor value 
+
+- pressure_sensor_read_raw_pressure:
+  - op  : 32
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read sensor value raw
+
+- pressure_sensor_set_lpf_cutoff:
+  - op  : 33
+  - arg : [id: UInt16, enable: Boolean, cut_off_hz: Double]
+  - ret : null
+  - getter_op : 34
+  - desc: set sensor lpf freq in hz
+
+- pressure_sensor_get_lpf_cutoff:
+  - op  : 34
+  - arg : [id: UInt16]
+  - ret : [enable: Boolean, cut_off_hz: Double]
+  - eeprom : 5
+  - desc: get sensor lpf freq in hz
+  
+  
+################################### EVENTS #################################################
+
+EVENTS:
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon input monitor changed
+  
+- on_sensor_out_of_bound:
+  - op  : 802
+  - ret: [id: UInt16, limit_type: UInt16, value: Double]
+  - desc: Fired upon sensor monitor out of counds
+
+- on_tare_done:
+  - op  : 803
+  - ret: [id: UInt16, offset: Double ]
+  - desc: Fired when tare scale done
+
+- on_calibrate_done:
+  - op  : 804
+  - ret: [id: UInt16, scale: Double]
+  - desc: Fired when tare scale done
+
+- on_timed_output_action_start:
+  - op  : 810
+  - ret: [id: UInt16, is_on: Boolean]
+  - desc: Fired when timed output with specified id and bit has started
+
+- on_timed_output_action_finish:
+  - op  : 811
+  - ret: [id: UInt16, is_on: Boolean]
+  - desc: Fired when timed output with specified id and bit has finished

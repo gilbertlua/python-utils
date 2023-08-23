@@ -1,0 +1,207 @@
+APPNAME: 'MTI_REDUNDANT_CHILLER'
+VERSION: '2.0.2'
+
+COMMANDS:
+- save_configuration:
+  - op : 3
+  - arg: null
+  - ret: null
+  
+- hang_firmware:
+  - op : 9
+  - arg: null
+  - ret: null
+  
+# ==================== CHILLER RELATED =====================================================
+
+- set_compressor_enable:
+  - op  : 10
+  - arg : [id: UInt16, enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: Manualy enable or disable the compressor, only use it when the controller disabled, debugging purpose
+
+- get_compressor_enable:
+  - op  : 11
+  - arg : [id: UInt16]
+  - ret : [return: Boolean]
+  - desc: get the compressor enable or disable
+
+- set_pump_enable:
+  - op  : 12
+  - arg : [id: UInt16, enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: set pump enable
+
+- get_pump_enable:
+  - op  : 13
+  - arg : [id: UInt16]
+  - ret : [return: Boolean]
+  - desc: see op 12
+
+- set_heater_enable_duration:
+  - op  : 14
+  - arg : [duration_us: UInt32]
+  - ret : [status: Boolean]
+  - desc: set the heater on for x amount of time
+
+- read_water_flow_speed:
+  - op  : 15
+  - arg : [id : UInt16]
+  - ret : [value: Float]
+  - desc: get current water flow speed if the controller enabled, or the current id flow speed
+
+- read_water_level:
+  - op  : 16
+  - arg : [id: UInt16]
+  - ret : [level: Boolean]
+  - desc: read water level
+
+- set_hot_gas_enable:
+  - op  : 17
+  - arg : [id: UInt16, enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: Manualy enable or disable the hot gas, only use it when the controller disabled, debugging purpose
+
+- get_hot_gas_enable:
+  - op  : 18
+  - arg : [id: UInt16]
+  - ret : [return: Boolean]
+  - desc: get the hot gas enable or disable
+
+- set_heater_enable:
+  - op  : 19
+  - arg : [id: UInt16, enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: Manualy enable or disable the heater, only use it when the controller disabled, debugging purpose
+
+- get_heater_enable:
+  - op  : 20
+  - arg : [id: UInt16]
+  - ret : [return: Boolean]
+  - desc: get the heater enable or disable
+
+- read_current_sense:
+  - op  : 21
+  - arg : [id: UInt16]
+  - ret : [return: Float]
+  - desc: read ac current consumption of chiller
+
+- set_firmware_comm_address:
+  - op  : 22
+  - arg : [address: UInt16]
+  - ret : null
+  - getter_op : 23
+  - desc: set pump enable
+
+- get_firmware_comm_address:
+  - op  : 23
+  - arg : null
+  - ret : [address: UInt16]
+  - eeprom : null
+  - desc: see op 12
+
+- set_temperature_limit:
+  - op  : 24
+  - arg : [id: UInt16, max: Float, min: Float]
+  - ret : null
+  - desc: set the max and minimu temperature
+
+- get_temperature_limit:
+  - op  : 25
+  - arg : [id: UInt16]
+  - ret : [max: Float, min: Float]
+  - desc: see 24
+
+- set_compressor_enable_with_delay:
+  - op  : 26
+  - arg : [id: UInt16,delay_us: UInt32]
+  - ret : [status: Boolean]
+  - desc: Manualy enable or disable the compressor, only use it when the controller disabled, debugging purpose
+
+- set_compressor_activation_delay:
+  - op  : 27
+  - arg : [id: UInt16,delay_us: UInt32]
+  - ret : [status: Boolean]
+  - desc: Manualy enable or disable the compressor, only use it when the controller disabled, debugging purpose
+
+- get_compressor_activation_delay:
+  - op  : 28
+  - arg : [id: UInt16]
+  - ret : [delay_us: UInt32]
+  - desc: get the compressor enable or disable
+
+# ==================== Temperature Sensor related =====================================================
+- set_thermistor_coeficient:
+  - op  : 74
+  - arg : [id: UInt16, shart_a: Float, shart_b: Float, shart_c: Float, r_divider: Float, v_offset: Float, gain_amplifier: Float, v_divider: Float, offset_temp: Float]
+  - ret : null
+  - getter_op : 75
+  - desc: Set interpolation coeficient of temperature sensor id is same as controller id
+
+- get_thermistor_coeficient:
+  - op  : 75
+  - arg : [id: UInt16]
+  - ret : [shart_a: Float, shart_b: Float, shart_c: Float, r_divider: Float, v_offset: Float, gain_amplifier: Float, v_divider: Float, offset_temp: Float]
+  - eeprom : [ id : 2 ]
+  - desc: see op 74
+
+- set_temperature_sampling_period:
+  - op  : 76
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 77
+  - desc: Set temperature sampling period in micro seconds 
+
+- get_temperature_sampling_period:
+  - op  : 77
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get temperature sampling period in micro seconds 
+
+- read_temperature:
+  - op  : 78
+  - arg : [id: UInt16]
+  - ret : [value: Float]
+  - desc: read temperature  in celcius 
+
+- read_adc:
+  - op  : 79
+  - arg : [id: UInt16]
+  - ret : [value: UInt16]
+  - desc: read adc result 
+
+# ==================== RTC =====================================================
+- set_rtc_clock:
+  - op : 80
+  - arg: [sec: UInt16,min: UInt16,hour: UInt16,day: UInt16,date: UInt16,month: UInt16,year: UInt16]
+  - ret: null
+  
+- get_rtc_clock:
+  - op : 81
+  - arg: null
+  - ret: [sec: UInt16,min: UInt16,hour: UInt16,day: UInt16,date: UInt16,month: UInt16,year: UInt16]
+
+- set_temperature_lpf_config:
+  - op  : 90
+  - arg : [enable: Boolean, cutOffFreqHz: Float]
+  - ret : null
+  - getter_op : 90
+  - desc: Set temperature lpf config
+
+- get_temperature_lpf_config:
+  - op  : 91
+  - arg : null
+  - ret : [enable: Boolean, cutOffFreqHz: Float]
+  - eeprom : null
+  - desc: Get temperature lpf config
+
+- read_temperature_filtered:
+  - op  : 92
+  - arg : [id: UInt16]
+  - ret : [value: Float]
+  - desc: read temperature  in celcius filtered
+
+
+#=============================================== event list =============================================
+EVENTS:

@@ -1,0 +1,710 @@
+APPNAME: Nighthawk
+VERSION: 3.0.7
+
+ENUMS:
+- MotorErrorCode:
+  - desc : Motor error code
+  - type : UInt16
+  - value:
+    - mecodeNone : [0, No Error]
+    - mecodeInvalidID : [1, Invalid Motor ID]
+    - mecodeLowerLimit : [2, Motor hit Lower Limit switch]
+    - mecodeUpperLimit : [3, Motor hit Upper Limit switch]
+    - mecodeIllegalPos : [4, Illegal Position]
+    - mecodeIllegalVel : [5, Illegal Velocity]
+    - mecodeIllegalAcc : [6, Illegal Acceleration]
+    - mecodeAborted : [7, Motor Stopped by Motion Abort]
+    - mecodeFolErrorIdle : [8, Encoder doesn't match Motor position while Idle]
+    - mecodeFolErrorMoving : [9, Encoder doesn't match Motor position while Moving]
+    - mecodeEncoderError : [10, Encoder error]
+    - mecodeDisabled : [11, Motor is disabled]
+    - mecodeHoming : [12, Motor is homing]
+    - mecodeEmergencyStop : [13, Emergency Stop is activated]
+    - mecodeHardBrake : [14, Hard Brake is activated]
+    - mecI2tTriggered : [15, Motor i2t limit is reached]
+    - mecNoMove : [16, Motor move to the same position]
+    - mecMoveNotSupported : [17, some movement can't b overidden ( s-curve)]
+    - mecIllegalJrk : [18, illegal jerk (s-curve)]
+    - mecVelErrorIdle : [19, Encoder doesn't match Motor velocity while Idle]
+    - mecVelErrorMoving : [20, Encoder doesn't match Motor velocity while moving]
+
+- MotorStatusBitmask:
+  - desc : Bitmask for motor status code (e.g. value 1 is bit 0, value 2 is bit 1, etc)
+  - type : UInt16
+  - value:
+    - msbitMoving : [1, Motor is moving]
+    - msbitHoming : [2, Motor is homing]
+    - msbitHomed : [4, Motor is already homed]
+    - msbitLowerLimit : [8, LowerLimit switch is hit]
+    - msbitUpperLimit : [16, UpperLimit switch is hit]
+    - msbitOverCurrent : [32, Motor overcurrent]
+    - msbitAborted : [64, Motor motion abort is triggered]
+    - msbitFolErrorIdle : [128, Following Error while motor is idle]
+    - msbitFolErrorMoving : [256, Following Error while motor is moving]
+    - msbitEncoderError : [512, Encode Error]
+    - msbitDisabled : [1024, Motor is Disabled]
+    - msbitEmergencyStop : [2048, Emergency Stop is triggered]
+    - msbitHardBrake : [4096, HardBrake is triggered]
+    - msbitI2tTriggered : [8192, Motor i2t limit is reached]
+    - msbitTargetReached : [16384, Motor target reached]
+    - msbitAutoStopped : [32768, Motor auto stopped triggered]
+    - msbitVelErrorIdle : [65536, Motor vel error idle triggered]
+    - msbitVelErrorMoving : [131072, Motor vel error idle triggered]
+
+COMMANDS:
+- save_configuration:
+  - op : 3
+  - arg: null
+  - ret: null
+
+- get_motor_limits:
+  - op : 10
+  - arg: [motor_id: Int16]
+  - ret: [min_limit: Double, max_limit: Double]
+  - eeprom : [motor_id: 3]
+  
+- set_motor_limits:
+  - op : 11
+  - arg: [motor_id: Int16, min_limit: Double, max_limit: Double]
+  - ret: null
+  - getter_op : 10
+
+- get_motor_currents:
+  - op : 12
+  - arg: [motor_id: Int16]
+  - ret: [boost: Double, travel: Double, hold: Double]
+  - eeprom : [motor_id: 3]
+  
+- set_motor_currents:
+  - op : 13
+  - arg: [motor_id: Int16, boost: Double, travel: Double, hold: Double]
+  - ret: null
+  - getter_op : 12
+
+- get_motor_config:
+  - op : 14
+  - arg: [motor_id: Int16]
+  - ret: [invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16]
+  - eeprom : [motor_id: 3]
+
+- set_motor_config:
+  - op : 15
+  - arg: [motor_id: Int16, invert_dir: Boolean, kp: Double, ki: Double, 
+        kd: Double, num_usteps: Int16]
+  - ret: null
+  - getter_op : 14  
+
+- clear_motor_fault:
+  - op : 17
+  - arg: [motor_id: Int16]
+  - ret: null
+
+- get_motor_status:
+  - op : 20
+  - arg: [motor_id: Int16]
+  - ret: [motor_status_lsb: UInt16, motor_status_msb: UInt16]
+
+- home_motor:
+  - op : 21
+  - arg: [motor_id: Int16, flag: UInt16, pos_edge: Boolean, pos_dir: Boolean,
+      slow_vel: Double, fast_vel: Double, accel: Double]
+  - ret: [motor_error_code: UInt16]
+
+- move_motor_abs:
+  - op : 22
+  - arg: [motor_id: Int16, pos: Double, vel: Double, acc: Double, jrk: Double]
+  - ret: [motor_error_code: UInt16]
+
+- move_motor_vel:
+  - op : 23
+  - arg: [motor_id: Int16, forward: Boolean, vel: Double, accel: Double]
+  - ret: [motor_error_code: UInt16]
+
+- stop_motor:
+  - op : 24
+  - arg: [motor_id: Int16, accel: Double, jerk: Double]
+  - ret: [motor_error_code: UInt16]
+
+- abort_motor:
+  - op : 25
+  - arg: [motor_id: Int16]
+  - ret: [motor_error_code: UInt16]
+
+- get_motor_pos:
+  - op : 27
+  - arg: [motor_id: Int16]
+  - ret: [curr_pos: Double, curr_vel: Double, curr_acc: Double, cmd_pos: Double, cmd_vel: Double, cmd_acc: Double]
+
+- set_motor_pos:
+  - op : 28
+  - arg: [motor_id: Int16, pos: Double]
+  - ret: null
+
+- get_encoder_config:
+  - op : 80
+  - arg: [motor_id: Int16]
+  - eeprom : [id : 3]
+  - ret: [inverted: Boolean, count_per_step: Double]
+
+- set_encoder_config:
+  - op : 81
+  - arg: [motor_id: Int16, inverted: Boolean, count_per_step: Double]
+  - ret: null
+  - getter_op : 80
+
+- get_fol_error_config:
+  - op : 82
+  - arg: [motor_id: Int16]
+  - ret: [is_tracking_enabled: Boolean, max_fol_error: Double, disable_motor: Boolean]
+  - eeprom : [id : 3]
+
+- set_fol_error_config:
+  - op : 83
+  - arg: [motor_id: Int16, is_tracking_enabled: Boolean, max_fol_error: Double,
+      disable_motor: Boolean]
+  - ret: null
+  - getter_op : 82
+
+- get_encoder_position:
+  - op : 84
+  - arg: [motor_id: Int16]
+  - ret: [position: Double]
+
+- set_encoder_position:
+  - op : 85
+  - arg: [motor_id: Int16, position: Double]
+  - ret: null
+
+- get_target_reached_params:
+  - op : 86
+  - arg: [motor_id: Int16]
+  - ret: [tracking_window: Double, tracking_time_ms: UInt16]
+
+- set_target_reached_params:
+  - op : 87
+  - arg: [motor_id: Int16, tracking_window: Double, tracking_time_ms: UInt16]
+  - ret: null
+
+- get_encoder_cpr:
+  - op : 88
+  - arg: [motor_id: Int16]
+  - ret: [cpr: UInt32]
+  - eeprom : [id : 3]
+
+- set_encoder_cpr:
+  - op : 89
+  - arg: [motor_id: Int16, cpr: UInt32]
+  - ret: null
+  - getter_op : 88
+
+- get_vel_error_config:
+  - op : 90
+  - arg: [motor_id: Int16]
+  - ret: [is_tracking_enabled: Boolean, max_vel_error: Double, disable_motor: Boolean]
+  - eeprom : [id : 3]
+
+- set_vel_error_config:
+  - op : 91
+  - arg: [motor_id: Int16, is_tracking_enabled: Boolean, max_vel_error: Double,
+      disable_motor: Boolean]
+  - ret: null
+  - getter_op : 82
+
+- set_address:
+  - op : 100
+  - arg: [value: Int16]
+  - ret: null
+
+- get_packet_error_count:
+  - op : 101
+  - arg: null
+  - ret: [value: Int16]
+
+- get_us_per_tick:
+  - op : 102
+  - arg: null
+  - ret: [value: UInt16]
+
+- get_batt_threshold:
+  - op : 103
+  - arg: null
+  - ret: [alarm_volt: Double, shutdown_volt: Double, alarm_debounce_ms: UInt16,
+      shutdown_debounce_ms: UInt16]
+
+- set_batt_threshold:
+  - op : 104
+  - arg: [alarm_volt: Double, shutdown_volt: Double, alarm_debounce_ms: UInt16,
+      shutdown_debounce_ms: UInt16]
+  - ret: null
+
+- read_batt_volt:
+  - op : 105
+  - arg: null
+  - ret: [value: Double]
+
+- get_power_status:
+  - op : 106
+  - arg: null
+  - ret: [status_flags: UInt16]
+
+- clear_power_status_mask:
+  - op : 107
+  - arg: [mask: UInt16]
+  - ret: null
+
+- shutdown:
+  - op : 108
+  - arg: [timeout_ms: UInt16]
+  - ret: null
+
+- cancel_shutdown:
+  - op : 109
+  - arg: null
+  - ret: null
+
+- set_single_precision_enable:
+  - op  : 110
+  - arg : [enable : Boolean]
+  - ret : null
+  - desc: Set single precision ( float ) data enable or use Float precision instead ( Float ) 
+
+- get_single_precision_enable:
+  - op  : 111
+  - arg : null
+  - ret : [enable : Boolean]
+  - desc: get single precision ( float ) data enable or use Float precision instead ( Float ) 
+
+- get_motor_pos_gains:
+  - op : 150
+  - arg: [motor_id: Int16]
+  - ret: [kp: Double, ki: Double, kd: Double]
+  - eeprom : [motor_id : 3]
+
+- set_motor_pos_gains:
+  - op : 151
+  - arg: [motor_id: Int16, kp: Double, ki: Double, kd: Double]
+  - ret: null
+  - getter_op : 150
+
+- get_motor_volt_limit:
+  - op : 152
+  - arg: [motor_id: Int16]
+  - ret: [value: Double]
+  - eeprom : [motor_id : 3]
+
+- set_motor_volt_limit:
+  - op : 153
+  - arg: [motor_id: Int16, value: Double]
+  - ret: null
+  - getter_op : 152
+
+- set_motor_enabled:
+  - op : 156
+  - arg: [motor_id: Int16, is_running: Boolean]
+  - ret: [ret_code: Int16]
+
+- get_stop_decel:
+  - op : 157
+  - arg: [motor_id: Int16]
+  - ret: [stop_decel: Double, abort_decel: Double]
+  - eeprom : [motor_id : 3]
+
+- set_stop_decel:
+  - op : 158
+  - arg: [motor_id: Int16, stop_decel: Double, abort_decel: Double]
+  - ret: null
+  - getter_op : 157
+
+- get_fol_error_homing_param:
+  - op : 159
+  - arg: [motor_id: Int16]
+  - ret: [limit: Double, retract: Double]
+
+- set_fol_error_homing_param:
+  - op : 160
+  - arg: [motor_id: Int16, limit: Double, retract: Double]
+  - ret: null
+
+- get_i2t_enabled:
+  - op : 161
+  - arg: [motor_id: Int16]
+  - ret: [enabled: Boolean]
+  - eeprom : [motor_id : 3]
+
+- set_i2t_enabled:
+  - op : 162
+  - arg: [motor_id: Int16, enabled: Boolean]
+  - ret: null
+  - getter_op : 162
+
+- get_i2t_config:
+  - op : 163
+  - arg: [motor_id: Int16]
+  - ret: [cont_current_limit: Double, peak_current_limit: Double, peak_time_limit: Double,
+      output_limit: Double]
+  - eeprom : [motor_id : 3]
+
+- set_i2t_config:
+  - op : 164
+  - arg: [motor_id: Int16, cont_current_limit: Double, peak_current_limit: Double,
+      peak_time_limit: Double, output_limit: Double]
+  - ret: null
+  - getter_op : 163
+
+- get_motor_curr_lpf_freq:
+  - op : 165
+  - arg: [motor_id: Int16]
+  - ret: [value_hz: Double]
+  - eeprom : [motor_id : 3]
+
+- set_motor_curr_lpf_freq:
+  - op : 166
+  - arg: [motor_id: Int16, value_hz: Double]
+  - ret: null
+  - getter_op : 165
+
+- get_motor_brake_params:
+  - op : 167
+  - arg: [motor_id: Int16]
+  - ret: [use_brake: Boolean, brake_inverted: Boolean, start_delay_ms: Int16,
+      stop_wait_ms: UInt16, brake_delay_ms: UInt16]
+  - eeprom : [motor_id : 3]
+
+- set_motor_brake_params:
+  - op : 168
+  - arg: [motor_id: Int16, use_brake: Boolean, brake_inverted: Boolean, start_delay_ms: Int16,
+      stop_wait_ms: UInt16, brake_delay_ms: UInt16]
+  - ret: null
+  - getter_op : 167
+
+- reset_motor_pos:
+  - op : 169
+  - arg: [motor_id: Int16]
+  - ret: null
+
+- get_motor_op_mode:
+  - op : 190
+  - arg: [motor_id: Int16]
+  - ret: [mode: Int16, desired_mode: Int16]
+
+- set_motor_op_mode:
+  - op : 191
+  - arg: [motor_id: Int16, desired_mode: Int16]
+  - ret: null
+
+- get_motor_curr_ref:
+  - op : 192
+  - arg: [motor_id: Int16]
+  - ret: [curr_amp: Double]
+
+- set_motor_curr_ref:
+  - op : 193
+  - arg: [motor_id: Int16, curr_amp: Double]
+  - ret: null
+
+- get_motor_pos_ref:
+  - op : 194
+  - arg: [motor_id: Int16]
+  - ret: [pos: Double]
+
+- set_motor_pos_ref:
+  - op : 195
+  - arg: [motor_id: Int16, pos: Double]
+  - ret: null
+
+- write_motor_volt_vector:
+  - op : 196
+  - arg: [motor_id: Int16, volt: Double, deg: Double]
+  - ret: null
+
+- read_motor_phase_angle:
+  - op : 197
+  - arg: [motor_id: Int16]
+  - ret: [phase_angle_deg: Double]
+
+- read_motor_curr_dq:
+  - op : 198
+  - arg: [motor_id: Int16]
+  - ret: [i_d: Double, i_q: Double]
+
+- read_motor_curr_abc:
+  - op : 199
+  - arg: [motor_id: Int16]
+  - ret: [i_a: Double, i_b: Double, i_c: Double]
+
+- set_motor_open_loop_volt:
+  - op : 200
+  - arg: [motor_id: Int16, volt: Double]
+  - ret: null
+
+- get_motor_phase_init_params:
+  - op : 201
+  - arg: [motor_id: Int16]
+  - ret: [drive_magnitude: Double, threshold: Int32, timeout_us: UInt32, force_wait_us: UInt32]
+
+- set_motor_phase_init_params:
+  - op : 202
+  - arg: [motor_id: Int16, drive_magnitude: Double, threshold: Int32, timeout_us: UInt32,
+      force_wait_us: UInt32]
+  - ret: null
+
+- motor_phase_initialize:
+  - op : 203
+  - arg: [motor_id: Int16]
+  - ret: null
+
+- is_motor_phase_initialized:
+  - op : 204
+  - arg: [motor_id: Int16]
+  - ret: [value: Boolean]
+
+- get_motor_num_pole_pairs:
+  - op : 205
+  - arg: [motor_id: Int16]
+  - ret: [value: UInt16]
+  - eeprom : [motor_id : 3]
+
+- set_motor_num_pole_pairs:
+  - op : 206
+  - arg: [motor_id: Int16, value: UInt16]
+  - ret: null
+  - getter_op : 205
+
+- move_motor_abs_all:
+  - op : 207
+  - arg: [pos0: Double, vel0: Double, acc0: Double,
+          pos1: Double, vel1: Double, acc1: Double,
+          pos2: Double, vel2: Double, acc2: Double]
+  - ret: [motor_error_code0: UInt16, motor_error_code1: UInt16, motor_error_code2: UInt16]
+
+- move_motor_vel_all:
+  - op : 208
+  - arg: [forward0: Boolean, vel0: Double, accel0: Double, 
+          forward1: Boolean, vel1: Double, accel1: Double,
+          forward2: Boolean, vel2: Double, accel2: Double]
+  - ret: [motor_error_code0: UInt16, motor_error_code1: UInt16, motor_error_code2: UInt16]
+
+- stop_motor_all:
+  - op : 209
+  - arg: [accel0: Double, accel1: Double, accel2: Double]
+  - ret: [motor_error_code0: UInt16, motor_error_code1: UInt16, motor_error_code2: UInt16]
+
+- abort_motor_all:
+  - op : 210
+  - arg: null
+  - ret: [motor_error_code0: UInt16, motor_error_code1: UInt16, motor_error_code2: UInt16]
+
+- get_motor_pos_all:
+  - op : 211
+  - arg: null
+  - ret: [ticks: UInt32, curr_pos0: Double, curr_pos1: Double, curr_pos2: Double]
+
+- get_encoder_position_all:
+  - op : 212
+  - arg: null
+  - ret: [ticks: UInt32, position0: Double, position1: Double, position2: Double]
+
+- get_motor_vel_actual:
+  - op : 213
+  - arg: [motor_id: Int16]
+  - ret: [velocity: Double]
+
+- get_motor_vel_actual_all:
+  - op : 214
+  - arg: null
+  - ret: [ticks: UInt32, velocity0: Double, velocity1: Double, velocity2: Double]
+
+- read_motor_phase_offset:
+  - op : 215
+  - arg: [motor_id: Int16]
+  - ret: [phase_offset_cnt: Double]
+
+- read_curr_sense_params:
+  - op : 216
+  - arg: [motor_id: Int16]
+  - ret: [scale_a: Double, offset_a: Double, scale_b: Double, offset_b: Double,
+      scale_c: Double, offset_c: Double]
+
+- is_motor_phase_init_running:
+  - op : 217
+  - arg: [motor_id: Int16]
+  - ret: [value: Boolean]
+
+- set_curr_sense_offsets:
+  - op : 218
+  - arg: [motor_id: Int16, offset_a: Double, offset_b: Double, offset_c: Double]
+  - ret: null
+
+- set_motor_phase_offset:
+  - op : 219
+  - arg: [motor_id: Int16, phase_offset_cnt: Double]
+  - ret: null
+
+- set_log_channel:
+  - op : 220
+  - arg: [channel_id: UInt16, module_id: UInt16, signal_id: UInt16]
+  - ret: null
+
+- get_log_channel:
+  - op : 221
+  - arg: [channel_id: UInt16]
+  - ret: [module_id: UInt16, signal_id: UInt16]
+
+- set_log_timebase:
+  - op : 222
+  - arg: [timebase_id: UInt16, prescaler: UInt16]
+  - ret: null
+
+- get_log_timebase:
+  - op : 223
+  - arg: null
+  - ret: [timebase_id: UInt16, prescaler: UInt16]
+
+- read_log_data:
+  - op : 224
+  - arg: [first_item: Int16]
+  - ret: [num_items: Int16, data: Array_Int16_c]
+
+- reset_log:
+  - op : 225
+  - arg: null
+  - ret: null
+
+- get_motor_vel_ref:
+  - op : 230
+  - arg: [motor_id: Int16]
+  - ret: [vel: Double]
+
+- set_motor_vel_ref:
+  - op : 231
+  - arg: [motor_id: Int16, vel: Double]
+  - ret: null
+
+- get_motor_vel_gains:
+  - op : 232
+  - arg: [motor_id: Int16]
+  - ret: [kp: Double, ki: Double, kd: Double]
+  - eeprom : [motor_id : 3]
+
+- set_motor_vel_gains:
+  - op : 233
+  - arg: [motor_id: Int16, kp: Double, ki: Double, kd: Double]
+  - ret: null
+  - getter_op : 232
+
+- get_filter_coeffs:
+  - op : 234
+  - arg: [motor_id: Int16, filter_id: Int16]
+  - ret: [a0: Double, a1: Double, a2: Double, b1: Double, b2: Double]
+  - eeprom : [motor_id : 3, filter_id : 5]
+
+- set_filter_coeffs:
+  - op : 235
+  - arg: [motor_id: Int16, filter_id: Int16, a0: Double, a1: Double, a2: Double,
+      b1: Double, b2: Double]
+  - ret: null
+  - getter_op : 234
+
+- get_filter_design:
+  - op : 236
+  - arg: [motor_id: Int16, filter_id: Int16]
+  - ret: [type: Int16, fco0: Double, fco1: Double]
+  - eeprom : [motor_id : 3, filter_id : 5]
+
+- set_filter_design:
+  - op : 237
+  - arg: [motor_id: Int16, filter_id: Int16, type: Int16, fco0: Double, 
+        fco1: Double]
+  - ret: [result: Boolean]
+  - getter_op : 236
+
+- get_filter_enabled:
+  - op : 238
+  - arg: [motor_id: Int16, filter_id: Int16]
+  - ret: [value: Boolean]
+  - eeprom : [motor_id : 3, filter_id : 5]
+
+- set_filter_enabled:
+  - op : 239
+  - arg: [motor_id: Int16, filter_id: Int16, value: Boolean]
+  - ret: null
+  - getter_op : 238
+
+- get_profile_list:
+  - op  : 240
+  - arg : [motor_id: Int16]
+  - ret : [count: Int16, data: Array_Int16_c]
+  - desc: Obtain list of available motion profile types
+
+- get_active_profile:
+  - op  : 241
+  - arg : [motor_id: Int16]
+  - ret : [profile_type: Int16]
+  - desc: Get the currently active profile
+  
+- set_active_profile:
+  - op  : 242
+  - arg : [motor_id: Int16, profile_type: Int16]
+  - ret : [ret_code: Int16]
+  - desc: Set active profile, returns 0 if success
+
+- move_motor_vel_prop:
+  - op  : 243
+  - arg : [vel0: Double, vel1: Double, vel2: Double, max_acc: Double]
+  - ret : [motor_error_code0: UInt16, motor_error_code1: UInt16, motor_error_code2: UInt16]
+
+- reset_auto_stop:
+  - op  : 244
+  - arg : [motor_id: Int16]
+  - ret : null
+  
+- is_auto_stop_running:
+  - op  : 245
+  - arg : [motor_id: Int16]
+  - ret : [is_running: Boolean]
+
+- set_auto_stop_config:
+  - op  : 246
+  - arg : [motor_id: Int16, timeout_ms: UInt16, decel_time: Double]
+  - ret : null
+
+- get_auto_stop_config:
+  - op  : 247
+  - arg : [motor_id: Int16]
+  - ret : [timeout_ms: UInt16, decel_time: Double]
+  
+- read_phase_init_angle_diff:
+  - op  : 250
+  - arg : [motor_id: Int16]
+  - ret : [angle_diff_deg: Double]
+  - desc: Read angle difference between final result and initial estimate in phase init routine
+  
+- read_encoder_count:
+  - op : 227
+  - arg: [motor_id: Int16]
+  - ret: [count: Int32]
+
+EVENTS:
+- motor_move_started:
+  - op : 512
+  - ret: [motor_id: Int16]
+
+- motor_move_done:
+  - op : 513
+  - ret: [motor_id: Int16, status: UInt16, position: Double]
+
+- motor_home_done:
+  - op : 514
+  - ret: [motor_id: Int16, home_pos: Double, pos: Double]
+
+- motor_error_occured:
+  - op : 515
+  - ret: [motor_id: Int16, motor_error_code: UInt16]
+
+- shutdown_requested:
+  - op : 900
+  - ret: null
+
+- batt_low_alarm:
+  - op : 901
+  - ret: [status_flags: UInt16, batt_volt: Double]

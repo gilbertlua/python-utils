@@ -1,0 +1,196 @@
+APPNAME: AUTOMATIONMASTER
+VERSION: v0.0.1
+
+################################### COMMANDS #################################################
+COMMANDS:
+- save_configuration:
+  - op  : 3
+  - arg : null
+  - ret : null
+  - desc: Save configuration to EEPROM
+  
+- hang_firmware:
+  - op  : 9
+  - arg : null
+  - ret : null
+  - desc: Save configuration to EEPROM
+
+- set_address:
+  - op  : 100
+  - arg : [addr : Int16]
+  - ret : null
+  - desc: Set device address
+
+#---------------------------------- MISC ---------------------------------------
+- set_address:
+  - op  : 100
+  - arg : [addr : Int16]
+  - ret : null
+  - desc: Set device address
+  
+- get_packet_error_count:
+  - op  : 101
+  - arg : null
+  - ret : [count : Int16]
+  - desc: Set device address  
+
+- set_single_precision_enable:
+  - op  : 102
+  - arg : [enable : Boolean]
+  - ret : null
+  - desc: Set single precision ( float ) data enable or use Float precision instead ( Float ) 
+
+- get_single_precision_enable:
+  - op  : 103
+  - arg : null
+  - ret : [enable : Boolean]
+  - desc: get single precision ( float ) data enable or use Float precision instead ( Float ) 
+
+#---------------------------------- Experimental Firmware Master ---------------------------------------
+- write_command:
+  - op  : 300
+  - arg : [id : UInt16, opcode : UInt16, lenght : UInt16, data : Array_UInt16]
+  - ret : null
+  - desc: write command to the client, using this opcode the firmware master will act like a bridge between pc and clients
+
+- read_response:
+  - op  : 301
+  - arg : [id : UInt16]
+  - ret : [is_responded : Boolean, lenght : UInt16, data : Array_UInt16_c]
+  - desc: read response the firmware master received from one of the clients, can be overwritten
+
+- read_event:
+  - op  : 302
+  - arg : [id : UInt16]
+  - ret : [is_any_event : Boolean, opcode : UInt16, lenght : UInt16, data : Array_UInt16_c]
+  - desc: read event from the clients, the buffer is only one event.
+
+- add_command_sequence:
+  - op  : 303
+  - arg : [seq_num : UInt16, id : UInt16, opcode : UInt16, timeout_tick_us : UInt32, lenght : UInt16, data : Array_UInt16]
+  - ret : [success : Boolean]
+  - desc: add command sequence to the firmware master 
+
+- add_jump_sequence:
+  - op  : 304
+  - arg : [seq_num : UInt16, jump_index : UInt16]
+  - ret : [success : Boolean]
+  - desc: add command sequence to the firmware master 
+
+- add_event_sequence:
+  - op  : 305
+  - arg : [seq_num : UInt16, id : UInt16, opcode : UInt16, timeout_tick_us : UInt32]
+  - ret : [success : Boolean]
+  - desc: add wait event sequence to the firmware master
+
+- read_sequence:
+  - op  : 306
+  - arg : [seq_num : UInt16]
+  - ret : [id : UInt16, opcode : UInt16, type : UInt16]
+  - desc: read the sequence type on index 
+
+- erase_sequence:
+  - op  : 307
+  - arg : null
+  - ret : null
+  - desc: erase all sequence
+
+- stop_sequence:
+  - op  : 308
+  - arg : null
+  - ret : null
+  - desc: stops the current running sequence
+
+- start_sequence:
+  - op  : 309
+  - arg : [start_index : UInt16]
+  - ret : null
+  - desc: start the sequence
+
+- add_termination_sequence:
+  - op  : 310
+  - arg : [seq_num : UInt16]
+  - ret : [success : Boolean]
+  - desc: add termination sequence to the firmware master
+
+- set_button_action:
+  - op  : 311
+  - arg : [id : UInt16, action_type : UInt16, start_index : UInt16]
+  - ret : null
+  - desc: set the button functionality
+
+- get_button_action:
+  - op  : 312
+  - arg : [id : UInt16]
+  - ret : [action_type : UInt16, start_index : UInt16]
+  - desc: set the button functionality
+
+- read_button_state:
+  - op  : 313
+  - arg : null
+  - ret : [button_mask : UInt16]
+  - desc: read button state
+
+- add_publish_sequence:
+  - op  : 314
+  - arg : [seq_num : UInt16, opcode : UInt16, lenght : UInt16, data : Array_UInt16]
+  - ret : [success : Boolean]
+  - desc: add command sequence to the firmware master 
+
+- add_compare_uint16_sequence:
+  - op  : 315
+  - arg : [seq_num : UInt16, data_index : UInt16, cmpr_type : UInt16, cmpr_data : UInt16, true_jump_index : UInt16, false_jump_index : UInt16]
+  - ret : [success : Boolean]
+  - desc: see tutorial pls
+
+- add_compare_int16_sequence:
+  - op  : 316
+  - arg : [seq_num : UInt16, data_index : UInt16, cmpr_type : UInt16, cmpr_data : Int16, true_jump_index : UInt16, false_jump_index : UInt16]
+  - ret : [success : Boolean]
+  - desc: see tutorial pls
+
+- add_compare_uint32_sequence:
+  - op  : 317
+  - arg : [seq_num : UInt16, data_index : UInt16, cmpr_type : UInt16, cmpr_data : UInt32, true_jump_index : UInt16, false_jump_index : UInt16]
+  - ret : [success : Boolean]
+  - desc: see tutorial pls
+
+- add_compare_int32_sequence:
+  - op  : 318
+  - arg : [seq_num : UInt16, data_index : UInt16, cmpr_type : UInt16, cmpr_data : Int32, true_jump_index : UInt16, false_jump_index : UInt16]
+  - ret : [success : Boolean]
+  - desc: see tutorial pls
+
+- add_compare_float_sequence:
+  - op  : 319
+  - arg : [seq_num : UInt16, data_index : UInt16, cmpr_type : UInt16, cmpr_data : Double, true_jump_index : UInt16, false_jump_index : UInt16]
+  - ret : [success : Boolean]
+  - desc: see tutorial pls
+
+- add_delay_sequence:
+  - op  : 320
+  - arg : [seq_num : UInt16]
+  - ret : [delay_us : UInt32]
+  - desc: add delay to the sequence
+
+################################### EVENTS #################################################
+EVENTS:
+- comm_error:
+  - op  : 512
+  - ret: [error_code: UInt16]
+  - desc: Fired whent there is communciation error
+
+- sequence_timeout:
+  - op  : 520
+  - ret: [seq_num: UInt16]
+  - desc: ---
+
+- sequence_comparison_error:
+  - op  : 521
+  - ret: [seq_num: UInt16, intended_data: UInt16, received_data: UInt16]
+  - desc: ---
+
+- sequence_finished:
+  - op  : 522
+  - ret: null
+  - desc: ---

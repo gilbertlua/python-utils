@@ -1,0 +1,123 @@
+APPNAME: 
+VERSION: 
+
+COMMANDS:
+- get_target_pressure:
+  - op : 10
+  - arg: [id: Int16]
+  - ret: [value: Double]
+
+- set_target_pressure:
+  - op : 11
+  - arg: [id: Int16, value: Double]
+  - ret: null
+
+- get_controller_enabled:
+  - op : 12
+  - arg: [id: Int16]
+  - ret: [value: Boolean]
+
+- set_controller_enabled:
+  - op : 13
+  - arg: [id: Int16, value: Boolean]
+  - ret: null
+
+- get_pump_on:
+  - op : 14
+  - arg: [id: Int16]
+  - ret: [value: Boolean]
+
+- set_pump_on:
+  - op : 15
+  - arg: [id: Int16, value: Boolean]
+  - ret: null
+
+- get_status:
+  - op : 16
+  - arg: [id: Int16]
+  - ret: [value: UInt16]
+
+- get_feedback_sensor_params:
+  - op : 20
+  - arg: [id: Int16]
+  - ret: [scale: Double, offset: Double]
+
+- set_feedback_sensor_params:
+  - op : 21
+  - arg: [id: Int16, scale: Double, offset: Double]
+  - ret: null
+
+- get_pid_params:
+  - op : 22
+  - arg: [id: Int16]
+  - ret: [kp: Double, ki: Double, kd: Double]
+
+- set_pid_params:
+  - op : 23
+  - arg: [id: Int16, kp: Double, ki: Double, kd: Double]
+  - ret: null
+
+- get_settling_criteria:
+  - op : 24
+  - arg: [id: Int16]
+  - ret: [time_ms: Double, max_error: Double]
+
+- set_settling_criteria:
+  - op : 25
+  - arg: [id: Int16, time_ms: Double, max_error: Double]
+  - ret: null
+
+- save_configuration:
+  - op : 26
+  - arg: null
+  - ret: null
+
+- read_feedback_sensor:
+  - op : 30
+  - arg: [id: Int16]
+  - ret: [value: Double]
+
+- get_proportional_valve:
+  - op : 31
+  - arg: [id: Int16]
+  - ret: [value: UInt16]
+
+- set_proportional_valve:
+  - op : 32
+  - arg: [id: Int16, value: UInt16]
+  - ret: null
+
+- get_solenoid_valve:
+  - op : 33
+  - arg: [id: Int16]
+  - ret: [value: UInt16]
+
+- set_solenoid_valve:
+  - op : 34
+  - arg: [id: Int16, value: UInt16]
+  - ret: null
+
+- get_aux_enabled:
+  - op : 41
+  - arg: [id: Int16]
+  - ret: [value: Boolean]
+
+- set_aux_enabled:
+  - op : 42
+  - arg: [id: Int16, value: Boolean]
+  - ret: null
+
+- get_aux_pwm:
+  - op : 43
+  - arg: [id: Int16]
+  - ret: [value: UInt16]
+
+- set_aux_pwm:
+  - op : 44
+  - arg: [id: Int16, value: UInt16]
+  - ret: null
+
+- set_address:
+  - op : 100
+  - arg: [value: Int16]
+  - ret: null

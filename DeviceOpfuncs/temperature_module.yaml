@@ -1,0 +1,532 @@
+APPNAME: temperature_module
+VERSION: 0.0.4
+
+COMMANDS:
+# ==================== Temperature Controller =====================================================
+- set_temp_target:
+  - op  : 10
+  - arg : [value: Float]
+  - ret : null
+  - getter_op : 11
+  - desc: Set temperature target in celcius
+
+- get_temp_target:
+  - op  : 11
+  - arg : null
+  - ret : [value: Float]
+  - eeprom : null
+  - desc: Get temperature target in celcius
+
+- set_temp_controller_enable:
+  - op  : 12
+  - arg : [enabled: Boolean]
+  - ret : [is_success: Boolean]
+  - desc: Set temperature control enabled 0 = disabled, 1 = enabled
+
+- get_temp_controller_enable:
+  - op  : 13
+  - arg : null
+  - ret : [enabled: Boolean]
+  - desc: Get temperature control enabled 0 = disabled, 1 = enabled
+
+- set_temp_controller_pid:
+  - op  : 14
+  - arg : [kp: Float, ki: Float, kd: Float,gain_multiplier: Float, integral_limit_high: Float, integral_limit_low: Float, output_limit_high: Float, output_limit_low: Float ]
+  - ret : null
+  - getter_op : 15
+  - desc: Set temperature control pid gains
+
+- get_temp_controller_pid:
+  - op  : 15
+  - arg : null
+  - ret : [kp: Float, ki: Float, kd: Float,gain_multiplier: Float, integral_limit_high: Float, integral_limit_low: Float, output_limit_high: Float, output_limit_low: Float ]
+  - eeprom : null
+  - desc: Get temperature control pid gains
+
+- read_temp_controller_feedback:
+  - op : 16
+  - arg: null
+  - ret: [value: Float]
+  - desc: Get temperature sensor feedback with exact same period sampling with controller
+
+- read_temp_controller_actuator_output:
+  - op : 17
+  - arg: null
+  - ret: [value: Float]
+  - desc: Get temperature sensor feedback with exact same period sampling with controller
+
+- set_temp_controller_enable_on_start:
+  - op  : 18
+  - arg : [enable: Boolean]
+  - ret : null
+  - getter_op : 19
+  - desc: set temperature controller to be enabled on firmware start
+  
+- get_temp_controller_enable_on_start:
+  - op  : 19
+  - arg : null
+  - ret : [enable: Boolean]
+  - eeprom : null
+  - desc: get temperature controller to be enabled on firmware start
+
+- set_temperature_control_period:
+  - op  : 20
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 21
+  - desc: Set temperature control period in micro seconds 
+
+- get_temperature_control_period:
+  - op  : 21
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get temperature control period in micro seconds 
+
+- set_temperature_control_distribution_output:
+  - op  : 22
+  - arg : [value: Float]
+  - ret : null
+  - getter_op : 21
+  - desc: Set fan actuator fixed output 
+
+- get_temperature_control_distribution_output:
+  - op  : 23
+  - arg : null
+  - ret : [value: Float]
+  - eeprom : null
+  - desc: Get fan actuator fixed output
+
+- set_peltier_output:
+  - op  : 30
+  - arg : [value: Float]
+  - ret : [is_success : Boolean]
+  - desc: set peltier output, if peltier mode is 1, it set the target current, if 0 it set the pwm duty precentage
+
+- get_peltier_output:
+  - op  : 31
+  - arg : null
+  - ret : [value: Float]
+  - desc: see op set_peltier_output
+
+- read_peltier_current:
+  - op  : 32
+  - arg : null
+  - ret : [value: Float]
+  - desc: read peltier electrical current
+
+- set_peltier_mode:
+  - op  : 33
+  - arg : [mode: UInt16]
+  - ret : [is_success : Boolean]
+  - desc: if peltier mode is 1, it set the target current, if 0 it set the pwm duty precentage
+
+- get_peltier_mode:
+  - op  : 34
+  - arg : null
+  - ret : [mode: UInt16]
+  - desc: if peltier mode is 1, it set the target current, if 0 it set the pwm duty precentage
+
+- set_peltier_enable:
+  - op  : 35
+  - arg : [enable: Boolean]
+  - ret : [is_success : Boolean]
+  - desc: set true so we can control the peltier
+
+- get_peltier_enable:
+  - op  : 36
+  - arg : null
+  - ret : [enable: Boolean]
+  - desc: set true so we can control the peltier
+
+- read_peltier_current_filtered:
+  - op  : 37
+  - arg : null
+  - ret : [value: Float]
+  - desc: read peltier electrical current
+
+- set_peltier_actuator_current_pid:
+  - op : 38
+  - arg: [kp: Float, ki: Float, kd: Float,gain_multiplier: Float, integral_limit_high: Float, integral_limit_low: Float, output_limit_high: Float, output_limit_low: Float ]
+  - ret: null
+
+- get_peltier_actuator_current_pid:
+  - op : 39
+  - arg: null
+  - ret: [kp: Float, ki: Float, kd: Float,gain_multiplier: Float, integral_limit_high: Float, integral_limit_low: Float, output_limit_high: Float, output_limit_low: Float ]
+
+- set_peltier_pwm_freq:
+  - op  : 40
+  - arg : [frq_hz: Float]
+  - ret : null
+  - desc: set pwm freq
+
+- get_peltier_pwm_freq:
+  - op  : 41
+  - arg : null
+  - ret : [frq_hz: Float]
+  - desc: set pwm freq
+
+- set_peltier_pwm_duty_limit:
+  - op  : 42
+  - arg : [value: Float]
+  - ret : null
+  - desc: set peltier pwm duty max duty to limit the voltage applied
+
+- get_peltier_pwm_duty_limit:
+  - op  : 43
+  - arg : null
+  - ret : [value: Float]
+  - desc: set peltier pwm duty max duty to limit the voltage applied
+
+- set_peltier_current_limit:
+  - op  : 44
+  - arg : [value: Float]
+  - ret : null
+  - desc: set peltier pwm duty max current to limit the voltage applied
+
+- get_peltier_current_limit:
+  - op  : 45
+  - arg : null
+  - ret : [value: Float]
+  - desc: set peltier pwm duty max current to limit the voltage applied
+
+- is_thermostat_error:
+  - op  : 46
+  - arg : null
+  - ret : [is_error: Boolean]
+  - desc: get Thermostat error status
+
+- set_remote_actuator_address:
+  - op  : 48
+  - arg : [address: UInt16]
+  - ret : null
+  - desc: set pump enable
+
+- get_remote_actuator_address:
+  - op  : 49
+  - arg : null
+  - ret : [address: UInt16]
+  - desc: see op 12
+
+- set_can_extend_address:
+  - op  : 50
+  - arg : [address: UInt16]
+  - ret : null
+  - desc: set pump enable
+
+- get_can_extend_address:
+  - op  : 51
+  - arg : null
+  - ret : [address: UInt16]
+  - desc: see op 12
+
+- set_temp_control_selected_actuator:
+  - op  : 52
+  - arg : [id: UInt16]
+  - ret : [is_success: Boolean]
+  - desc: set pump enable
+
+- get_temp_control_selected_actuator:
+  - op  : 53
+  - arg : null
+  - ret : [id: UInt16]
+  - desc: see op 12
+
+- read_peltier_set_voltage_current:
+  - op  : 54
+  - arg : null
+  - ret : [voltage: Float, current: Float]
+  - desc: read peltier voltage and current set to it
+
+- is_peltier_current_not_reach:
+  - op  : 55
+  - arg : null
+  - ret : [is_error : Boolean]
+  - desc: Get current not reach status
+
+# ==================== FAN Controller only on MTI =====================================================
+- set_fan_enable:
+  - op  : 60
+  - arg : [id : UInt16, enable: Boolean]
+  - ret : [is_success : Boolean]
+  - desc: xx
+
+- get_fan_enable:
+  - op  : 61
+  - arg : [id : UInt16]
+  - ret : [enable: Boolean]
+  - desc: xx
+
+- set_fan_output:
+  - op  : 62
+  - arg : [id : UInt16, value: Float]
+  - ret : [is_success : Boolean]
+  - desc: xx
+
+- get_fan_output:
+  - op  : 63
+  - arg : [id : UInt16]
+  - ret : [value: Float]
+  - desc: xx
+
+- set_fan_range:
+  - op  : 64
+  - arg : [id : UInt16, max_value: Float, min_value: Float]
+  - ret : [is_success : Boolean]
+  - desc: xx
+
+- get_fan_range:
+  - op  : 65
+  - arg : [id : UInt16]
+  - ret : [max_value: Float, min_value: Float]
+  - desc: xx
+
+- read_fan_tacho_period:
+  - op  : 66
+  - arg : [id : UInt16]
+  - ret : [period_us: UInt32]
+  - desc: also used on flo acc
+
+- set_fan_error_params:
+  - op  : 67
+  - arg : [actuator_out_threshold: Float,min_val_threshold : Float,max_val_threshold : Float, timeout_us : UInt32]
+  - ret : null
+  - getter_op : 75
+  - desc: Set fan error handling params
+
+- get_fan_error_params:
+  - op  : 68
+  - arg : null
+  - ret : [actuator_out_threshold: Float,min_val_threshold : Float,max_val_threshold : Float, timeout_us : UInt32]
+  - eeprom : null
+  - desc: Get fan error handling params
+
+- is_fan_error:
+  - op  : 70
+  - arg : [id: UInt16]
+  - ret : [is_error: Boolean]
+  - desc: get the fan error status
+
+- read_fan_tacho_freq:
+  - op  : 71
+  - arg : [id : UInt16]
+  - ret : [freq_hz: Float]
+  - desc: also used on flo acc
+
+# ==================== PUMP Controller only on FLO ACC =====================================================
+- set_pump_enable:
+  - op  : 60
+  - arg : [enable: Boolean]
+  - ret : [is_success : Boolean]
+  - desc: xx
+
+- get_pump_enable:
+  - op  : 61
+  - arg : null
+  - ret : [enable: Boolean]
+  - desc: xx
+
+- set_pump_output:
+  - op  : 62
+  - arg : [value: Float]
+  - ret : [is_success : Boolean]
+  - desc: xx
+
+- get_pump_output:
+  - op  : 63
+  - arg : null
+  - ret : [value: Float]
+  - desc: xx
+
+- set_pump_output:
+  - op  : 62
+  - arg : [value: Float]
+  - ret : [is_success : Boolean]
+  - desc: xx
+
+- set_pump_range:
+  - op  : 64
+  - arg : [max_value: Float, min_value: Float]
+  - ret : [is_success : Boolean]
+  - desc: xx
+
+- get_pump_range:
+  - op  : 65
+  - arg : null
+  - ret : [max_value: Float, min_value: Float]
+  - desc: xx
+
+- read_pump_tacho_period:
+  - op  : 67
+  - arg : null
+  - ret : [period_us: UInt32]
+  - desc: xx
+
+# neopixel only on FLO_ACC
+- set_RGB_LED:
+  - op : 70
+  - arg: [count: UInt16, dataHighColorRGB: Array_UInt16_c]
+  - ret: [status: Boolean]
+
+- set_animator_frame_buffer:
+  - op : 71
+  - arg: [frameIndex: UInt16, durationUs: UInt32, offset: UInt16, count: UInt16, dataHighRGB: Array_UInt16_c]
+  - ret: [status: Boolean]
+
+- get_animator_frame_buffer:
+  - op : 72
+  - arg: [ledIndex: UInt16, frameIndex: UInt16]
+  - ret: [durationUs : UInt32,count: UInt16, dataHighRGB: Array_UInt16_c]
+
+- clear_animator_frame_buffer:
+  - op : 73
+  - arg: null
+  - ret: [status: Boolean]  
+
+- start_animator:
+  - op : 74
+  - arg: [min_index: UInt16, max_index: UInt16, isRepeat: Boolean]
+  - ret: [status: Boolean]
+
+- stop_animator:
+  - op : 75
+  - arg: null
+  - ret: null 
+
+- set_initial_led:
+  - op : 76
+  - arg: [color: UInt32, led_count: UInt16]
+  - ret: null 
+
+- get_initial_led:
+  - op : 77
+  - arg: null
+  - ret: [color: UInt32, led_count: UInt16]
+
+
+# ============== temperature reading =================================
+- set_thermistor_coeficient:
+  - op  : 110
+  - arg : [id: UInt16,shart_A: Float, shart_B: Float, shart_C: Float, r_divider: Float, v_offset: Float, gain_amplifier: Float, voltage_divider: Float, offset_temp : Float]
+  - ret : null
+  - getter_op : 111
+  - desc: Set steinhart or thermistor coeficient of temperature sensor id is same as controller id
+
+- get_thermistor_coeficient:
+  - op  : 111
+  - arg : [id: UInt16]
+  - ret : [shart_A: Float, shart_B: Float, shart_C: Float, r_divider: Float, v_offset: Float, gain_amplifier: Float, voltage_divider: Float, offset_temp : Float]
+  - eeprom : [id : 4]
+  - desc: Get steinhar and thermistort coeficien of temperature sensor id is same as controller id
+
+- set_temperature_sampling_period:
+  - op  : 112
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 113
+  - desc: Set temperature sampling period in micro seconds 
+
+- get_temperature_sampling_period:
+  - op  : 113
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get temperature sampling period in micro seconds 
+
+- set_temperature_sensor_lpf_config:
+  - op  : 114
+  - arg : [lpf_enable : Boolean, cut_off_freq_hz : Float]
+  - ret : null
+  - getter_op : 111
+  - desc: Set LPF filter cut off freq
+
+- get_temperature_sensor_lpf_config:
+  - op  : 115
+  - arg : null
+  - ret : [lpf_enable : Boolean, cut_off_freq_hz : Float]
+  - eeprom : null
+  - desc: Get LPF filter cut off freq
+
+- read_temperature:
+  - op  : 118
+  - arg : [id: UInt16]
+  - ret : [value: Float]
+  - desc: read temperature  in celcius 
+
+- read_temperature_filtered:
+  - op  : 119
+  - arg : [id: UInt16]
+  - ret : [value: Float]
+  - desc: read temperature after low pass filter  in celcius 
+
+- read_temperature_filtered_all:
+  - op  : 120
+  - arg : null
+  - ret : [value: Array_Float]
+  - desc: read all temperature after low pass filter  in celcius 
+
+- read_temperature_all:
+  - op  : 121
+  - arg : null
+  - ret : [value: Array_Float]
+  - desc: read all temperature  in celcius 
+
+- set_thermistor_normal_temp_limit:
+  - op  : 122
+  - arg : [id : UInt16, max_limit_celciuis : Float, min_limit_celciuis : Float]
+  - ret : null
+  - getter_op : 123
+  - desc: Set thermistor normal reading range
+
+- get_thermistor_normal_temp_limit:
+  - op  : 123
+  - arg : [id : UInt16]
+  - ret : [max_limit_celciuis : Float, min_limit_celciuis : Float]
+  - eeprom : [id : 6]
+  - desc: get thermistor normal reading range
+
+- set_temperature_controller_out_table:
+  - op  : 124
+  - arg : [index : UInt16, out_value : Float]
+  - ret : null
+  - getter_op : 111
+  - desc: Set out value when all thermistor failed
+
+- get_temperature_controller_out_table:
+  - op  : 125
+  - arg : [index : UInt16]
+  - ret : [out_value : Float]
+  - eeprom : [index : 276]
+  - desc: Get out value when all thermistor failed
+
+- is_thermistor_error:
+  - op  : 126
+  - arg : [index : UInt16]
+  - ret : [is_error : Boolean]
+  - desc: Get thermistor error status
+
+- read_adc_all:
+  - op  : 130
+  - arg : null
+  - ret : [value: Array_UInt16]
+  - desc: read all adc 
+
+#=============================================== event list =============================================
+EVENTS:
+
+- on_fan_error:
+  - op : 910
+  - ret: [id : UInt16,error_type : UInt16]
+
+- on_thermistor_error:
+  - op : 911
+  - ret: [id : UInt16,temp_reading : Float ,error_type : UInt32]
+
+- on_peltier_current_not_reach:
+  - op : 912
+  - ret: [duty : Float,current_target : Float ,current_reading : Float]
+
+- on_thermostat_triggered:
+  - op : 922
+  - ret: [heatsink_temperature : Float]

@@ -1,0 +1,784 @@
+APPNAME: IOExpanderF4
+VERSION: 4.x.x
+
+COMMANDS:  
+
+# ------------------------------- Atomic PPI ------------------------------------
+- ppi_read_direction_bit:
+  - op  : 10
+  - arg : [id: UInt16]
+  - ret : [direction: UInt16]
+  - desc: |
+            get the data direction of PPI IO
+
+- ppi_write_direction_bit:
+  - op  : 11
+  - arg : [id: UInt16, direction: UInt16]
+  - ret : null
+  - desc: |
+            set the data direction of PPI IO
+
+- ppi_read_bit:
+  - op  : 12
+  - arg : [id: UInt16]
+  - ret : [value: UInt16]
+  - desc: get bit IO value
+
+- ppi_set_bit:
+  - op  : 13
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: set bit IO value
+
+- ppi_clear_bit:
+  - op  : 14
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: clear bit IO value
+
+- ppi_toggle_bit:
+  - op  : 15
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: toggle bit IO value
+  
+- ppi_write_bit:
+  - op  : 16
+  - arg : [id: UInt16, value: UInt16]
+  - ret : null
+  - desc: write bit PPI IO value
+
+- ppi_read_direction_words:
+  - op  : 17
+  - arg : [start_index : UInt16, count : UInt16]
+  - ret : [count : UInt16, direction: Array_UInt16_c]
+  - desc: |
+            read word data of PPI IO direction 
+
+- ppi_write_direction_words:
+  - op  : 18
+  - arg : [start_index : UInt16, count : UInt16, direction: Array_UInt16_c]
+  - ret : null
+  - desc: |
+            write word data of PPI IO direction 
+  
+- ppi_read_words:
+  - op  : 19
+  - arg : [start_index: UInt16, count: UInt16]
+  - ret : [count : UInt16, states: Array_UInt16_c]
+  - desc: Read current PPI output states
+  
+- ppi_set_words:
+  - op  : 20
+  - arg : [start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : null
+  - desc: Perform set operation on PPI outputs directly
+  
+- ppi_clear_words:
+  - op  : 21
+  - arg : [start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : null
+  - desc: Perform clear operation on PPI outputs directly
+  
+- ppi_toggle_words:
+  - op  : 22
+  - arg : [start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : null
+  - desc: Perform toggle operation on PPI outputs directly
+
+- ppi_write_words:
+  - op  : 23
+  - arg : [start_index: UInt16, count: UInt16, states: Array_UInt16_c]
+  - ret : null
+  - desc: Perform write operation on PPI outputs directly
+  
+- ppi_revert_state_words:
+  - op  : 24
+  - arg : [start_index: UInt16, count: UInt16]
+  - ret : null
+  - desc: Undo all PPI port to last previous state state
+  
+ 
+ # ------------------------------- PPI Pulser ------------------------------------
+- get_pulser_params:
+  - op  : 25
+  - arg : null
+  - ret : [pulser_voltage : Double, hold_voltage : Double, supply_voltage : Double, pulse_time_us : UInt32, inverted : Boolean, active_low_input : Boolean]
+  - desc: |
+          Return
+          - pulser_voltage     -> voltage on pulsing for period us
+          - hold_voltage  -> voltage on holding for period us
+          - supply_voltage -> power supply for pulser
+          - pulse_time_us     -> Valve pulsing time in microsecs.
+          - inverted     -> pulser PWM inverting characteristic.
+          - active_low_input -> input signal type to activate pulser 
+
+- set_pulser_params:
+  - op  : 26
+  - arg : [pulser_voltage : Double, hold_voltage : Double, supply_voltage : Double, pulse_time_us : UInt32, inverted : Boolean, active_low_input : Boolean]
+  - ret : null
+  - desc: |
+          Arguments
+          - pulser_voltage     -> voltage on pulsing for period us
+          - hold_voltage  -> voltage on holding for period us
+          - supply_voltage -> power supply for pulser
+          - pulse_time_us     -> Valve pulsing time in microsecs.
+          - inverted     -> pulser PWM inverting characteristic.
+          - active_low_input -> input signal type to activate pulser 
+
+# ------------------------------- PPI Valve Sequencer ------------------------------------
+- ppi_seq_queue_nop:
+  - op  : 27
+  - arg : [id: UInt32, duration_ms: UInt32]
+  - ret : [remaining_count: Int16, error_code: UInt16]
+  - desc: Add wasting time to sequence wihtout operation on outputs
+
+- ppi_seq_queue_write:
+  - op  : 28
+  - arg : [id: UInt32, duration_ms: UInt32, start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : [remaining_count: Int16, error_code: UInt16]
+  - desc: Add write operation on valve outputs
+  
+- ppi_seq_queue_set:
+  - op  : 29
+  - arg : [id: UInt32, duration_ms: UInt32, start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : [remaining_count: Int16, error_code: UInt16]
+  - desc: Add set operation on valve outputs
+
+- ppi_seq_queue_clear:
+  - op  : 30
+  - arg : [id: UInt32, duration_ms: UInt32, start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : [remaining_count: Int16, error_code: UInt16]
+  - desc: Add clear operation on valve outputs
+  
+- ppi_seq_queue_toggle:
+  - op  : 31
+  - arg : [id: UInt32, duration_ms: UInt32, start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : [remaining_count: Int16, error_code: UInt16]
+  - desc: Add toggle operation on valve outputs
+
+- ppi_seq_start:
+  - op  : 32
+  - arg : null
+  - ret : null
+  - desc: Start sequence executions
+
+- ppi_seq_abort:
+  - op  : 33
+  - arg : null
+  - ret : [uncompleted_count: UInt16]
+  - desc: Abort after last sequence executions finished
+
+- ppi_seq_abort_immediately:
+  - op  : 34
+  - arg : null
+  - ret : [uncompleted_count: UInt16]
+  - desc: Abort immediately current sequence execution
+
+- ppi_seq_get_info:
+  - op  : 35
+  - arg : null
+  - ret : [status: UInt16, size: UInt16, count: UInt16]
+  - desc: Reads sequencer current info
+  
+- ppi_seq_queue_set_clear:
+  - op  : 36
+  - arg : [id: UInt32, duration_ms: UInt32, start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : [remaining_count: UInt16, error_code: UInt16]
+  - desc: Add set operation on valve outputs, followed with clear operation after duration timeouts
+  
+- ppi_seq_queue_clear_set:
+  - op  : 37
+  - arg : [id: UInt32, duration_ms: UInt32, start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : [remaining_count: UInt16, error_code: UInt16]
+  - desc: Add clear operation on valve outputs, followed with set operation after duration timeouts
+
+- ppi_seq_clear:
+  - op  : 38
+  - arg : null
+  - ret : [uncompleted_count: UInt16]
+  - desc: Clear all sequencer queue items.
+  
+- ppi_seq_queue_abort:
+  - op  : 39
+  - arg : [id: UInt32]
+  - ret : [remaining_count: UInt16, error_code: UInt16]
+  - desc: Add abort/halt routine on sequencer. Sequencer executions would be aborted if meet this item.
+  
+- ppi_seq_info:
+  - op  : 40
+  - arg : null
+  - ret : [info: UInt16]
+  - desc: Get sequencer info (Bit0-> IsRunning, Bit1-> IsEmpty. Bit2-> IsHalfFull, Bit3-> IsFull)          
+
+- ppi_seq_publish_go:
+  - op  : 41
+  - arg : [id: UInt32, duration_ms: UInt32]
+  - ret : [remaining_count: Int16, error_code: UInt16]
+  - desc: ppiSequencerQueePublishGo
+
+- ppi_seq_wait_subscribe:
+  - op  : 42
+  - arg : [id: UInt32, duration_ms: UInt32]
+  - ret : [remaining_count: Int16, error_code: UInt16]
+  - desc: ppiSequencerWaitSub
+# ------------------------------- Timed Valve ------------------------------------
+# -- Note: before using Timed Output feature, ensure that corresponding IO direction
+# -- was set to OUTPUT first (save config then if necesarry).
+# -- Because FW would make it INPUT as default
+# -- id: Digital IO Index 0-7
+
+- timed_valve_perform_set_clear:
+  - op  : 44
+  - arg : [id: UInt16, duration_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: Add set operation on output, followed with clear operation after duration timeouts
+
+- timed_valve_perform_clear_set:
+  - op  : 45
+  - arg : [id: UInt16, duration_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: Add set operation on output, followed with clear operation after duration timeouts
+
+- timed_valve_abort:
+  - op  : 46
+  - arg : [id: UInt16]
+  - ret : [success: Boolean]
+  - desc: Abort current action on timed valve with specified bit
+
+- timed_valve_set_enable_mask:
+  - op  : 47
+  - arg : [mask: UInt16]
+  - ret : null
+  - desc: Set timed valve enable mask
+
+- timed_valve_get_enable_mask:
+  - op  : 48
+  - arg : null
+  - ret : [mask: UInt16]
+  - desc: Get timed valve enable mask
+
+#---------------------------- INPUT MONITOR ------------------------------------
+- input_monitor_get_debouch_time_ms:
+  - op  : 60
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the debouch time in ms
+
+- input_monitor_set_debouch_time_ms:
+  - op  : 61
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the debouch time in ms
+
+- input_monitor_get_input_mask:
+  - op  : 62
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the input mask please see InputMonitorMask
+
+- input_monitor_set_input_mask:
+  - op  : 63
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the input mask please see InputMonitorMask
+
+- input_monitor_read_input:
+  - op  : 64
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+# ------------------------------- MOTION ABORT ------------------------------------
+- motion_abort_get_config:
+  - op  : 80
+  - arg : [abort_id: Int16]
+  - ret : [trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - desc: please see AbortInputBitmask and AbortId
+
+- motion_abort_set_config:
+  - op : 81
+  - arg: [abort_id: Int16, trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - ret: null
+  - desc: please see AbortInputBitmask and AbortId
+
+- motion_abort_clear_triggered_inputs:
+  - op : 82
+  - arg: [abort_id: Int16]
+  - ret: null
+
+- motion_abort_get_triggered_inputs:
+  - op : 83
+  - arg: [abort_id: Int16]
+  - ret: [input_mask: UInt32]
+
+- motion_abort_get_threshold:
+  - op : 84
+  - arg: [abort_id: Int16]
+  - ret: [threshold: Double]
+
+- motion_abort_set_threshold:
+  - op : 85
+  - arg: [abort_id: Int16, threshold: Double]
+  - ret: [success: Boolean]
+
+- get_triggered_value:
+  - op : 86
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c]
+
+- get_triggered_tick_us:
+  - op : 87
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_UInt32_c]
+
+#---------------------------------- LOGGING ---------------------------------------
+- get_log_items:
+  - op  : 89
+  - arg : null
+  - ret : [logtick_mask: UInt16, aux_analog_in_mask: UInt16]
+  - desc: |
+           Get data logger activation status. Each logger module has bitmasks to represent/activate which data is logged.
+           - logtick  -> provide logger tick that keeps incremented, one tick per log sampling, to provide information if any data is missing.
+                         Activation bitmasks is described in TickLogMask under ENUMS section.
+           - aux_analog_in_mask   -> atomic aux analog in related data. Check AuxAnalogInLogMask.
+
+- set_log_items:
+  - op  : 90
+  - arg : [logtick_mask: UInt16, aux_analog_in_mask: UInt16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set data logger activation.  Check get_log_items opcode for furher explanation of bitmasks and modules.
+          Success will be False if device fails to activate all given masks, which happen when number of logging channel is insufficient (MAX NUM of channel is 9).
+
+- start_log:
+  - op  : 91
+  - arg : null
+  - ret : [started: Boolean]
+  - desc: Start data logger. started is False if unable to start (log items is not set yet).
+
+- stop_log:
+  - op  : 92
+  - arg : null
+  - ret : null
+  - desc: Stop data logger.
+
+- read_log_data:
+  - op  : 93
+  - arg : [start_index: Int16]
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: Read log data from a starting index, maximum data per command is 251 items.
+          Arguments
+          - start_index -> Starting index to be read
+
+          Returns
+          - num_items -> number of received data
+          - data      -> array of received data
+
+          Note
+          - Pump and Valves data will be sent as bitmask in one UInt16 data, check PumpValveLogDatamask
+
+- get_log_status:
+  - op  : 94
+  - arg : null
+  - ret : [status: Int16, triggered_pos: UInt16]
+  - desc: |
+          Get logger status. If trigger is activated, trigger_pos contain the index of data where trigger is activated. status is enums that consist of
+          - 0 -> logger is running
+          - 1 -> logger is stopped by user
+          - 2 -> logger is stopped by trigger
+          - 3 -> logger has not been started at all
+
+- read_log_stream_data:
+  - op  : 95
+  - arg : null
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: |
+          Read streaming of data from last read index, max 200 data per command. For example, first read_log_stream_data command will obtain
+          data 0-199, second command will obtain data 200-399, and so on.
+          Arguments
+          - num_items -> number of received data
+          - data      -> array of received data
+
+          Note
+          - Pump and Valves data will be sent as bitmask in one UInt16 data, check PumpValveLogDatamask
+
+- set_log_trigger:
+  - op  : 96
+  - arg : [module_id: UInt16, signal_mask: UInt16, level: UInt16, trigger_type: Int16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set a signal from a module to simulate osciloscope-like trigger. If trigger activated, the logger will automatically setup data such that
+          trigger position is in the middle of logged data. You should read the data using read_log_data command on trigger mode.
+          See https://community.keysight.com/community/keysight-blogs/oscilloscopes/blog/2016/09/01/understanding-oscilloscope-trigger-system-basics-why-you-should-care
+          to understand trigger in detail.
+          Arguments
+          - module_id    -> id of logger module, 0 is log tick, 1 is aux_analog_in_mask
+          - signal_mask  -> data/signal activation mask for each module, similar to masks in set_log_items. Please check enum section for mask list
+          - level        -> level of selected data/signal that activate the triggers
+          - trigger_type -> trigger type, 0 is disable trigger, 1 is rising signal trigger, 2 is falling signal trigger, 3 is both rising and falling signal trigger
+
+- get_log_period:
+  - op  : 97
+  - arg : null
+  - ret : [period_us : UInt32]
+  - desc: Get current logging period in microsecs.
+
+- set_log_period:
+  - op  : 98
+  - arg : [period_us : UInt32]
+  - ret : null
+  - desc: Set current logging period in microsecs.
+
+- set_log_prescaler:
+  - op  : 99
+  - arg : [prescaler : UInt16]
+  - ret : null
+  - desc: Set current logging period prescaler.
+
+#---------------------------- AUX ANALOG IN ADC -----------------------------
+- aux_adc_get_params:
+  - op  : 103
+  - arg : [id: UInt16]
+  - ret : [scale: Double, offset: Double]
+  - desc: get setting scale and offset for reading the analog in from ADC
+
+- aux_adc_set_params:
+  - op  : 104
+  - arg : [id: UInt16, scale: Double, offset: Double]
+  - ret : null
+  - desc: setting scale and offset for reading the analog in from ADC
+
+- aux_adc_read_value:
+  - op  : 105
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read value aux input analog
+
+#---------------------------- AUX ANALOG OUT PWM -----------------------------
+- aux_pwm_get_params:
+  - op  : 109
+  - arg : [id: UInt16]
+  - ret : [max_range: Double, min_range: Double]
+  - desc: get max range and min range of output in percentag
+
+- aux_pwm_set_params:
+  - op  : 110
+  - arg : [id: UInt16, max_range: Double, min_range: Double]
+  - ret : null
+  - desc: set max range and min range of output in percentage
+
+- aux_pwm_read_value:
+  - op  : 111
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: get value in percentage from range
+
+- aux_pwm_write_value:
+  - op  : 112
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - desc: set value in percentage from range
+
+- aux_pwm_get_freq:
+  - op  : 113
+  - arg : [id: UInt16]
+  - ret : [value: UInt32]
+  - desc: get freq analog out pwm in Hz
+
+- aux_pwm_set_freq:
+  - op  : 114
+  - arg : [id: UInt16, value: UInt32]
+  - ret : null
+  - desc: set freq analog out pwm in Hz
+
+# ------------------------------- AUX ANALOG IN ADC as Temp Sensor ------------------------------------
+- set_temp_offset:
+  - op  : 123
+  - arg : [id: UInt16, offset: Double]
+  - ret : null
+  - desc: Set temperature offset for correcting the reading of temperature in celcius
+
+- get_temp_offset:
+  - op  : 124
+  - arg : [id: UInt16]
+  - ret : [offset: Double]
+  - desc: Get temperature offset for correcting the reading of temperature in celcius
+
+- set_steinhart_temperature_coeficient:
+  - op  : 125
+  - arg : [id: UInt16, A: Double, B: Double, C: Double]
+  - ret : null
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_steinhart_temperature_coeficient:
+  - op  : 126
+  - arg : [id: UInt16]
+  - ret : [A: Double, B: Double, C: Double]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- set_thermistor_coefficient:
+  - op  : 127
+  - arg : [id: UInt16, r_divider: Double, v_offset: Double, gain_amplifier: Double, voltage_divider: Double]
+  - ret : null
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_thermistor_coefficient:
+  - op  : 128
+  - arg : [id: UInt16]
+  - ret : [r_divider: Double, v_offset: Double, gain_amplifier: Double, voltage_divider: Double]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- read_temperature_sensor:
+  - op  : 129
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: Read temperature sensor value
+
+# ------------------------------- AUX ANALOG IN ADC SENSOR MONITOR ------------------------------------
+- sensor_monitor_get_enable_mask:
+  - op : 133
+  - arg: null
+  - ret: [enable_mask: UInt16]
+  - desc: |
+            get sensor monitor enable mask
+
+- sensor_monitor_set_enable_mask:
+  - op : 134
+  - arg: [enable_mask: UInt16]
+  - ret: null
+  - desc: |
+            set sensor monitor enable mask
+
+- sensor_monitor_get_debounce_ms:
+  - op : 135
+  - arg: null
+  - ret: [debounce_ms: UInt16]
+  - desc: |
+            get sensor monitor debounce time in milisecond
+
+- sensor_monitor_set_debounce_ms:
+  - op : 136
+  - arg: [debounce_ms: UInt16]
+  - ret: null
+  - desc: |
+            set sensor monitor debounce time in milisecond
+
+- sensor_monitor_get_threshold:
+  - op : 137
+  - arg: [id: UInt16]
+  - ret: [upper_limit: Double, lower_limit: Double]
+  - desc: |
+            get sensor monitor upper and lower threshold for corresponding channel
+
+- sensor_monitor_set_threshold:
+  - op : 138
+  - arg: [id: UInt16, upper_limit: Double, lower_limit: Double]
+  - ret: [success : Boolean]
+  - desc: |
+            set sensor monitor upper and lower threshold for corresponding channel
+
+# ------------------------------- AUX ANALOG OUT PWM as SERVO MOTION ------------------------------------
+- servo_motion_set_position:
+  - op : 142
+  - arg: [id: UInt16, position: Double, speed: Double]
+  - ret: [success : Boolean]
+  - desc: |
+            Set servo position given by Id, position scale and speed scale (0 to 1)
+
+- servo_motion_get_position:
+  - op : 143
+  - arg: [id: UInt16]
+  - ret: [position : Double]
+  - desc: |
+            Get servo position given by Id, returns it's position scale (0 to 1)
+
+- servo_motion_get_status:
+  - op : 144
+  - arg: [id: UInt16]
+  - ret: [status : UInt16]
+  - desc: |
+           Get servo status given by Id, returns (0: INVALID Id, 1: STANDBY, 2: INCREMENTING, 3: DECREMENTING)
+
+- servo_motion_set_config:
+  - op : 145
+  - arg: [id: UInt16, period_us: UInt16, upper_limit: Double, lower_limit: Double]
+  - ret: null
+  - desc: |
+            set servo duty cycle limit
+            return false if upper_limit<lower limit and vice versa
+
+- servo_motion_get_config:
+  - op : 146
+  - arg: [id: UInt16]
+  - ret: [period_us: UInt16,upper_limit: Double, lower_limit: Double]
+  - desc: |
+            get servo duty cycle limit
+
+- servo_motion_set_initial_position:
+  - op : 147
+  - arg: [id: UInt16, enable: Boolean, pos: Double]
+  - ret: [status: Boolean]
+  - desc: |
+            set servo initial position
+            when device turn on
+
+- servo_motion_get_initial_position:
+  - op : 148
+  - arg: [id: UInt16]
+  - ret: [enable: Boolean, pos: Double]
+  - desc: |
+            get servo initial position
+            when device turn on
+
+- servo_motion_abort:
+  - op : 149
+  - arg: [id : UInt16]
+  - ret: [position : Double]
+  - desc: |
+            Abort in motion servo given by id. Returns last position otherwise -1.0 if wrong id was given.
+
+#-------------------------------- PUB SUB ----------------------------------------------
+- set_subscribe_address:
+  - op : 140
+  - arg: [value: Int16]
+  - ret: null
+
+- get_subscribe_address:
+  - op : 141
+  - arg: null
+  - ret: [value: Int16]
+
+- set_publish_ppi_seq_start:
+  - op  : 152
+  - arg : null
+  - ret : null
+  - desc: Start sequence executions
+
+- get_publ:
+  - op  : 153
+  - arg : null
+  - ret : [status: UInt16, size: UInt16, count: UInt16]
+  - desc: Reads sequencer current info
+
+- publishSequenceGoManual:
+  - op  : 160
+  - arg : null
+  - ret : null
+  - desc: Test motor
+
+
+#-------------------------------- Gripper ----------------------------------------------
+- gripper_grip:
+  - op  : 155
+  - arg : [vac_valve_opentime_us : UInt32, vacuum_setpoint: Double, lower_deadband : Double, upper_deadband : Double]
+  - ret : null
+  - desc: Grip lid using valve gripping sequence (gripper).
+          Arguments
+          - vac_valve_opentime_us -> Vacuum valve opening time in microsecs on gripping initialization.
+          - vacuum_setpoint       -> Vacuum pressure that should be maintaned while gripping.
+          - lower_deadband        -> Lower deadband of vacuum setpoint.
+          - upper_deadband        -> Upper deadband of vacuum setpoint.
+
+- gripper_release:
+  - op  : 156
+  - arg : [rls_valve_opentime_us : UInt32]
+  - ret : null
+  - desc: Release lid using valve gripping sequence (gripper).
+          Arguments
+          - rls_valve_opentime_us -> Release valve opening time in microsecs on release initialization.
+
+- get_gripper_status:
+  - op  : 157
+  - arg : null
+  - ret : [status : UInt16]
+  - desc: Get gripper status. Check GripperStatusCode under ENUMS section for possible status.
+
+#---------------------------------- MISC ---------------------------------------
+- set_address:
+  - op  : 216
+  - arg : [addr : Int16]
+  - ret : null
+  - desc: Set device address
+
+- get_packet_error_count:
+  - op  : 217
+  - arg : null
+  - ret : [count : Int16]
+  - desc: Set device address
+
+
+
+################################### EVENTS #################################################
+EVENTS:
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon input monitor changed
+
+- on_sensor_out_of_bound:
+  - op  : 802
+  - ret: [id: UInt16, limit_type: UInt16, value: Double]
+  - desc: Fired upon sensor monitor out of counds
+
+- on_servo_motion_finished:
+  - op  : 803
+  - ret: [id: UInt16, position: Double]
+  - desc: Fired when spesific servo finished motion job
+
+- on_ppi_started:
+  - op  : 805
+  - ret: null
+  - desc: Fired when PPI valve sequencer feature started
+
+- on_ppi_aborted:
+  - op  : 806
+  - ret: [id: UInt32, uncompleted_count: UInt16]
+  - desc: Fired when PPI valve sequencer feature aborted
+
+- on_ppi_queue_progress:
+  - op  : 807
+  - desc: Fired when PPI valve sequence item specified by id begin executes
+  - ret: [id: UInt32]
+
+- on_ppi_queue_finish:
+  - op  : 808
+  - ret: [id: UInt32]
+  - desc: Fired when PPI valve sequence item specified by id sucessfully executed
+
+- on_ppi_all_queue_finish:
+  - op  : 809
+  - ret: null
+  - desc: Fired when all PPI valve sequences item sucessfully executed
+
+- on_timed_valve_action_start:
+  - op  : 810
+  - ret: [id: UInt16, isOpen: Boolean]
+  - desc: Fired when timed valve with specified id and bit has started
+
+- on_timed_valve_action_finish:
+  - op  : 811
+  - ret: [id: UInt16, isOpen: Boolean]
+  - desc: Fired when timed valve with specified id and bit has finished
+
+- gripper_action_start:
+  - op  : 523
+  - ret : [status : UInt16]
+  - desc: Fired upon gripper action is started (both release and gripping). Check GripperStatusCode enum for possible status.
+
+- gripper_action_done:
+  - op  : 524
+  - ret : [status : UInt16]
+  - desc: Fired upon lid release is finished or gripping is succesful. Check GripperStatusCode enum for possible status.
+
+- gripper_grip_failure:
+  - op  : 525
+  - ret : null
+  - desc: Fired upon gripping is failure, either when start gripping or maintaining grip.
+
+- gripper_grip_vacuum_loss:
+  - op  : 526
+  - ret : null
+  - desc: |
+          Fired upon gripper control detects a vacuum loss. This event only sent once when vacuum loss is first detected.
+          It won't be resent again unless vacuum setpoint is already reached first before another loss occurs.

@@ -1,0 +1,669 @@
+APPNAME: General Ereg
+VERSION: v1.0.0
+
+################################### ENUMS & BITMASKS ####################
+ENUMS:
+
+- InputMonitorMask:
+  - desc : Bitmask for activating input monitor also value for read input
+  - type : UInt32
+  - value:
+    - InputMonitor0 : [1, Input monitor 0]
+    - InputMonitor1 : [2, Input monitor 1]
+    - InputMonitor2 : [4, Input monitor 2]
+    - InputMonitor3 : [8, Input monitor 3]
+    - InputMonitor4 : [16, Input monitor 4]
+    - InputMonitor5 : [32, Input monitor 5]
+    - InputMonitor6 : [64, Input monitor 6]
+    - InputMonitor7 : [128, Input monitor 7]
+    - InputMonitor8 : [256, Input monitor 8]
+    - InputMonitor9 : [512, Input monitor 9]
+    - InputMonitor10 : [1024, Input monitor 10]
+    - InputMonitor11 : [2048, Input monitor 11]
+    - InputMonitor12 : [4096, Input monitor 12]
+    - InputMonitor13 : [8192, Input monitor 13]
+    - InputMonitor14 : [16384, Input monitor 14]
+    - Estop : [32768, Estop Signal active low]
+    - TouchOff : [65536, Touch off Signal active low]
+
+- ControllerError:
+  - desc : Type controller error
+  - type : UInt16
+  - value:
+    - ENone : [0, None]
+    - ESourceTimeout : [1, SourceTimeout]
+    - EDrainTimeout : [2, DrainTimeout]
+    - EPidTimeout : [3, PidTimeout]
+    - EUpperThresholdLimit : [4,UpperThresholdLimit]
+    - ELowerThresholdLimit : [5, LowerThresholdLimit]
+    
+
+################################### COMMANDS ################
+COMMANDS:
+
+# -------------------------------  16bit PPI ----------------
+- read_ppi_direction_bit:
+  - op  : 10
+  - arg : [id: UInt16]
+  - ret : [direction: UInt16]
+  - eeprom : [id: 16]
+  - desc: |
+            get the data direction of PPI IO
+
+- write_ppi_direction_bit:
+  - op  : 11
+  - arg : [id: UInt16, direction: UInt16]
+  - ret : null
+  - getter_op : 10
+  - desc: |
+            set the data direction of PPI IO
+
+- read_ppi_bit:
+  - op  : 12
+  - arg : [id: UInt16]
+  - ret : [value: UInt16]
+  - desc: get bit IO value
+
+- set_ppi_bit:
+  - op  : 13
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: set bit IO value
+
+- clear_ppi_bit:
+  - op  : 14
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: clear bit IO value
+
+- toggle_ppi_bit:
+  - op  : 15
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: toggle bit IO value
+  
+- write_ppi_bit:
+  - op  : 16
+  - arg : [id: UInt16, value: UInt16]
+  - ret : null
+  - desc: write bit PPI IO value
+
+- read_ppi_direction_words:
+  - op  : 17
+  - arg : null
+  - ret : [direction : UInt16]
+  - desc: |
+            read word data of PPI IO direction 
+
+- write_ppi_direction_words:
+  - op  : 18
+  - arg : [direction : UInt16]
+  - ret : null
+  - desc: |
+            write word data of PPI IO direction 
+  
+- read_ppi_words:
+  - op  : 19
+  - arg : null
+  - ret : [direction : UInt16]
+  - desc: Read current PPI output states
+  
+- set_ppi_words:
+  - op  : 20
+  - arg : null
+  - ret : null
+  - desc: Perform set operation on PPI outputs directly
+  
+- clear_ppi_words:
+  - op  : 21
+  - arg : null
+  - ret : null
+  - desc: Perform clear operation on PPI outputs directly
+  
+- toggle_ppi_words:
+  - op  : 22
+  - arg : null
+  - ret : null
+  - desc: Perform toggle operation on PPI outputs directly
+
+- write_ppi_words:
+  - op  : 23
+  - arg : [data: UInt16]
+  - ret : null
+  - desc: Perform write operation on PPI outputs directly
+  
+
+#---------------------------- INPUT MONITOR ----------------
+- get_debouch_time_ms:
+  - op  : 30
+  - arg : [id: UInt16]
+  - ret : [duration_us: UInt32]
+  - eeprom :  [id: 16]
+  - desc: get the debouch time in ms
+
+- set_debouch_time_ms:
+  - op  : 31
+  - arg : [id: UInt16, duration_us: UInt32]
+  - ret : null
+  - getter_op : 30
+  - desc: set the debouch time in ms
+
+- get_input_mask:
+  - op  : 32
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : 0
+  - desc: get the input mask please see InputMonitorMask
+
+- set_input_mask:
+  - op  : 33
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 32
+  - desc: set the input mask please see InputMonitorMask
+
+- read_input_monitor_port_value:
+  - op  : 34
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+# --------------------------------- 12adc Aux analog In ----------------
+- get_aux_analog_in_params:
+  - op  : 40
+  - arg : [id: UInt16]
+  - ret : [scale: Double, offset: Double]
+  - eeprom :  [id: 12]
+  - desc: get setting scale and offset for reading the analog in from ADC
+
+- set_aux_analog_in_params:
+  - op  : 41
+  - arg : [id: UInt16, scale: Double, offset: Double]
+  - ret : null
+  - getter_op : 40
+  - desc: setting scale and offset for reading the analog in from ADC
+
+- read_aux_analog_in_value:
+  - op  : 42
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read value aux input analog
+
+- set_aux_analog_in_cutoff_freq:
+  - op  : 43
+  - arg : [id : UInt16, freq : Double]
+  - ret : null
+  - getter_op : 44
+  - desc: set the cutoff freq of the lpf filter
+
+- get_aux_analog_in_cutoff_freq:
+  - op  : 44
+  - arg : [id: UInt16]
+  - ret : [freq : Double]
+  - eeprom : [id: 12]
+  - desc: get the cutoff freq of the lpf filter
+
+- set_aux_analog_in_sampling_period:
+  - op  : 45
+  - arg : [id : UInt16, periodUs : UInt32]
+  - ret : null
+  - getter_op : 46
+  - desc: set the analog in sampling period
+
+- get_aux_analog_in_sampling_period:
+  - op  : 46
+  - arg : [id: UInt16]
+  - ret : [periodUs : UInt32]
+  - eeprom :  [id: 12]
+  - desc: get the analog in sampling period
+
+# ---------------- 12 Thermistor -----------------
+- read_thermistor:
+  - op  : 47
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read thermistor value in degree celcius
+
+- read_thermistor_filtered:
+  - op  : 48
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read thermistor value in degree celcius after calculated from low pass filter
+
+- set_thermistor_steinhart_coeficient:
+  - op  : 49
+  - arg : [id: UInt16, A: Double, B: Double, C: Double]
+  - ret : null
+  - getter_op : 50
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_thermistor_steinhart_coeficient:
+  - op  : 50
+  - arg : [id: UInt16]
+  - ret : [A: Double, B: Double, C: Double]
+  - eeprom : [id: 12]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- set_thermistor_thermistor_coeficient:
+  - op  : 51
+  - arg : [id: UInt16, r_divider: Double, v_offset: Double, gain_amplifier: Double, voltage_divider: Double, offset_temp: Double]
+  - ret : null
+  - getter_op : 52
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_thermistor_thermistor_coeficient:
+  - op  : 52
+  - arg : [id: UInt16]
+  - ret : [r_divider: Double, v_offset: Double, gain_amplifier: Double, voltage_divider: Double, offset_temp: Double]
+  - eeprom :  [id: 12]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+# Aux In filtered read 
+- read_aux_analog_in_value_filtered:
+  - op  : 55
+  - arg : [id: UInt16]
+  - ret : [value: Double, enable : Boolean]
+  - desc: read value aux input analog filtered value
+
+- set_aux_analog_in_enable_lpf:
+  - op  : 56
+  - arg : [id : UInt16, enable: Boolean]
+  - ret : null
+  - getter_op : 57
+  - desc: enable or disable lpf enable
+
+- get_aux_analog_in_enable_lpf:
+  - op  : 57
+  - arg : [id : UInt16]
+  - ret : [enable : Boolean]
+  - eeprom :  [id: 12]
+  - desc: get the enable lpf status 
+
+#---------------------------- 16pwm Auxs Analog out  --------
+
+- set_aux_analog_out_enable_on_start:
+  - op  : 58
+  - arg : [id : UInt16, enable: Boolean]
+  - ret : null
+  - getter_op : 59 
+  - desc: enable or disable the analog out on firmware start
+
+- get_aux_analog_out_enable_on_start:
+  - op  : 59
+  - arg : [id : UInt16]
+  - ret : [enable: Boolean]
+  - eeprom :   [id: 16]
+  - desc: get the enable status on start of the analog out
+  
+
+- set_aux_analog_out_enable:
+  - op  : 60
+  - arg : [id : UInt16, enable: Boolean]
+  - ret : null
+  - getter_op : 61
+  - desc: enable or disable the analog out, return true if sucessfuly set
+
+- get_aux_analog_out_enable:
+  - op  : 61
+  - arg : [id : UInt16]
+  - ret : [enable : Boolean]
+  - eeprom :  [id: 16]
+  - desc: get the enable status of the analog out
+
+- get_aux_analog_out_params:
+  - op  : 63
+  - arg : [id: UInt16]
+  - ret : [max_range: Double, min_range: Double]
+  - eeprom :  [id: 16]
+  - desc: get max range and min range of output in percentage
+
+- set_aux_analog_out_params:
+  - op  : 64
+  - arg : [id: UInt16, max_range: Double, min_range: Double]
+  - ret : null
+  - getter_op : 63
+  - desc: set max range and min range of output in percentage
+
+- get_aux_analog_out_value:
+  - op  : 65
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: get value in percentage from range
+
+- set_aux_analog_out_value:
+  - op  : 66
+  - arg : [id: UInt16, value: Double]
+  - ret : [success: Boolean]
+  - desc: set value in percentage from range
+
+- get_aux_analog_out_pwm_frequency:
+  - op  : 67
+  - arg : [id: UInt16]
+  - ret : [value: UInt32]
+  - desc: get freq analog out pwm hz
+
+- set_aux_analog_out_pwm_frequency:
+  - op  : 68
+  - arg : [id: UInt16, value: UInt32]
+  - ret : null
+  - desc: set freq analog out pwm in Hz
+ 
+
+#------------------------------- 1 Pwm Pulser ---------------
+- get_pulser_params:
+  - op  : 70
+  - arg : null
+  - ret : [pulser_voltage : Double, hold_voltage : Double, supply_voltage : Double, pulse_time_us : UInt32, inverted : Boolean, active_low_input : Boolean]
+  - eeprom : 0
+  - desc: |
+          Return
+          - pulser_voltage     -> voltage on pulsing for period us
+          - hold_voltage  -> voltage on holding for period us
+          - supply_voltage -> power supply for pulser
+          - pulse_time_us     -> Valve pulsing time in microsecs.
+          - inverted     -> pulser PWM inverting characteristic.
+          - active_low_input -> input signal type to activate pulser 
+
+- set_pulser_params:
+  - op  : 71
+  - arg : [pulser_voltage : Double, hold_voltage : Double, supply_voltage : Double, pulse_time_us : UInt32, inverted : Boolean, active_low_input : Boolean]
+  - ret : null
+  - getter_op : 70
+  - desc: |
+          Arguments
+          - pulser_voltage     -> voltage on pulsing for period us
+          - hold_voltage  -> voltage on holding for period us
+          - supply_voltage -> power supply for pulser
+          - pulse_time_us     -> Valve pulsing time in microsecs.
+          - inverted     -> pulser PWM inverting characteristic.
+          - active_low_input -> input signal type to activate pulser
+
+#------------------------- 16 Valves  (pulser aux_analog_out individual)
+- get_valves_params:
+  - op  : 72
+  - arg : [id : UInt16]
+  - ret : [pulser_voltage : Double, hold_voltage : Double, supply_voltage : Double, pulse_time_ms : UInt32, inverted : Boolean]
+  - eeprom :  [id: 16]
+  - desc: |
+          Return
+          - pulser_voltage     -> voltage on pulsing for period us
+          - hold_voltage  -> voltage on holding for period us
+          - supply_voltage -> power supply for pulser
+          - pulse_time_ms     -> Valve pulsing time in milisecs.
+          - inverted     -> pulser PWM inverting characteristic.
+
+- set_valves_params:
+  - op  : 73
+  - arg : [id : UInt16, pulser_voltage : Double, hold_voltage : Double, supply_voltage : Double, pulse_time_ms : UInt32, inverted : Boolean]
+  - ret : null
+  - getter_op : 72
+  - desc: |
+          Arguments
+          - pulser_voltage     -> voltage on pulsing for period us
+          - hold_voltage  -> voltage on holding for period us
+          - supply_voltage -> power supply for pulser
+          - pulse_time_ms     -> Valve pulsing time in milisecs.
+          - inverted     -> pulser PWM inverting characteristic.
+
+- valves_on:
+  - op  : 74
+  - arg : [id : UInt16]
+  - ret : [success: Boolean]
+  - desc:  turn on valve
+
+- valves_off:
+  - op  : 75
+  - arg : [id : UInt16]
+  - ret : [success: Boolean]
+  - desc:  turn off valve
+
+# --------------------------------- CONTROLLER ---------
+- set_controller_setting:
+  - op : 120
+  - arg: [id : UInt16, source_index : UInt16, drain_index : UInt16, input_id : UInt16, type : UInt16, isUsingFilter : Boolean]
+  - ret: [success: Boolean]
+  - getter_op : 121
+  - desc: |
+            Set controller setting
+            type:
+              0. None
+              1. Bang2_GpioGpio (source = 16 MCU IO, drain = 16 MCU IO, input = 12 Aux analog In)
+              2. Bang2_GpioValve (source = 16 MCU IO, drain = 16 valve, input = 12 Aux analog In)
+              3. TBang2_ValveValve (source = 16 valve, drain = 16 valve, input = 12 Aux analog In)
+              4. PIDAnalog (source = 16 aux_analog_out, drain = 16 aux_analog_out, input = 12 Aux analog In)
+              5. PIDOnOff (source = 16 MCU IO, drain = 16 MCU IO, input = 12 Aux analog In)
+            return false if there are any out of bound index or id
+
+- get_controller_setting:
+  - op : 121
+  - arg: [id : UInt16]
+  - ret: [source_index : UInt16, drain_index : UInt16, input_id : UInt16, type : UInt16, isUsingFilter : Boolean]
+  - eeprom :  [id: 8]
+  - desc: |
+             get the controller setting
+
+- set_controller_enable:
+  - op : 122
+  - arg: [id : UInt16, enable : Boolean, timeout_enable: Boolean, timeout_period_us: UInt32]
+  - ret: null
+  - desc: |
+            enable the controller
+
+- get_controller_enable:
+  - op : 123
+  - arg: [id : UInt16]
+  - ret: [enable : Boolean, timeout_enable: Boolean, timeout_period_us: UInt32]
+  - desc: |
+            get the controller enable status
+
+- set_controller_enable_on_start:
+  - op : 124
+  - arg: [id : UInt16, enable : Boolean, timeout_enable : Boolean , timeout_period_us: UInt32]
+  - ret: null
+  - getter_op : 125
+  - desc: |
+            set the controller to be enable on start
+
+- get_controller_enable_on_start:
+  - op : 125
+  - arg: [id : UInt16]
+  - ret: [enable : Boolean,  timeout_enable : Boolean , timeout_period_us: UInt32]
+  - eeprom :   [id: 8]
+  - desc: |
+            get the controller to be enable on start
+
+- set_controller_period:
+  - op : 126
+  - arg: [id : UInt16, period_us : UInt32]
+  - ret: null
+  - getter_op : 127
+  - desc: |
+            set the controller period 
+
+- get_controller_period:
+  - op : 127
+  - arg: [id : UInt16]
+  - ret: [period_us : UInt32]
+  - eeprom : [id: 8]
+  - desc: |
+            get the controller period
+
+- set_pid_setpoint:
+  - op : 128
+  - arg: [id : UInt16, setpoint : Double]
+  - ret: null
+  - getter_op : 129
+  - desc: |
+            set pid controller set point
+
+- get_pid_setpoint:
+  - op : 129
+  - arg: [id : UInt16]
+  - ret: [setpoint : Double]
+  - eeprom :  [id: 8]
+  - desc: |
+            get pid controller set point
+
+- set_pid_coeff:
+  - op  : 130
+  - arg : [id : UInt16, p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - ret : null
+  - getter_op : 131
+  - desc: Set control pid gains
+
+- get_pid_coeff:
+  - op  : 131
+  - arg : [id : UInt16]
+  - ret : [p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - eeprom :  [id: 8]
+  - desc: Get control pid gains
+
+- set_pid_deadband:
+  - op  : 132
+  - arg : [id : UInt16, lower: Double, upper: Double]
+  - ret : null
+  - getter_op : 133
+  - desc: Set  control pid deadband 
+
+- get_pid_deadband:
+  - op  : 133
+  - arg : [id : UInt16]
+  - ret : [lower: Double, upper: Double]
+  - eeprom :   [id: 8]
+  - desc: Get  control pid deadband
+
+- set_pid_invert:
+  - op  : 134
+  - arg : [id : UInt16, invert_source: Boolean, invert_drain: Boolean]
+  - ret : null
+  - getter_op : 135
+  - desc: asd
+
+- get_pid_invert:
+  - op  : 135
+  - arg : [id : UInt16]
+  - ret : [invert_source: Boolean, invert_drain: Boolean]
+  - eeprom :   [id: 8]
+  - desc: asd
+
+- set_bang2_param:
+  - op  : 136
+  - arg : [id : UInt16, source_on_threshold: Double, source_off_threshold: Double, drain_on_threshold: Double, drain_off_threshold: Double]
+  - ret : null
+  - getter_op : 137
+  - desc: Set bang2 params
+
+- get_bang2_param:
+  - op  : 137
+  - arg : [id : UInt16]
+  - ret : [source_on_threshold: Double, source_off_threshold: Double, drain_on_threshold: Double, drain_off_threshold: Double]
+  - eeprom :   [id: 8]
+  - desc: Get bang2 param
+
+- read_bang2_state:
+  - op  : 138
+  - arg : [id : UInt16]
+  - ret : [source_state: UInt16,drain_state: UInt16]
+  - desc: 0=init, 1=on, 2=off 3 = error 
+
+- read_pid_output:
+  - op  : 139
+  - arg : [id : UInt16]
+  - ret : [output: Double]
+  - desc: read pid calculation output
+
+
+# --------------------------------- CONTROLLER Extended error handler 
+- get_controller_error:
+  - op : 140
+  - arg: [id: UInt16]
+  - ret: [error_type : UInt16]
+
+- clear_controller_error:
+  - op : 141
+  - arg: [id: UInt16]
+  - ret: null
+
+- set_bang2_inverted_actuator:
+  - op : 142
+  - arg: [id: UInt16, inverted_source: Boolean, inverted_drain: Boolean]
+  - ret: null
+  - getter_op : 143
+
+- get_bang2_inverted_actuator:
+  - op : 143
+  - arg: [id: UInt16]
+  - ret: [inverted_source: Boolean, inverted_drain: Boolean]
+  - eeprom :   [id: 8]
+
+- set_controller_error_limit:
+  - op : 144
+  - arg: [id: UInt16, enable: Boolean, upper_limit: Double, lower_limit: Double]
+  - ret: null
+  - getter_op : 145
+
+- get_controller_error_limit:
+  - op : 145
+  - arg: [id: UInt16]
+  - ret: [enable: Boolean, upper_limit: Double, lower_limit: Double]
+  - eeprom :  [id: 8]
+
+- set_bang2_source_on_time_limit:
+  - op : 146
+  - arg: [id: UInt16, enable: Boolean, period_us: UInt32]
+  - ret: null
+  - getter_op : 147
+
+- get_bang2_source_on_time_limit:
+  - op : 147
+  - arg: [id: UInt16]
+  - ret: [enable: Boolean, period_us: UInt32]
+  - eeprom :   [id: 8]
+
+- set_bang2_drain_on_time_limit:
+  - op : 148
+  - arg: [id: UInt16, enable: Boolean, period_us: UInt32]
+  - ret: null
+  - getter_op : 149
+
+- get_bang2_drain_on_time_limit:
+  - op : 149
+  - arg: [id: UInt16]
+  - ret: [enable: Boolean, period_us: UInt32]
+  - eeprom :   [id: 8]
+  - desc : This will throw an error when bang2 controller drain actuator keep turned on within set period of time
+
+- set_pid_time_limit:
+  - op : 150
+  - arg: [id: UInt16, enable: Boolean, period_us: UInt32, error_tolerance: Double]
+  - ret: null
+  - getter_op : 151
+  - desc : This will throw an error when the PID controller can't reach certain error tolerance within the set period of time
+
+- get_pid_time_limit:
+  - op : 151
+  - arg: [id: UInt16]
+  - ret: [enable: Boolean, period_us: UInt32, error_tolerance: Double]
+  - eeprom :   [id: 8]
+  - desc : This will throw an error when the PID controller can't reach certain error tolerance within the set period of time
+
+
+
+################################### EVENTS ################
+EVENTS:
+
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon input monitor changed
+  
+- on_controller_error:
+  - op  : 821
+  - ret: [id: UInt16,error_type: UInt16, sensor_data: Double]
+  - desc: Fired when controller met error condition
+
+- on_controller_expired:
+  - op  : 822
+  - ret: [id: UInt16]
+  - desc: Fired when controller has expired
+

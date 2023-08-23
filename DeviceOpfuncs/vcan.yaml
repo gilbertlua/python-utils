@@ -1,0 +1,51 @@
+APPNAME: FloV2
+VERSION: v0.0.32
+
+################################### ENUMS & BITMASKS #################################################-
+################################### COMMANDS #################################################
+COMMANDS:
+#---------------------------------------- MOTOR ------------------------------------
+- test_double:
+  - op  : 10
+  - arg : [value: Double]
+  - ret : [value: Double]
+  - desc: test double
+
+- test_int16:
+  - op  : 11
+  - arg : [value: Int16]
+  - ret : [value: Int16]
+  - desc: test integer 16
+
+- test_int32:
+  - op  : 12
+  - arg : [value: Int32]
+  - ret : [value: Int32]
+  - desc: test integer 32
+
+- test_uint16:
+  - op  : 13
+  - arg : [value: UInt16]
+  - ret : [value: UInt16]
+  - desc: test unsigned 16
+
+- test_uint32:
+  - op  : 14
+  - arg : [value: UInt32]
+  - ret : [value: UInt32]
+  - desc: test unsigned 32
+
+- test_string:
+  - op  : 15
+  - arg : [value: String]
+  - ret : [value: String]
+  - desc: test string
+
+################################### EVENTS #################################################
+EVENTS:
+# -------------------- Motor --------------------------------------------------------------------------------------------------
+- motor_move_started:
+  - op  : 512
+  - ret: [motor_id: Int16]
+  - desc: Fired upon motor movement is started.
+

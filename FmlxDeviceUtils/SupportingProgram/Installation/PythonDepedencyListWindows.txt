@@ -1,0 +1,14 @@
+pythonnet
+pyyaml
+pyreadline3
+pyserial
+python-can
+colorama
+intelhex
+matplotlib
+numpy
+bokeh
+opencv-python
+pyqtgraph
+pyqt5
+PySimpleGUI

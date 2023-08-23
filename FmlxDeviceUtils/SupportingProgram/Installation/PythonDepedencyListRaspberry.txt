@@ -1,0 +1,6 @@
+pyyaml
+pyreadline3
+pyserial
+python-can
+colorama
+intelhex

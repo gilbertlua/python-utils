@@ -1,0 +1,450 @@
+APPNAME: IOExpanderF4
+VERSION: 4.x.x
+
+COMMANDS:  
+#---------------------------- GENERAL ------------------------------------
+- save_configuration:
+  - op  : 3
+  - arg : null
+  - ret : null
+  - desc: Save configuration to EEPROM
+
+- hang_firmware:
+  - op  : 8
+  - arg : null
+  - ret : null
+  - desc: hang device
+  
+- reset:
+  - op  : 9
+  - arg : null
+  - ret : null
+  - desc: reset device
+ 
+# ------------------------------- Atomic PPI ------------------------------------
+- ppi_read_direction_bit:
+  - op  : 10
+  - arg : [id: UInt16]
+  - ret : [direction: UInt16]
+  - desc: |
+            get the data direction of PPI IO
+
+- ppi_write_direction_bit:
+  - op  : 11
+  - arg : [id: UInt16, direction: UInt16]
+  - ret : null
+  - desc: |
+            set the data direction of PPI IO
+
+- ppi_read_bit:
+  - op  : 12
+  - arg : [id: UInt16]
+  - ret : [value: UInt16]
+  - desc: get bit IO value
+
+- ppi_set_bit:
+  - op  : 13
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: set bit IO value
+
+- ppi_clear_bit:
+  - op  : 14
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: clear bit IO value
+
+- ppi_toggle_bit:
+  - op  : 15
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: toggle bit IO value
+  
+- ppi_write_bit:
+  - op  : 16
+  - arg : [id: UInt16, value: UInt16]
+  - ret : null
+  - desc: write bit PPI IO value
+
+- ppi_read_direction_words:
+  - op  : 17
+  - arg : [start_index : UInt16, count : UInt16]
+  - ret : [count : UInt16, direction: Array_UInt16_c]
+  - desc: |
+            read word data of PPI IO direction 
+
+- ppi_write_direction_words:
+  - op  : 18
+  - arg : [start_index : UInt16, count : UInt16, direction: Array_UInt16_c]
+  - ret : null
+  - desc: |
+            write word data of PPI IO direction 
+  
+- ppi_read_words:
+  - op  : 19
+  - arg : [start_index: UInt16, count: UInt16]
+  - ret : [count : UInt16, states: Array_UInt16_c]
+  - desc: Read current PPI output states
+  
+- ppi_set_words:
+  - op  : 20
+  - arg : [start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : null
+  - desc: Perform set operation on PPI outputs directly
+  
+- ppi_clear_words:
+  - op  : 21
+  - arg : [start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : null
+  - desc: Perform clear operation on PPI outputs directly
+  
+- ppi_toggle_words:
+  - op  : 22
+  - arg : [start_index: UInt16, count: UInt16, masks: Array_UInt16_c]
+  - ret : null
+  - desc: Perform toggle operation on PPI outputs directly
+
+- ppi_write_words:
+  - op  : 23
+  - arg : [start_index: UInt16, count: UInt16, states: Array_UInt16_c]
+  - ret : null
+  - desc: Perform write operation on PPI outputs directly
+  
+- ppi_revert_state_words:
+  - op  : 24
+  - arg : [start_index: UInt16, count: UInt16]
+  - ret : null
+  - desc: Undo all PPI port to last previous state state
+  
+ 
+ # ------------------------------- PPI Pulser ------------------------------------
+- get_pulser_params:
+  - op  : 25
+  - arg : null
+  - ret : [pulser_voltage : Double, hold_voltage : Double, supply_voltage : Double, pulse_time_us : UInt32, inverted : Boolean, active_low_input : Boolean]
+  - desc: |
+          Return
+          - pulser_voltage     -> voltage on pulsing for period us
+          - hold_voltage  -> voltage on holding for period us
+          - supply_voltage -> power supply for pulser
+          - pulse_time_us     -> Valve pulsing time in microsecs.
+          - inverted     -> pulser PWM inverting characteristic.
+          - active_low_input -> input signal type to activate pulser 
+
+- set_pulser_params:
+  - op  : 26
+  - arg : [pulser_voltage : Double, hold_voltage : Double, supply_voltage : Double, pulse_time_us : UInt32, inverted : Boolean, active_low_input : Boolean]
+  - ret : null
+  - desc: |
+          Arguments
+          - pulser_voltage     -> voltage on pulsing for period us
+          - hold_voltage  -> voltage on holding for period us
+          - supply_voltage -> power supply for pulser
+          - pulse_time_us     -> Valve pulsing time in microsecs.
+          - inverted     -> pulser PWM inverting characteristic.
+          - active_low_input -> input signal type to activate pulser 
+
+# ------------------------------- Timed Valve ------------------------------------
+# -- Note: before using Timed Output feature, ensure that corresponding IO direction
+# -- was set to OUTPUT first (save config then if necesarry). 
+# -- Because FW would make it INPUT as default 
+# -- id: Digital IO Index 0-7
+
+- timed_valve_perform_set_clear:
+  - op  : 44
+  - arg : [id: UInt16, duration_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: Add set operation on output, followed with clear operation after duration timeouts
+
+- timed_valve_perform_clear_set:
+  - op  : 45
+  - arg : [id: UInt16, duration_ms: UInt32]
+  - ret : [success: Boolean]
+  - desc: Add set operation on output, followed with clear operation after duration timeouts
+
+- timed_valve_abort:
+  - op  : 46
+  - arg : [id: UInt16]
+  - ret : [success: Boolean]
+  - desc: Abort current action on timed valve with specified bit
+
+- timed_valve_set_enable_mask:
+  - op  : 47
+  - arg : [mask: UInt16]
+  - ret : null
+  - desc: Set timed valve enable mask
+
+- timed_valve_get_enable_mask:
+  - op  : 48
+  - arg : null
+  - ret : [mask: UInt16]
+  - desc: Get timed valve enable mask
+  
+#---------------------------- INPUT MONITOR ------------------------------------
+- input_monitor_get_debouch_time_ms:
+  - op  : 60
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the debouch time in ms
+
+- input_monitor_set_debouch_time_ms:
+  - op  : 61
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the debouch time in ms
+
+- input_monitor_get_input_mask:
+  - op  : 62
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: get the input mask please see InputMonitorMask
+
+- input_monitor_set_input_mask:
+  - op  : 63
+  - arg : [mask: UInt32]
+  - ret : null
+  - desc: set the input mask please see InputMonitorMask
+
+- input_monitor_read_input:
+  - op  : 64
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+#---------------------------------- LOGGING ---------------------------------------
+- get_log_items:
+  - op  : 89
+  - arg : null
+  - ret : [logtick_mask: UInt16, aux_analog_in_mask: UInt16]
+  - desc: |
+           Get data logger activation status. Each logger module has bitmasks to represent/activate which data is logged.
+           - logtick  -> provide logger tick that keeps incremented, one tick per log sampling, to provide information if any data is missing.
+                         Activation bitmasks is described in TickLogMask under ENUMS section.
+           - aux_analog_in_mask   -> atomic aux analog in related data. Check AuxAnalogInLogMask.
+
+- set_log_items:
+  - op  : 90
+  - arg : [logtick_mask: UInt16, aux_analog_in_mask: UInt16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set data logger activation.  Check get_log_items opcode for furher explanation of bitmasks and modules.
+          Success will be False if device fails to activate all given masks, which happen when number of logging channel is insufficient (MAX NUM of channel is 9).
+
+- start_log:
+  - op  : 91
+  - arg : null
+  - ret : [started: Boolean]
+  - desc: Start data logger. started is False if unable to start (log items is not set yet).
+
+- stop_log:
+  - op  : 92
+  - arg : null
+  - ret : null
+  - desc: Stop data logger.
+
+- read_log_data:
+  - op  : 93
+  - arg : [start_index: Int16]
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: Read log data from a starting index, maximum data per command is 251 items.
+          Arguments
+          - start_index -> Starting index to be read
+
+          Returns
+          - num_items -> number of received data
+          - data      -> array of received data
+
+          Note
+          - Pump and Valves data will be sent as bitmask in one UInt16 data, check PumpValveLogDatamask
+
+- get_log_status:
+  - op  : 94
+  - arg : null
+  - ret : [status: Int16, triggered_pos: UInt16]
+  - desc: | 
+          Get logger status. If trigger is activated, trigger_pos contain the index of data where trigger is activated. status is enums that consist of
+          - 0 -> logger is running
+          - 1 -> logger is stopped by user
+          - 2 -> logger is stopped by trigger
+          - 3 -> logger has not been started at all
+
+- read_log_stream_data:
+  - op  : 95
+  - arg : null
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: | 
+          Read streaming of data from last read index, max 200 data per command. For example, first read_log_stream_data command will obtain
+          data 0-199, second command will obtain data 200-399, and so on.
+          Arguments
+          - num_items -> number of received data
+          - data      -> array of received data
+
+          Note
+          - Pump and Valves data will be sent as bitmask in one UInt16 data, check PumpValveLogDatamask
+
+- set_log_trigger:
+  - op  : 96
+  - arg : [module_id: UInt16, signal_mask: UInt16, level: UInt16, trigger_type: Int16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set a signal from a module to simulate osciloscope-like trigger. If trigger activated, the logger will automatically setup data such that
+          trigger position is in the middle of logged data. You should read the data using read_log_data command on trigger mode.
+          See https://community.keysight.com/community/keysight-blogs/oscilloscopes/blog/2016/09/01/understanding-oscilloscope-trigger-system-basics-why-you-should-care
+          to understand trigger in detail.
+          Arguments
+          - module_id    -> id of logger module, 0 is log tick, 1 is aux_analog_in_mask
+          - signal_mask  -> data/signal activation mask for each module, similar to masks in set_log_items. Please check enum section for mask list
+          - level        -> level of selected data/signal that activate the triggers
+          - trigger_type -> trigger type, 0 is disable trigger, 1 is rising signal trigger, 2 is falling signal trigger, 3 is both rising and falling signal trigger
+
+- get_log_period:
+  - op  : 97
+  - arg : null
+  - ret : [period_us : UInt32]
+  - desc: Get current logging period in microsecs.
+
+- set_log_period:
+  - op  : 98
+  - arg : [period_us : UInt32]
+  - ret : null
+  - desc: Set current logging period in microsecs.
+  
+- set_log_prescaler:
+  - op  : 99
+  - arg : [prescaler : UInt16]
+  - ret : null
+  - desc: Set current logging period prescaler.
+  
+#---------------------------- AUX ANALOG IN ADC -----------------------------
+- aux_adc_get_params:
+  - op  : 103
+  - arg : [id: UInt16]  
+  - ret : [scale: Double, offset: Double]
+  - desc: get setting scale and offset for reading the analog in from ADC
+
+- aux_adc_set_params:
+  - op  : 104
+  - arg : [id: UInt16, scale: Double, offset: Double]
+  - ret : null
+  - desc: setting scale and offset for reading the analog in from ADC
+
+- aux_adc_read_value:
+  - op  : 105
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read value aux input analog
+
+#---------------------------- AUX ANALOG OUT PWM -----------------------------
+- aux_pwm_get_params:
+  - op  : 109
+  - arg : [id: UInt16]
+  - ret : [max_range: Double, min_range: Double]
+  - desc: get max range and min range of output in percentag
+
+- aux_pwm_set_params:
+  - op  : 110
+  - arg : [id: UInt16, max_range: Double, min_range: Double]
+  - ret : null
+  - desc: set max range and min range of output in percentage
+
+- aux_pwm_read_value:
+  - op  : 111
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: get value in percentage from range
+
+- aux_pwm_write_value:
+  - op  : 112
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - desc: set value in percentage from range
+
+- aux_pwm_get_freq:
+  - op  : 113
+  - arg : [id: UInt16]
+  - ret : [value: UInt32]
+  - desc: get freq analog out pwm in Hz
+
+- aux_pwm_set_freq:
+  - op  : 114
+  - arg : [id: UInt16, value: UInt32]
+  - ret : null
+  - desc: set freq analog out pwm in Hz
+  
+#---------------------------- AUX ANALOG OUT DAC -----------------------------
+- aux_dac_read_value:
+  - op  : 118
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read value aux output DAC in scale value from 0 to 1
+  
+- aux_dac_write_value:
+  - op  : 119
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - desc: write value aux output DAC in scale value from 0 to 1
+
+# ------------------------------- AUX ANALOG IN ADC as Temp Sensor ------------------------------------
+- set_temp_offset:
+  - op  : 123
+  - arg : [id: UInt16, offset: Double]
+  - ret : null
+  - desc: Set temperature offset for correcting the reading of temperature in celcius
+
+- get_temp_offset:
+  - op  : 124
+  - arg : [id: UInt16]
+  - ret : [offset: Double]
+  - desc: Get temperature offset for correcting the reading of temperature in celcius
+  
+- set_steinhart_temperature_coeficient:
+  - op  : 125
+  - arg : [id: UInt16, A: Double, B: Double, C: Double]
+  - ret : null
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_steinhart_temperature_coeficient:
+  - op  : 126
+  - arg : [id: UInt16]
+  - ret : [A: Double, B: Double, C: Double]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- set_thermistor_coefficient:
+  - op  : 127
+  - arg : [id: UInt16, r_divider: Double, v_offset: Double, gain_amplifier: Double, voltage_divider: Double]
+  - ret : null
+  - desc: Set steinhart coeficient of temperature sensor id is same as controller id
+
+- get_thermistor_coefficient:
+  - op  : 128
+  - arg : [id: UInt16]
+  - ret : [r_divider: Double, v_offset: Double, gain_amplifier: Double, voltage_divider: Double]
+  - desc: Get steinhart coeficient of temperature sensor id is same as controller id
+
+- read_temperature_sensor:
+  - op  : 129
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: Read temperature sensor value
+
+#---------------------------------- SeventSegment ---------------------------------------- 
+- set_Current_Floor:
+  - op : 161
+  - arg: [id : UInt16]
+  - ret: null
+  - desc: |
+            set floor on sevent segment. 
+
+#---------------------------------- MISC ---------------------------------------
+- set_address:
+  - op  : 216
+  - arg : [addr : Int16]
+  - ret : null
+  - desc: Set device address
+  
+- get_packet_error_count:
+  - op  : 217
+  - arg : null
+  - ret : [count : Int16]
+  - desc: Set device address  
+  

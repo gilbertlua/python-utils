@@ -1,0 +1,454 @@
+APPNAME: 'MTI_REDUNDANT_CHILLER'
+VERSION: '2.0.2'
+
+COMMANDS:
+- save_configuration:
+  - op : 3
+  - arg: null
+  - ret: null
+  
+- hang_firmware:
+  - op : 9
+  - arg: null
+  - ret: null
+  
+# ==================== CHILLER RELATED =====================================================
+
+- set_compressor_enable:
+  - op  : 10
+  - arg : [id: UInt16, enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: Manualy enable or disable the compressor, only use it when the controller disabled, debugging purpose
+
+- get_compressor_enable:
+  - op  : 11
+  - arg : [id: UInt16]
+  - ret : [return: Boolean]
+  - desc: get the compressor enable or disable
+
+- set_pump_enable:
+  - op  : 12
+  - arg : [id: UInt16, enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: set pump enable
+
+- get_pump_enable:
+  - op  : 13
+  - arg : [id: UInt16]
+  - ret : [return: Boolean]
+  - desc: see op 12
+
+- set_selector_valve_dir:
+  - op  : 14
+  - arg : [dir: Boolean]
+  - ret : [status: Boolean]
+  - desc: set the selector valve between chiller 0 (false) or chiller 1 (true), return true if succesfuly set it
+
+- get_selector_valve_dir:
+  - op  : 15
+  - arg : null
+  - ret : [return: Boolean]
+  - desc: see op 43
+
+- read_water_level:
+  - op  : 16
+  - arg : [id: UInt16]
+  - ret : [return: Float]
+  - desc: read water level
+
+- read_current_sense:
+  - op  : 17
+  - arg : [id: UInt16]
+  - ret : [return: Float]
+  - desc: read water level
+
+- set_chiller_valve_out:
+  - op  : 18
+  - arg : [value: Float]
+  - ret : [status: Boolean]
+  - desc: set the bypass valve output value of the current active controller
+
+- get_chiller_valve_out:
+  - op  : 19
+  - arg : null
+  - ret : [value: Float]
+  - desc: see op 18
+
+# ==================== IWC CONTROLLER RELATED =====================================================
+
+- set_chiller_control_enable:
+  - op  : 21
+  - arg : [enable: Boolean]
+  - ret : null
+  - desc: enable the iwc controller
+
+- get_chiller_control_enable:
+  - op  : 22
+  - arg : null
+  - ret : [enable: Boolean]
+  - desc: enable the iwc controller
+
+- set_chiller_control_switch_duration:
+  - op  : 23
+  - arg : [sec : UInt16, min : UInt16, hour : UInt16]
+  - ret : null
+  - desc: see op 21
+
+- get_chiller_control_switch_duration:
+  - op  : 24
+  - arg : null
+  - ret : [sec : UInt16, min : UInt16, hour : UInt16]
+  - desc: set the bypass valve whether it loopback (false) or supplied to selector valve (true)
+
+- read_chiller_control_switch_time:
+  - op  : 25
+  - arg : null
+  - ret : [sec : UInt16, min : UInt16, hour : UInt16]
+  - desc: set the bypass valve whether it loopback (false) or supplied to selector valve (true)
+
+- switch_chiller:
+  - op  : 26
+  - arg : null
+  - ret : [isSuccess : Boolean]
+  - desc: see op 21
+
+- read_chiller_control_state:
+  - op  : 27
+  - arg : null
+  - ret : [state: UInt16]
+  - desc: set the selector valve between chiller 0 (false) or chiller 1 (true), return true if succesfuly set it
+
+- set_chiller_control_automatic_switch_enable:
+  - op  : 28
+  - arg : [enable: Boolean]
+  - ret : null
+  - desc: enable the iwc controller
+
+- get_chiller_control_automatic_switch_enable:
+  - op  : 29
+  - arg : null
+  - ret : [enable: Boolean]
+  - desc: enable the iwc controller
+
+- set_chiller_control_enable_on_start:
+  - op  : 30
+  - arg : [enable: Boolean]
+  - ret : null
+  - desc: enable the iwc controller
+
+- get_chiller_control_enable_on_start:
+  - op  : 31
+  - arg : null
+  - ret : [enable: Boolean]
+  - desc: enable the iwc controller
+
+- read_chiller_control_active_index:
+  - op  : 32
+  - arg : null
+  - ret : [index: UInt16]
+  - desc: enable the iwc controller
+
+- set_chiller_control_switch_temperature_threshold:
+  - op  : 33
+  - arg : [temp: Float]
+  - ret : null
+  - desc: enable the iwc controller
+
+- get_chiller_control_switch_temperature_threshold:
+  - op  : 34
+  - arg : null
+  - ret : [temp: Float]
+  - desc: enable the iwc controller
+
+- set_selector_valve_position_sensor_config:
+  - op  : 35
+  - arg : [scale: Float , offset: Float]
+  - ret : null
+  - desc: set the selector valve between chiller 0 (false) or chiller 1 (true), return true if succesfuly set it
+
+- get_selector_valve_position_sensor_config:
+  - op  : 36
+  - arg : null
+  - ret : [scale: Float , offset: Float]
+  - desc: see op 43
+
+- read_selector_valve_position:
+  - op  : 37
+  - arg : null
+  - ret : [pos: Float]
+  - desc: see op 43
+
+- set_chiller_control_valve_pos_threshold:
+  - op  : 38
+  - arg : [upperThreshold: Float , lowerThreshold: Float]
+  - ret : null
+  - desc: set the selector valve between chiller 0 (false) or chiller 1 (true), return true if succesfuly set it
+
+- get_chiller_control_valve_pos_threshold:
+  - op  : 39
+  - arg : null
+  - ret : [upperThreshold: Float , lowerThreshold: Float]
+  - desc: see op 43
+
+- read_selector_valve_position:
+  - op  : 40
+  - arg : null
+  - ret : [return: Float]
+  - desc: read selector valve position
+
+# ==================== flow Sensor related =====================================================
+- read_water_flow_speed:
+  - op  : 59
+  - arg : [id : UInt16]
+  - ret : [value: Float]
+  - desc: get current water flow speed if the controller enabled, or the current id flow speed
+
+
+# ==================== Temperature Sensor related =====================================================
+- set_thermistor_coeficient:
+  - op  : 74
+  - arg : [id: UInt16, shart_a: Float, shart_b: Float, shart_c: Float, r_divider: Float, v_offset: Float, gain_amplifier: Float, v_divider: Float, offset_temp: Float]
+  - ret : null
+  - getter_op : 75
+  - desc: Set interpolation coeficient of temperature sensor id is same as controller id
+
+- get_thermistor_coeficient:
+  - op  : 75
+  - arg : [id: UInt16]
+  - ret : [shart_a: Float, shart_b: Float, shart_c: Float, r_divider: Float, v_offset: Float, gain_amplifier: Float, v_divider: Float, offset_temp: Float]
+  - eeprom : [ id : 2 ]
+  - desc: see op 74
+
+- set_temperature_sampling_period:
+  - op  : 76
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 77
+  - desc: Set temperature sampling period in micro seconds 
+
+- get_temperature_sampling_period:
+  - op  : 77
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get temperature sampling period in micro seconds 
+
+- read_temperature:
+  - op  : 78
+  - arg : [id: UInt16]
+  - ret : [value: Float]
+  - desc: read temperature  in celcius 
+
+- read_adc:
+  - op  : 79
+  - arg : [id: UInt16]
+  - ret : [value: UInt16]
+  - desc: read adc result 
+
+# various extended opcode
+
+- set_temperature_lpf_config:
+  - op  : 90
+  - arg : [enable: Boolean, cutOffFreqHz: Float]
+  - ret : null
+  - getter_op : 90
+  - desc: Set temperature lpf config
+
+- get_temperature_lpf_config:
+  - op  : 91
+  - arg : null
+  - ret : [enable: Boolean, cutOffFreqHz: Float]
+  - eeprom : null
+  - desc: Get temperature lpf config
+
+- read_temperature_filtered:
+  - op  : 92
+  - arg : [id: UInt16]
+  - ret : [value: Float]
+  - desc: read temperature  in celcius filtered
+
+# ==================== RTC =====================================================
+- set_rtc_clock:
+  - op : 80
+  - arg: [sec: UInt16,min: UInt16,hour: UInt16,day: UInt16,date: UInt16,month: UInt16,year: UInt16]
+  - ret: null
+  
+- get_rtc_clock:
+  - op : 81
+  - arg: null
+  - ret: [sec: UInt16,min: UInt16,hour: UInt16,day: UInt16,date: UInt16,month: UInt16,year: UInt16]
+
+# ==================== Chiller error handling! =====================================================
+- set_hot_gas_enable:
+  - op  : 110
+  - arg : [id: UInt16, enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: Manualy enable or disable the compressor, only use it when the controller disabled, debugging purpose
+
+- get_hot_gas_enable:
+  - op  : 111
+  - arg : [id: UInt16]
+  - ret : [return: Boolean]
+  - desc: get the compressor enable or disable
+
+- set_heater_enable:
+  - op  : 112
+  - arg : [id: UInt16, enable: Boolean]
+  - ret : [status: Boolean]
+  - desc: Manualy enable or disable the compressor, only use it when the controller disabled, debugging purpose
+
+- get_heater_enable:
+  - op  : 113
+  - arg : [id: UInt16]
+  - ret : [return: Boolean]
+  - desc: get the compressor enable or disable
+
+- set_chiller_monitor_delay_us:
+  - op  : 114
+  - arg : [id: UInt16, delay: UInt32]
+  - ret : null
+  - getter_op : 115
+  - desc: set monitor delay before it thrown an error
+
+- get_chiller_monitor_delay_us:
+  - op  : 115
+  - arg : [id: UInt16]
+  - ret : [delay: UInt32]
+  - eeprom : [id: 2]
+  - desc: see op 114
+
+- set_chiller_temperature_not_reach_params:
+  - op  : 116
+  - arg : [id: UInt16, threshold: Float, timeout: UInt32]
+  - ret : null
+  - getter_op : 117
+  - desc: set chiller temperature not reach threshold and timeout
+
+- get_chiller_temperature_not_reach_params:
+  - op  : 117
+  - arg : [id: UInt16]
+  - ret : [threshold: Float, timeout: UInt32]
+  - eeprom : [id: 2]
+  - desc: see op 116
+
+- get_chiller_error_code:
+  - op  : 118
+  - arg : [id: UInt16]
+  - ret : [error_code: UInt16]
+  - desc: get the error code of the chiller
+
+- clear_chiller_error:
+  - op  : 119
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: clear the error code of the chiller
+
+- set_chiller_control_error_handling_enable:
+  - op  : 120
+  - arg : [enable: Boolean]
+  - ret : null
+  - getter_op : 115
+  - desc: enable/disable chiller control error handling
+
+- get_chiller_control_error_handling_enable:
+  - op  : 121
+  - arg : null
+  - ret : [enable: Boolean]
+  - eeprom : null
+  - desc: see op 120
+
+- set_chiller_minimum_flow_rate:
+  - op  : 122
+  - arg : [id: UInt16, value: Float]
+  - ret : null
+  - getter_op : 123
+  - desc: set chiller minimumw water level
+
+- get_chiller_minimum_flow_rate:
+  - op  : 123
+  - arg : [id: UInt16]
+  - ret : [value: Float]
+  - eeprom : [id: 2]
+  - desc: see op 122
+
+- set_water_level_lpf_config:
+  - op  : 124
+  - arg : [enable: Boolean, cutOffFreqHz: Float]
+  - ret : null
+  - getter_op : 125
+  - desc: Set temperature lpf config
+
+- get_water_level_lpf_config:
+  - op  : 125
+  - arg : null
+  - ret : [enable: Boolean, cutOffFreqHz: Float]
+  - eeprom : null
+  - desc: Get temperature lpf config
+
+- set_water_level_sampling_period:
+  - op  : 126
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 127
+  - desc: Set water level sampling period in micro seconds 
+
+- get_water_level_sampling_period:
+  - op  : 127
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get water level sampling period in micro seconds 
+
+- set_chiller_flow_error_monitor_delay:
+  - op  : 128
+  - arg : [id: UInt16,period: UInt32]
+  - ret : null
+  - getter_op : 129
+  - desc: Set chiller flow error monitor delay 
+
+- get_chiller_flow_error_monitor_delay:
+  - op  : 129
+  - arg : [id: UInt16]
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get chiller flow error monitor delay 
+
+- set_chiller_control_temp_threshold:
+  - op  : 130
+  - arg : [upperTemp : Float,lowerTemp : Float]
+  - ret : null
+  - desc: Set chiller power cycle params
+
+- get_chiller_control_temp_threshold:
+  - op  : 131
+  - arg : null
+  - ret : [upperTemp : Float,lowerTemp : Float]
+  - desc: Get chiller power cycle params
+
+#=============================================== event list =============================================
+EVENTS:
+
+- on_chiller_actuator_error:
+  - op : 801
+  - ret: [id: UInt16, error_code: UInt16]
+  - desc: fired when there's an error on one of the actuator
+
+- on_chiller_handler_error:
+  - op : 802
+  - ret: [type: UInt16, flow_value: Float, temp_value: Float]
+  - desc: fired when there's an error on flow or temperature of all chiller
+
+- on_chiller_switch_start:
+  - op : 803
+  - ret: null
+  - desc: event fired when switch process start
+
+- on_chiller_switch_finish:
+  - op : 804
+  - ret: [is_success : Boolean]
+  - desc: event fired when chiller finished switching process
+
+- on_chiller_disabled_temporary:
+  - op : 805
+  - ret: [id : UInt16]
+  - desc: event fired when chiller disabled temporary to avoid ringing alarm beacuse of high initial temperature

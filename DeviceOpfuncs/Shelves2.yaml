@@ -1,0 +1,373 @@
+APPNAME: Shelves2
+VERSION: 0.0.2 
+
+COMMANDS:
+
+
+# -------------------------------  8 bit PPI ----------------
+- read_ppi_direction_bit:
+  - op  : 10
+  - arg : [id: UInt16]
+  - ret : [direction: UInt16]
+  - eeprom : [id: 8]
+  - desc: |
+            get the data direction of PPI IO
+
+- write_ppi_direction_bit:
+  - op  : 11
+  - arg : [id: UInt16, direction: UInt16]
+  - ret : null
+  - getter_op : 10
+  - desc: |
+            set the data direction of PPI IO
+
+- read_ppi_bit:
+  - op  : 12
+  - arg : [id: UInt16]
+  - ret : [value: UInt16]
+  - desc: get bit IO value
+
+- set_ppi_bit:
+  - op  : 13
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: set bit IO value
+
+- clear_ppi_bit:
+  - op  : 14
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: clear bit IO value
+
+- toggle_ppi_bit:
+  - op  : 15
+  - arg : [id: UInt16]
+  - ret : null
+  - desc: toggle bit IO value
+  
+- write_ppi_bit:
+  - op  : 16
+  - arg : [id: UInt16, value: UInt16]
+  - ret : null
+  - desc: write bit PPI IO value
+
+- read_ppi_direction_words:
+  - op  : 17
+  - arg : null
+  - ret : [direction : UInt16]
+  - desc: |
+            read word data of PPI IO direction 
+
+- write_ppi_direction_words:
+  - op  : 18
+  - arg : [direction : UInt16]
+  - ret : null
+  - desc: |
+            write word data of PPI IO direction 
+  
+- read_ppi_words:
+  - op  : 19
+  - arg : null
+  - ret : [direction : UInt16]
+  - desc: Read current PPI output states
+  
+- set_ppi_words:
+  - op  : 20
+  - arg : null
+  - ret : null
+  - desc: Perform set operation on PPI outputs directly
+  
+- clear_ppi_words:
+  - op  : 21
+  - arg : null
+  - ret : null
+  - desc: Perform clear operation on PPI outputs directly
+  
+- toggle_ppi_words:
+  - op  : 22
+  - arg : null
+  - ret : null
+  - desc: Perform toggle operation on PPI outputs directly
+
+- write_ppi_words:
+  - op  : 23
+  - arg : [data: UInt16]
+  - ret : null
+  - desc: Perform write operation on PPI outputs directly
+  
+
+
+# ----------------------------sensor-----------------------------
+- temperature_sensor_read:
+  - op  : 30
+  - arg : [id: Int16]
+  - ret : [value: Double]
+  - desc: Read temperature sensor value
+  
+- temperature_sensor_set_params:
+  - op  : 31
+  - arg : [id: UInt16, offset_temp: Double, gain_amp: Double, scale_temp: Double, vref: Double, sampling_us: UInt32, lpf_cutoff: Double]
+  - ret : null
+  - getter_op : 32
+  - desc: Set temperature sensor parameters
+
+- temperature_sensor_get_params:
+  - op  : 32
+  - arg : [id: UInt16]
+  - ret : [offset_temp: Double, gain_amp: Double, scale_temp: Double, vref: Double, sampling_us: UInt32, lpf_cutoff: Double]
+  - eeprom : [id : 3]
+  - desc: Set temperature sensor parameters
+
+# ------------------------------- SENSOR MONITOR ------------------------------------
+- sensor_monitor_get_enable_mask:
+  - op : 41
+  - arg: null
+  - ret: [enable_mask: UInt16]
+  - eeprom : null
+  - desc: |
+            get sensor monitor enable mask
+
+- sensor_monitor_set_enable_mask:
+  - op : 42
+  - arg: [enable_mask: UInt16]
+  - ret: null
+  - getter_op : 41
+  - desc: |
+            set sensor monitor enable mask
+
+- sensor_monitor_get_debounce_ms:
+  - op : 43
+  - arg: null
+  - ret: [debounce_ms: UInt16]
+  - eeprom : null 
+  - desc: |
+            get sensor monitor debounce time in milisecond
+            
+- sensor_monitor_set_debounce_ms:
+  - op : 44
+  - arg: [debounce_ms: UInt16]
+  - ret: null
+  - getter_op : 43
+  - desc: |
+            set sensor monitor debounce time in milisecond
+            
+- sensor_monitor_get_threshold:
+  - op : 45
+  - arg: [id: UInt16]
+  - ret: [upper_limit: Double, lower_limit: Double]
+  - eeprom : [id: 3]
+  - desc: |
+            get sensor monitor upper and lower threshold for corresponding channel
+
+- sensor_monitor_set_threshold:
+  - op : 46
+  - arg: [id: UInt16, upper_limit: Double, lower_limit: Double]
+  - ret: [success : Boolean]
+  - getter_op : 45
+  - desc: |
+            set sensor monitor upper and lower threshold for corresponding channel
+
+
+#---------------------------- INPUT MONITOR ------------------------------------
+- get_debouch_time_ms:
+  - op  : 50
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null 
+  - desc: get the debouch time in ms
+
+- set_debouch_time_ms:
+  - op  : 51
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 50
+  - desc: set the debouch time in ms
+
+- get_input_mask:
+  - op  : 52
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null 
+  - desc: get the input mask please see InputMonitorMask
+
+- set_input_mask:
+  - op  : 53
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 52
+  - desc: set the input mask please see InputMonitorMask
+
+- read_input_monitor_port_value:
+  - op  : 54
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+#---------------------------- Auxs ---------------------------------------------
+- get_aux_analog_in_params:
+  - op  : 60
+  - arg : [id: UInt16]  
+  - ret : [scale: Double, offset: Double]
+  - eeprom : [id: 8] 
+  - desc: get setting scale and offset for reading the analog in from ADC
+
+- set_aux_analog_in_params:
+  - op  : 61
+  - arg : [id: UInt16, scale: Double, offset: Double]
+  - ret : null
+  - getter_op : 60
+  - desc: setting scale and offset for reading the analog in from ADC
+
+- read_aux_analog_in_value:
+  - op  : 62
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: read value aux input analog
+
+- get_aux_analog_out_params:
+  - op  : 63
+  - arg : [id: UInt16]
+  - ret : [max_range: Double, min_range: Double]
+  - eeprom : [id: 3]
+  - desc: get max range and min range of output in percentag
+
+- set_aux_analog_out_params:
+  - op  : 64
+  - arg : [id: UInt16, max_range: Double, min_range: Double]
+  - ret : null
+  - getter_op : 63
+  - desc: set max range and min range of output in percentage
+
+- get_aux_analog_out_value:
+  - op  : 65
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: get value in percentage from range
+
+- set_aux_analog_out_value:
+  - op  : 66
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - desc: set value in percentage from range
+
+- get_aux_analog_out_pwm_freq:
+  - op  : 67
+  - arg : null
+  - ret : [value: UInt32]
+  - eeprom : null
+  - desc: get freq analog out pwm in Hz for Aux
+
+- set_aux_analog_out_pwm_freq:
+  - op  : 68
+  - arg : [value: UInt32]
+  - ret : null
+  - getter_op : 67
+  - desc: set freq analog out pwm in Hz
+
+#---------
+- get_aux_analog_out_enable_on_start:
+  - op  : 70
+  - arg : [id: UInt16]
+  - ret : [value: UInt16]
+  - eeprom :  [id: 2]
+  - desc: get enable/disable on start
+  
+- set_aux_analog_out_enable_on_start:
+  - op  : 71
+  - arg : [id: UInt16, value: UInt16]
+  - ret : null
+  - getter_op : 70
+  - desc: set enable/disable on start
+  
+- get_aux_analog_out_value_on_start:
+  - op  : 72
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - eeprom :  [id: 2] 
+  - desc: get value in percentage from range
+  
+- set_aux_analog_out_value_on_start:
+  - op  : 73
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - getter_op : 72
+  - desc: set value in percentage from range
+#---------------------------------- LOGGER ---------------------------------------
+
+- get_log_items:
+  - op  : 111
+  - arg : null
+  - ret : [log_mask: UInt16]
+  - desc: |
+           Get data logger activation status. Each logger module has bitmasks to represent/activate which data is logged.
+           1: channel 1
+           2: challel 2
+           4: channel 3
+
+- set_log_items:
+  - op  : 112
+  - arg : [log_mask: UInt16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set data logger activation.  Check get_log_items opcode for furher explanation of bitmasks and modules.
+         
+- start_log:
+  - op  : 113
+  - arg : null
+  - ret : [started: Boolean]
+  - desc: Start data logger. started is False if unable to start (log items is not set yet).
+
+- stop_log:
+  - op  : 114
+  - arg : null
+  - ret : null
+  - desc: Stop data logger.
+
+- read_log_data:
+  - op  : 115
+  - arg : [start_index: Int16]
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: Read log data from a starting index, maximum data per command is 251 items.
+          Arguments
+          - start_index -> Starting index to be read
+
+          Returns
+          - num_items -> number of received data
+          - data      -> array of received data
+
+- get_log_status:
+  - op  : 116
+  - arg : null
+  - ret : [status: Int16, triggered_pos: UInt16]
+  - desc: | 
+          Get logger status. 
+
+- read_log_stream_data:
+  - op  : 117
+  - arg : null
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: | 
+          Read streaming of data from last read index, max 200 data per command. For example, first read_log_stream_data command will obtain
+          data 0-199, second command will obtain data 200-399, and so on.
+          Arguments
+          - num_items -> number of received data
+          - data      -> array of received data
+
+ ################################### EVENTS #################################################
+EVENTS:
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon input monitor changed
+  
+- on_sensor_out_of_bound:
+  - op  : 802
+  - ret: [id: UInt16, limit_type: UInt16, value: Double]
+  - desc: Fired upon sensor monitor out of counds
+
+
+
+  
+
+  
+

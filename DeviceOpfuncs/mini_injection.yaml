@@ -1,0 +1,1007 @@
+APPNAME: MINI_INJECTION
+VERSION: v0.0.6
+
+################################### ENUMS & BITMASKS #################################################-
+ENUMS:
+- MotorErrorCode:
+  - desc : Motor error code
+  - type : UInt16
+  - value:
+    - mecodeNone : [0, No Error]
+    - mecodeInvalidID : [1, Invalid Motor ID]
+    - mecodeLowerLimit : [2, Motor hit Lower Limit switch]
+    - mecodeUpperLimit : [3, Motor hit Upper Limit switch]
+    - mecodeIllegalPos : [4, Illegal Position]
+    - mecodeIllegalVel : [5, Illegal Velocity]
+    - mecodeIllegalAcc : [6, Illegal Acceleration]
+    - mecodeAborted : [7, Motor Stopped by Motion Abort]
+    - mecodeFolErrorIdle : [8, Encoder doesn't match Motor position while Idle]
+    - mecodeFolErrorMoving : [9, Encoder doesn't match Motor position while Moving]
+    - mecodeEncoderError : [10, Encoder error]
+    - mecodeDisabled : [11, Motor is disabled]
+    - mecodeHoming : [12, Motor is homing]
+    - mecodeEmergencyStop : [13, Emergency Stop is activated]
+    - mecodeHardBrake : [14, Hard Brake is activated]
+    - mecodeDriverFault : [15, Motor driver fault signal is triggered]
+    - mecNoMove : [16, Motor move to the same position]
+    - mecMoveNotSupported : [17, some movement can't b overidden ( s-curve)]
+    - mecIllegalJrk : [18, illegal jerk (s-curve)]
+    - mecStalled : [19, motor stalled detected using trinamic stallguard]
+
+- MotorStatusBitmask:
+  - desc : Bitmask for motor status code (e.g. value 1 is bit 0, value 2 is bit 1, etc)
+  - type : UInt16
+  - value:
+    - msbitMoving : [1, Motor is moving]
+    - msbitHoming : [2, Motor is homing]
+    - msbitHomed : [4, Motor is already homed]
+    - msbitLowerLimit : [8, LowerLimit switch is hit]
+    - msbitUpperLimit : [16, UpperLimit switch is hit]
+    - msbitOverCurrent : [32, Motor overcurrent]
+    - msbitAborted : [64, Motor motion abort is triggered]
+    - msbitFolErrorIdle : [128, Following Error while motor is idle]
+    - msbitFolErrorMoving : [256, Following Error while motor is moving]
+    - msbitEncoderError : [512, Encode Error]
+    - msbitDisabled : [1024, Motor is Disabled]
+    - msbitEmergencyStop : [2048, Emergency Stop is triggered]
+    - msbitHardBrake : [4096, HardBrake is triggered]
+    - msbitDriverFault : [8192, Motor driver fault signal is triggered]
+
+- MotorInputBitmask:
+  - desc : Bitmask for motor input code (e.g. value 1 is bit 0, value 2 is bit 1, etc)
+  - type : UInt16
+  - value:
+    - mibitHomeSwitch : [1, motor homing switch]
+    - mibitLowerLimit : [2, motor lower limit switch]
+    - mibitUpperLimit : [4, motor upper limit switch]
+    - mibitEnableSwitch : [8, motor enable switch]
+    - mibitAbortFlag : [16, motor abort flag]
+    - mibitDriverFault : [32, motor driver fault signal]
+
+- LoggerTickBitmask:
+  - desc : Bitmask for activation of logger tick (e.g. value 1 is bit 0, value 2 is bit 1, etc)
+  - type : UInt16
+  - value:
+    - logbitIndexActive : [1, Activate logging index]
+
+- AbortInputBitmask:
+  - desc : Bitmask for activating input of motion abort
+  - type : UInt32
+  - value:
+    - Motor0Fault : [1, motor 0 fault active high]
+    - Motor1Fault : [2, motor 1 fault active high]
+    - Motor2Fault : [4, motor 0 fault active high]
+    - Motor3Fault : [8, motor 1 fault active high]
+    - Estop : [16, Estop Signal active low]
+    - TouchOff : [32, Touch off Signal active low]
+    - InputMonitor0 : [64, Input monitor 0]
+    - InputMonitor1 : [128, Input monitor 1]
+    - InputMonitor2 : [256, Input monitor 2]
+    - InputMonitor3 : [512, Input monitor 3]
+    - InputMonitor4 : [1024, Input monitor 4]
+    - InputMonitor5 : [2048, Input monitor 5]
+    - InputMonitor6 : [4196, Input monitor 6]
+    - InputMonitor7 : [8192, Input monitor 7]
+
+- AbortId:
+  - desc : Id for abort object
+  - type : Int16
+  - value:
+    - Motor0_normal : [0, motor 0 it will stop motor with deceleration if aborted]
+    - Motor1_normal : [1, motor 1 it will stop motor with deceleration if aborted]
+    - Motor2_normal : [2, motor 2 it will stop motor with deceleration if aborted]
+    - Motor3_normal : [3, motor 3 it will stop motor with deceleration if aborted]
+    - Estop : [4, Estop it will give low signal to bus if aborted]
+    - TouchOff : [5, Touch off it will give low signal to bus if aborted]
+    - Motor0_estop : [6, motor 0 it will stop motor disable and release the brake if there is any]
+    - Motor1_estop : [7, motor 1 it will stop motor disable and release the brake if there is any]
+    - Motor2_estop : [8, motor 2 it will stop motor disable and release the brake if there is any]
+    - Motor3_estop : [9, motor 3 it will stop motor disable and release the brake if there is any]
+
+
+- InputMonitorMask:
+  - desc : Bitmask for activating input monitor also value for read input
+  - type : UInt32
+  - value:
+    - InputMonitor0 : [1, Input monitor 0]
+    - InputMonitor1 : [2, Input monitor 1]
+    - InputMonitor2 : [4, Input monitor 2]
+    - InputMonitor3 : [8, Input monitor 3]
+    - InputMonitor4 : [16, Input monitor 4]
+    - InputMonitor5 : [32, Input monitor 5]
+    - InputMonitor6 : [64, Input monitor 6]
+    - InputMonitor7 : [128, Input monitor 7]
+    - Estop : [32768, Estop Signal active low]
+    - TouchOff : [65536, Touch off Signal active low]
+
+
+################################### COMMANDS #################################################
+COMMANDS:
+
+#---------------------------------- GENERIC OPCODE 1-9 ---------------------------------------
+
+#---------------------------------------- MOTOR ------------------------------------
+- get_motor_limits:
+  - op  : 10
+  - arg : [motor_id: Int16]
+  - ret : [min_limit: Double, max_limit: Double]
+  - eeprom : [motor_id: 4]
+  - desc: Get motor position limits
+
+- set_motor_limits:
+  - op  : 11
+  - arg : [motor_id: Int16, min_limit: Double, max_limit: Double]
+  - ret : null
+  - getter_op : 10
+  - desc: Set motor position limits (e.g. min -4000 max 4000)  
+
+- get_motor_currents:
+  - op  : 12
+  - arg : [motor_id: Int16]
+  - ret : [boost: Double, travel: Double, hold: Double]
+  - eeprom : [motor_id: 4]
+  - desc: Get motor current (Ampere) setting. Boost is acceleration current, travel is moving current, hold is holding current
+
+- set_motor_currents:
+  - op  : 13
+  - arg : [motor_id: Int16, boost: Double, travel: Double, hold: Double]
+  - ret : null
+  - getter_op : 12
+  - desc: Set motor current (Ampere). Boost is acceleration current, travel is moving current, hold is holding current
+
+- get_motor_config:
+  - op  : 14
+  - arg : [motor_id: Int16]
+  - ret : [invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16]
+  - eeprom : [motor_id: 4]
+  - desc: Get motor config. Invert_dir is motor direction inversion flag. Kp, Ki, Kd is PID gain. Currently, Kd and num_usteps cannot be changed.
+
+- set_motor_config:
+  - op  : 15
+  - arg : [motor_id: Int16, invert_dir: Boolean, kp: Double, ki: Double, kd: Double, num_usteps: Int16]
+  - ret : null
+  - getter_op : 14
+  - desc: Set motor config. Invert_dir is motor direction inversion flag. Kp, Ki, Kd is PID gain. num_usteps is number of substep for each step.
+
+- read_motor_inputs:
+  - op  : 16
+  - arg : [motor_id: Int16]
+  - ret : [motor_inputs: Int16]
+  - desc: Read various motor inputs, collected as bitmasks (1 is Active). Check MotorInputBitmask for the bitmask details.
+
+- clear_motor_fault:
+  - op  : 17
+  - arg : [motor_id: Int16]
+  - ret : null
+  - desc: Clear motor faults. You should send this before moving motor, every time motor failure occurs.
+
+- get_motor_open_loop:
+  - op  : 18
+  - arg : [motor_id: Int16]
+  - ret : [is_open_loop: Boolean]
+  - desc: Returns false if motor is not in open loop control mode, true otherwise.
+
+- set_motor_open_loop:
+  - op  : 19
+  - arg : [motor_id: Int16, is_open_loop: Boolean]
+  - ret : null
+  - desc: Set use_openloop to True, to activate open loop control mode. is_error will be True if motor mode cannot be set (e.g. while still moving).
+
+- get_motor_status:
+  - op  : 20
+  - arg : [motor_id: Int16]
+  - ret : [motor_status: UInt16]
+  - desc: Get motor status. Check MotorStatusBitmask under ENUMS section.
+
+- home_motor:
+  - op  : 21
+  - arg : [motor_id: Int16, flag: UInt16, pos_edge: Boolean, pos_dir: Boolean, slow_vel: Double, fast_vel: Double, accel: Double, jerk: Double]
+  - ret : [motor_error_code: UInt16]
+  - desc: |
+          Home motor. Automatically set motor position to 0 upon finished. Delidder used home switch only for homing
+          Arguments
+          - flag     -> Always set this to 0 for now. 
+          - pos_edge -> False to detect falling edge homing sensor signal, True to detect rising edge
+          - pos_dir  -> Movement direction, set False to reverse.
+          - slow_vel -> Initial velocity before home switch is activated.
+          - fast_vel -> Velocity after home switch is activated (finding precise home location).
+          - accel    -> Motor motion acceleration.
+          - jerk     -> Motor jerk.
+
+          Returns
+          - motor_error -> Check MotorErrorCode in ENUMS section
+
+
+- move_motor_abs:
+  - op  : 22
+  - arg : [motor_id: Int16, pos: Double, vel: Double, acc: Double, jrk: Double]
+  - ret : [motor_error_code: UInt16]
+  - desc: |
+          Move motor to an absolute position
+          Arguments
+          - pos -> Target position, should be within position limit
+          - vel -> Motor Velocity
+          - acc -> Motor Acceleration
+          - jrk     -> Motor Jerk (optional, depends on profile type)
+
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- move_motor_vel:
+  - op  : 23
+  - arg : [motor_id: Int16, forward: Boolean, vel: Double, accel: Double, jrk: Double, isContinous: Boolean]
+  - ret : [motor_error_code: UInt16]
+  - desc: |
+          Move motor with certain velocity, stopped when position limit is reached.
+          Arguments
+          - forward -> Set to False to inverse direction.
+          - vel     -> Motor velocity
+          - acc     -> Motor Acceleration
+          - jrk     -> Motor Jerk (optional, depends on profile type)
+          - isContinous -> if true the motor will always move regardless the motor limit, can be stopped using motion abort or stop or motor fault
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- stop_motor:
+  - op  : 24
+  - arg : [motor_id: Int16, accel: Double, jrk: Double]
+  - ret : [motor_error_code: UInt16]
+  - desc: Stop motor, even if its moving, with inputed acceleration set in accel. Return MotorErrorCode enum.
+
+- abort_motor:
+  - op : 25
+  - arg : [motor_id: Int16]
+  - ret : [motor_error_code: UInt16]
+  - desc: Stop motor with predetermined acceleration (56000). Return MotorErrorCode enum.
+
+- get_motor_pos:
+  - op  : 27
+  - arg : [motor_id: Int16]
+  - ret : [curr_pos: Double, curr_vel: Double, curr_acc: Double]
+  - desc: Get current motor position.
+
+- set_motor_pos:
+  - op  : 28
+  - arg : [motor_id: Int16, pos: Double]
+  - ret : null
+  - desc: Manually set current motor position.
+
+# can't be implemented on trinamic
+# - set_motor_duty_cycle:
+#   - op  : 29
+#   - arg : [motor_id: Int16, pct_a: Double, pct_b: Double]
+#   - ret : null
+#   - desc: Set the duty cycle of motor coil A and B (in percent/ 0-100). Only works on open loop mode. 
+
+#---------------------------------- LOGGING ---------------------------------------
+- set_log_prescaler:
+  - op : 34
+  - arg: [prescaler: UInt16]
+  - ret: null
+
+- get_log_items:
+  - op  : 35
+  - arg : null
+  - ret : [motor0_mask: UInt32, motor1_mask: UInt32, motor2_mask: UInt32, motor3_mask: UInt32, sensor_mask: UInt32]
+  - desc: |
+           Get data logger activation status. Each logger module has bitmasks to represent/activate which data is logged.
+           - motorx   -> log motor x-related data. Check LoggerMotorBitmask.
+           - Sensor    -> sensor-related data. Check LoggerValveBitmask.
+
+- set_log_items:
+  - op  : 36
+  - arg : [motor0_mask: UInt32, motor1_mask: UInt32, motor2_mask: UInt32, motor3_mask: UInt32, sensor_mask: UInt32]
+  - ret : [success: Boolean]
+  - desc: |
+          Set data logger activation.  Check get_log_items opcode for furher explanation of bitmasks and modules.
+          Success will be False if device fails to activate all given masks, which happen when number of logging channel is insufficient (MAX NUM of channel is 9).
+
+- start_log:
+  - op  : 37
+  - arg : null
+  - ret : [started: Boolean]
+  - desc: Start data logger. started is False if unable to start (log items is not set yet).
+
+- stop_log:
+  - op  : 38
+  - arg : null
+  - ret : null
+  - desc: Stop data logger.
+
+- read_log_data:
+  - op  : 39
+  - arg : [start_index: Int16]
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: Read log data from a starting index, maximum data per command is 251 items.
+          Arguments
+          - start_index -> Starting index to be read
+
+          Returns
+          - num_items -> number of received data
+          - data      -> array of received data
+
+- get_log_status:
+  - op  : 40
+  - arg : null
+  - ret : [status: Int16, triggered_pos: UInt16]
+  - desc: | 
+          Get logger status. If trigger is activated, trigger_pos contain the index of data where trigger is activated. status is enums that consist of
+          - 0 -> logger is running
+          - 1 -> logger is stopped by user
+          - 2 -> logger is stopped by trigger
+          - 3 -> logger has not been started at all
+
+- read_log_stream_data:
+  - op  : 41
+  - arg : null
+  - ret : [num_items: Int16, data: Array_UInt16_c]
+  - desc: | 
+          Read streaming of data from last read index, max 200 data per command. For example, first read_log_stream_data command will obtain
+          data 0-199, second command will obtain data 200-399, and so on.
+          Arguments
+          - num_items -> number of received data
+          - data      -> array of received data
+
+          Note
+          - Pump and Valves data will be sent as bitmask in one UInt16 data, check PumpValveLogDatamask
+
+- set_log_trigger:
+  - op  : 42
+  - arg : [module_id: UInt16, signal_mask: UInt16, level: UInt16, trigger_type: Int16]
+  - ret : [success: Boolean]
+  - desc: |
+          Set a signal from a module to simulate osciloscope-like trigger. If trigger activated, the logger will automatically setup data such that
+          trigger position is in the middle of logged data. You should read the data using read_log_data command on trigger mode.
+          See https://community.keysight.com/community/keysight-blogs/oscilloscopes/blog/2016/09/01/understanding-oscilloscope-trigger-system-basics-why-you-should-care
+          to understand trigger in detail.
+          Arguments
+          - module_id    -> id of logger module, 0 is log tick, 1 is motor module, 1 is delidder module
+          - signal_mask  -> data/signal activation mask for each module, similar to masks in set_log_items. Please check enum section for mask list
+          - level        -> level of selected data/signal that activate the triggers
+          - trigger_type -> trigger type, 0 is disable trigger, 1 is rising signal trigger, 2 is falling signal trigger, 3 is both rising and falling signal trigger
+
+- get_log_period:
+  - op  : 43
+  - arg : null
+  - ret : [period_us : UInt32]
+  - desc: Get current logging period in microsecs.
+
+- set_log_period:
+  - op  : 44
+  - arg : [period_us : UInt32]
+  - ret : null
+  - desc: Set current logging period in microsecs.
+
+#---------------------------------------- MOTOR EXTENDED 1------------------------------------
+- set_motor_estopdelay:
+  - op  : 45
+  - arg : [motor_id: Int16, delay: UInt32]
+  - ret : null
+  - desc: Get motor estop delay for disable the motor
+
+- get_motor_estopdelay:
+  - op  : 46
+  - arg : [motor_id: Int16]
+  - ret : [delay: UInt32]
+  - desc: Get motor estop delay for disable the motor
+
+- set_motor_enabled:
+  - op  : 47
+  - arg : [motor_id: Int16, enable: Boolean]
+  - ret : null
+  - desc: Set enable to True to enable motor, False to disable.
+
+- get_motor_deceleration:
+  - op  : 48
+  - arg : [motor_id: Int16]
+  - ret : [stop_decel: Double, abort_decel: Double, stop_abort_jerk: Double]
+  - eeprom : [motor_id : 4]
+  - desc: Get enable stop and abort deceleration in step/sec^2, and jerk in step/sec^3
+
+- set_motor_deceleration:
+  - op  : 49
+  - arg : [motor_id: Int16, stop_decel: Double, abort_decel: Double, stop_abort_jerk: Double]
+  - ret : null
+  - getter_op : 48
+  - desc: Set enable stop and abort deceleration in step/sec^2, and jerk in step/sec^3
+
+#---------------------------- INPUT MONITOR ------------------------------------
+- get_debouch_time_ms:
+  - op  : 50
+  - arg : [id: UInt16]
+  - ret : [duration_us: UInt32]
+  - eeprom : [id : 8]
+  - desc: get the debouch time in ms
+
+- set_debouch_time_ms:
+  - op  : 51
+  - arg : [id: UInt16, duration_us: UInt32]
+  - ret : null
+  - getter_op : 50
+  - desc: set the debouch time in ms
+
+- get_input_mask:
+  - op  : 52
+  - arg : null
+  - ret : [mask: UInt32]
+  - eeprom : null
+  - desc: get the input mask please see InputMonitorMask
+
+- set_input_mask:
+  - op  : 53
+  - arg : [mask: UInt32]
+  - ret : null
+  - getter_op : 52
+  - desc: set the input mask please see InputMonitorMask
+
+- read_input_monitor_port_value:
+  - op  : 54
+  - arg : null
+  - ret : [mask: UInt32]
+  - desc: read the IO port (all bits)
+
+# -------------------------- SEQUENCER ------------------------------------
+- set_clamping_motor_param:
+  - op  : 60
+  - arg : [pos : Double, velo: Double, accel: Double ]
+  - ret : null
+  - desc: Set clamping motor parameter
+
+- get_clamping_motor_param:
+  - op  : 61
+  - arg : null
+  - ret : [pos : Double, velo: Double, accel: Double ]
+  - desc: get clamping motor parameter
+
+- set_clamping_home_param:
+  - op  : 62
+  - arg : [slow_vel : Double, fast_velo: Double, home_accel: Double ]
+  - ret : null
+  - desc: Set clamping motor homing parameter
+
+- get_clamping_home_param:
+  - op  : 63
+  - arg : null
+  - ret : [slow_vel : Double, fast_velo: Double, home_accel: Double ]
+  - desc: get clamping motor homing parameter
+
+- set_homing_all_timeout:
+  - op  : 64
+  - arg : [timeout : UInt16 ]
+  - ret : null
+  - desc: Set homing timeout in ms
+
+- get_homing_all_timeout:
+  - op  : 65
+  - arg : null
+  - ret : [timeout : UInt16 ]
+  - desc: get homing timeout in ms
+
+- set_clamping_period:
+  - op  : 66
+  - arg : [period : UInt16 ]
+  - ret : null
+  - desc: Set clamping period in ms
+
+- get_clamping_period:
+  - op  : 67
+  - arg : null
+  - ret : [period : UInt16 ]
+  - desc: get clamping period in ms
+
+- set_inject_hold_period:
+  - op  : 68
+  - arg : [period : UInt16 ]
+  - ret : null
+  - desc: Set inject hold period in ms
+
+- get_inject_hold_period:
+  - op  : 69
+  - arg : null
+  - ret : [period : UInt16 ]
+  - desc: get inject hold period in ms
+
+- start_main_sequencer:
+  - op  : 70
+  - arg : null
+  - ret : [status : Boolean]
+  - desc: start main sequencer
+
+- stop_main_sequencer:
+  - op  : 71
+  - arg : null
+  - ret : [status : Boolean]
+  - desc: stop main sequencer
+
+- start_purge_sequencer:
+  - op  : 72
+  - arg : null
+  - ret : [status : Boolean]
+  - desc: start purge sequencer
+
+- stop_purge_sequencer:
+  - op  : 73
+  - arg : null
+  - ret : [status : Boolean]
+  - desc: stop purge sequencer
+
+- get_sequencer_status:
+  - op  : 74
+  - arg : null
+  - ret : [seq_group : UInt16 , seq_id : UInt16 , status : UInt16]
+  - desc: get sequencer status
+
+- abort_sequencer:
+  - op  : 75
+  - arg : null
+  - ret : [status : Boolean ]
+  - desc: abort sequencer
+
+# ------------------------------- THERMO SENSOR ------------------------------------
+- get_temperature_value:
+  - op  : 80
+  - arg : [id: Int16]
+  - ret : [temp: Double]
+  - desc: get thermocouple sensor read temperature in celsius
+
+
+# ------------------------------- MOTION ABORT ------------------------------------
+- get_abort_config:
+  - op  : 90
+  - arg : [abort_id: Int16]
+  - ret : [trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - desc: please see AbortInputBitmask and AbortId
+
+- set_abort_config:
+  - op : 91
+  - arg: [abort_id: Int16, trigger_on_all: Boolean, enable_mask: UInt32, active_low_mask: UInt32]
+  - ret: null
+  - desc: please see AbortInputBitmask and AbortId
+
+- clear_triggered_inputs:
+  - op : 92
+  - arg: [abort_id: Int16]
+  - ret: null
+
+- get_triggered_inputs:
+  - op : 93
+  - arg: [abort_id: Int16]
+  - ret: [input_mask: UInt32]
+
+- get_triggered_positions:
+  - op : 94
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c]
+
+- get_triggered_value:
+  - op : 95
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c] 
+
+- get_abort_threshold:
+  - op : 96
+  - arg: [abort_id: Int16]
+  - ret: [threshold: Double]
+
+- set_abort_threshold:
+  - op : 97
+  - arg: [abort_id: Int16, threshold: Double]
+  - ret: null
+
+
+#---------------------------------- EXT GENERIC OPCODE 100-109 ---------------------------------------
+#- set_address:
+#  - op  : 100
+#  - arg : [addr : Int16]
+#  - ret : null
+#  - desc: Set device address
+#  
+#- get_packet_error_count:
+#  - op  : 101
+#  - arg : null
+#  - ret : [count : Int16]
+#  - desc: Set device address  
+#
+#- set_single_precision_enable:
+#  - op  : 102
+#  - arg : [enable : Boolean]
+#  - ret : null
+#  - desc: Set single precision ( float ) data enable or use Float precision instead ( Float ) 
+#
+#- get_single_precision_enable:
+#  - op  : 103
+#  - arg : null
+#  - ret : [enable : Boolean]
+#  - desc: get single precision ( float ) data enable or use Float precision instead ( Float ) 
+
+# ==================== Temperature Controller =====================================================
+- set_temp_controller_target:
+  - op  : 110
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - desc: Set temperature target in celcius
+
+- get_temp_controller_target:
+  - op  : 111
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: Get temperature target in celcius
+
+- set_temp_controller_enable:
+  - op  : 112
+  - arg : [id: UInt16, value: Boolean]
+  - ret : [status: Boolean]
+  - desc: Set temperature control enabled 0 = disabled, 1 = enabled
+
+- get_temp_controller_enable:
+  - op  : 113
+  - arg : [id: UInt16]
+  - ret : [enabled: Boolean]
+  - desc: Get temperature control enabled 0 = disabled, 1 = enabled
+
+- set_temp_controller_pid:
+  - op  : 114
+  - arg : [id: UInt16, p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - ret : null
+  - desc: Set temperature control pid gains
+
+- get_temp_controller_pid:
+  - op  : 115
+  - arg : [id: UInt16]
+  - ret : [p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - desc: Get temperature control pid gains
+
+- set_temp_controller_deadband:
+  - op  : 116
+  - arg : [id: UInt16, lower: Double, upper: Double]
+  - ret : null
+  - desc: Set temperature control pid deadband in Celcius relative from target
+
+- get_temp_controller_deadband:
+  - op  : 117
+  - arg : [id: UInt16]
+  - ret : [lower: Double, upper: Double]
+  - desc: Get temperature control pid deadband
+
+- read_temp_controller_feedback:
+  - op : 118
+  - arg: [id: UInt16]
+  - ret: [value: Double]
+  - desc: Get temperature sensor feedback with exact same period sampling with controller
+
+- set_temp_controller_out:
+  - op  : 119
+  - arg : [id: UInt16, value: Double]
+  - ret : null
+  - desc: Get temperature controller pwm out in percentage
+
+- get_temp_controller_out:
+  - op  : 120
+  - arg : [id: UInt16]
+  - ret : [value: Double]
+  - desc: Get temperature controller pwm out in percentage
+
+- set_temp_controller_auto:
+  - op  : 121
+  - arg : [id: UInt16, auto: Boolean]
+  - ret : null
+  - desc: Set temperature control auto, if 0 = we can manually control the actuator, if 1 we cannot control manually actuator output
+
+- get_temp_controller_auto:
+  - op  : 122
+  - arg : [id: UInt16]
+  - ret : [auto: Boolean]
+  - desc: Get temperature controller auto
+
+- set_temp_controller_period:
+  - op  : 123
+  - arg : [id: UInt16, period: UInt32]
+  - ret : null
+  - desc: Set temperature controller period in micro seconds
+
+- get_temp_controller_period:
+  - op  : 124
+  - arg : [id: UInt16]
+  - ret : [period: UInt32]
+  - desc: Get temperature controller period in micro seconds
+
+- set_temp_bang2_threshold:
+  - op  : 125
+  - arg : [id: UInt16, upper: Double, lower: Double]
+  - ret : null
+  - desc: Set temperature controller bang2 threshold in celcius
+
+- get_temp_bang2_threshold:
+  - op  : 126
+  - arg : [id: UInt16]
+  - ret : [upper: Double, lower: Double]
+  - desc: Get temperature controller bang2 threshold in celcius
+
+- set_temp_controller_type:
+  - op  : 127
+  - arg : [id: UInt16, type: UInt16]
+  - ret : [status: Boolean]
+  - desc: 0 = bang2, 1 = pid
+
+- get_temp_controller_type:
+  - op  : 128
+  - arg : [id: UInt16]
+  - ret : [type: UInt16]
+  - desc: 0 = bang2, 1 = pid
+
+- set_temp_controller_thermocouple_id:
+  - op  : 129
+  - arg : [id: UInt16, thermistor_id: UInt16]
+  - ret : null
+  - desc: if thermistor_id > 1 = average all thermistor
+
+
+#---------------------------------- MOTOR EXTENSION -----------------------------------
+- get_profile_list:
+  - op  : 130
+  - arg : [motor_id: Int16]
+  - ret : [count: Int16, data: Array_Int16_c]
+  - desc: Obtain list of available motion profile types
+
+- get_active_profile:
+  - op  : 131
+  - arg : [motor_id: Int16]
+  - ret : [profile_type: Int16]
+  - eeprom : [motor_id : 4]
+  - desc: Get the currently active profile
+  
+- set_active_profile:
+  - op  : 132
+  - arg : [motor_id: Int16, profile_type: Int16]
+  - ret : [ret_code: Int16]
+  - getter_op : 131
+  - desc: Set active profile, returns 0 if success
+
+- move_multi_motor_abs:
+  - op  : 133
+  - arg : [motor_count: UInt16, motor_id: Array_Int16, pos: Array_Double, vel: Array_Double, acc: Array_Double]
+  - ret : [motor_error_code: Array_UInt16]
+  - desc: |
+          Move motor to an absolute position
+          Arguments
+          - pos -> Target position, should be within position limit
+          - vel -> Motor Velocity
+          - acc -> Motor Acceleration
+          
+          Returns
+          - motor_error_code -> Check MotorErrorCode in ENUMS section
+
+- set_motor_network_id:
+  - op  : 134
+  - arg : [id : UInt16, network_id : UInt16]
+  - ret : null
+  - getter_op : 135
+  - desc: motor network id for publish move motor abs
+
+- get_motor_network_id:
+  - op  : 135
+  - arg : [id: UInt16]
+  - ret : [network_id : UInt16]
+  - eeprom : [id: 4]
+  - desc: motor network id for publish move motor abs
+
+- get_motor_enabled:
+  - op  : 136
+  - arg : [id: UInt16]
+  - ret : [isEnabled: Boolean]
+  - desc: get motor enabled
+
+#- get_triggered_tick:
+#  - op  : 137
+#  - arg : [id: UInt16, first_input: UInt16, count : UInt16]
+#  - ret : [data: Array_UInt32]
+#  - desc: get the tick time in us of the triggered abort inputs
+
+- reset_motor_position:
+  - op  : 137
+  - arg : [id: UInt16]
+  - ret : [pos: Double,velo: Double, accel: Double]
+  - desc: reset motor tpva position
+
+
+- set_clear_homed_config:
+  - op  : 138
+  - arg : [motor_id: Int16, on_foll_error: Boolean, on_motor_disable: Boolean]
+  - ret : null
+  - desc: setting the homed flag cleared on
+
+- get_clear_homed_config:
+  - op  : 139
+  - arg : [motor_id: Int16]
+  - ret : [on_foll_error: Boolean, on_motor_disable: Boolean]
+  - desc: get the homed flag cleared on
+
+
+# ------------------------------- Ruler ------------------------------------
+- get_ruler_position:
+  - op  : 140
+  - arg : null
+  - ret : [position: Double]
+  - desc: get digital caliper position
+
+- set_ruler_to_zero:
+  - op  : 141
+  - arg : null
+  - ret : null
+  - desc: set digital caliper to zero by restarting
+
+# -------------------------- PPI  ---------------------------------------
+- read_ppi_direction_bit:
+  - op  : 150
+  - arg : [id: UInt16]
+  - ret : [direction: UInt16]
+  - desc: |
+            get the data direction of PPI IO
+
+- write_ppi_direction_bit:
+  - op  : 151
+  - arg : [id: UInt16, direction: UInt16]
+  - ret : null
+  - desc: |
+            set the data direction of PPI IO
+
+- read_ppi_bit:
+  - op  : 152
+  - arg : [id: UInt16]
+  - ret : [value: UInt16]
+  - desc: get bit IO value
+
+- write_ppi_bit:
+  - op  : 153
+  - arg : [id: UInt16, value: UInt16]
+  - ret : null
+  - desc: write bit PPI IO value
+
+- write_ppi_words:
+  - op  : 154
+  - arg : [masks: UInt16]
+  - ret : null
+  - desc: Perform write operation on PPI outputs directly  
+
+- read_ppi_words:
+  - op  : 155
+  - arg : null
+  - ret : [masks: UInt16]
+  - desc: Perform read operation on PPI outputs/Inputs directly
+
+- set_clear_bit_timed_ppi:
+  - op  : 156
+  - arg : [id: UInt16, tick_us: UInt32]
+  - ret : null
+  - desc: Perform set and clear bit for periods of tick
+
+- clear_set_bit_timed_ppi:
+  - op  : 157
+  - arg : [id: UInt16, tick_us: UInt32]
+  - ret : null
+  - desc: Perform clear and set bit for periods of tick
+
+# ---------------- temp-controller extended -------------------------------------------------------
+- set_pid_invert:
+  - op  : 160
+  - arg : [id : UInt16, invert: Boolean]
+  - ret : null
+  - getter_op : 161
+  - desc: set pid actuator to invert mode
+
+- get_pid_invert:
+  - op  : 161
+  - arg : [id : UInt16]
+  - ret : [invert: Boolean]
+  - eeprom : [id: 6]
+  - desc: get pid actuator invert mode
+
+- set_pid_timelimit_enable:
+  - op  : 162
+  - arg : [id : UInt16, enable: Boolean, period_ms: UInt32, err_tolerance: Double]
+  - ret : null
+  - getter_op : 163
+  - desc: set pid timelimit configuration
+
+- get_pid_timelimit_enable:
+  - op  : 163
+  - arg : [id : UInt16]
+  - ret : [enable: Boolean, period_ms: UInt32, err_tolerance: Double]
+  - eeprom : [id: 6]
+  - desc: get pid timelimit configuration
+
+# ---------------- flash sequence test -------------------------------------------------------
+- add_command_sequence:
+  - op  : 170
+  - arg : [seq_num: UInt16, id : UInt16 ]
+  - ret : [status: Boolean]
+  - desc: add command sequencer 
+
+- read_command_sequence:
+  - op  : 171
+  - arg : [seq_num: UInt16 ]
+  - ret : [id: UInt16, cmd_type: UInt16]
+  - desc: get command sequencer 
+
+# ---------------- stm32f4 specific opcodes -------------------------------------------------------
+- get_last_fault_cpu_register:
+  - op  : 340
+  - arg : null
+  - ret : [r0: UInt32 , r1: UInt32 , r2: UInt32 , r3: UInt32 , r12: UInt32 , psr: UInt32 , cfsr: UInt32 , bus_fault_address: UInt32 , memmanage_fault_address: UInt32 ]
+  - desc: get the cpu register value the moment before cpu gets faulty
+
+# ---------------- motion abort extended opcodes -------------------------------------------------------
+- get_triggered_encoder_positions:
+  - op : 350
+  - arg: [abort_id: Int16, first_input: Int16, count: Int16]
+  - ret: [data: Array_Double_c]
+
+
+################################### EVENTS #################################################
+EVENTS:
+- motor_move_started:
+  - op  : 512
+  - ret: [motor_id: Int16]
+  - desc: Fired upon motor movement is started.
+
+- motor_move_done:
+  - op  : 513
+  - ret: [motor_id: Int16, status: UInt16, position: Double]
+  - desc: Fired upon motor movement is done, send the motor status and position. Check MotorStatusBitmask enum for motor status.
+
+- motor_home_done:
+  - op  : 514
+  - ret: [motor_id: Int16, home_pos: Double, pos: Double]
+  - desc: Fired upon motor homing is done, return abs_pos (absolute position), and pos (position after applying offset).
+
+- motor_error_occured:
+  - op  : 515
+  - ret: [motor_id: Int16, motor_error_code: UInt16]
+  - desc: Fired upon motor error is occured. Check MotorErrorCode enum for possible error code.
+
+- max_out_reached:
+  - op  : 516
+  - ret: [motor_id: Int16]
+  - desc: Fired upon motor current control maximum output control reached, this usually caused by not enough voltage to drive
+
+- on_input_changed:
+  - op  : 801
+  - ret: [input_id: UInt16, is_on: UInt16]
+  - desc: Fired upon input monitor changed
+  
+- on_sensor_out_of_bound:
+  - op  : 802
+  - ret: [id: UInt16, limit_type: UInt16, value: Double]
+  - desc: Fired upon sensor monitor out of counts
+
+- on_timed_valve_action_start:
+  - op  : 810
+  - ret: [id: UInt16, isOpen: Boolean]
+  - desc: Fired when timed valve with specified id and bit has started
+
+- on_timed_valve_action_finish:
+  - op  : 811
+  - ret: [id: UInt16, isOpen: Boolean]
+  - desc: Fired when timed valve with specified id and bit has finished
+
+- on_sequencer_all_finish:
+  - op  : 813
+  - ret: [seqGroup: UInt16]
+  - desc: Fired when all sequences item sucessfully executed
+
+- on_sequencer_fault:
+  - op  : 814
+  - ret: [seqGroup: UInt16,id: UInt16, error_type: UInt16]
+  - desc: Fired when sequencer fault (motor fault)
+
+- on_sequencer_item_done:
+  - op  : 815
+  - ret: [seqGroup: UInt16,id: UInt16]
+  - desc: Fired when sequences item/group of item sucessfully executed
+
+- on_sequencer_stop:
+  - op  : 816
+  - ret: [seqGroup: UInt16,id: UInt16]
+  - desc: Fired when sequencer stopped/paused on safe seq item
+
+

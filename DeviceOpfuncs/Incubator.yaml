@@ -1,0 +1,826 @@
+APPNAME: 
+VERSION: 
+
+# temperature control id
+# 0 = top
+# 1 = middle
+# 2 = bottom
+
+COMMANDS:
+- save_configuration: 
+  - op  : 3
+  - arg : null
+  - ret : null
+  - desc: Save configuration to EEPROM
+
+# ==================== Temperature Controller =====================================================
+- set_temp_controller_target:
+  - op  : 10
+  - arg : [id: Int16, value: Double]
+  - ret : null
+  - getter_op : 11
+  - desc: Set temperature target in celcius
+
+- get_temp_controller_target:
+  - op  : 11
+  - arg : [id: Int16]
+  - ret : [value: Double]
+  - eeprom : [id : 3]
+  - desc: Get temperature target in celcius
+
+- set_temp_controller_enable:
+  - op  : 12
+  - arg : [id: Int16, value: UInt16]
+  - ret : null
+  - desc: Set temperature control enabled 0 = disabled, 1 = enabled
+
+- get_temp_controller_enable:
+  - op  : 13
+  - arg : [id: Int16]
+  - ret : [enabled: UInt16]
+  - desc: Get temperature control enabled 0 = disabled, 1 = enabled
+
+- set_temp_controller_pid:
+  - op  : 14
+  - arg : [id: Int16, p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - ret : null
+  - getter_op : 15
+  - desc: Set temperature control pid gains
+
+- get_temp_controller_pid:
+  - op  : 15
+  - arg : [id: Int16]
+  - ret : [p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - eeprom : [id : 3]
+  - desc: Get temperature control pid gains
+
+- set_temp_controller_deadband:
+  - op  : 16
+  - arg : [id: Int16, lower: Double, upper: Double]
+  - ret : null
+  - getter_op : 17
+  - desc: Set temperature control pid deadband in Celcius relative from target
+
+- get_temp_controller_deadband:
+  - op  : 17
+  - arg : [id: Int16]
+  - ret : [lower: Double, upper: Double]
+  - eeprom : [id : 3]
+  - desc: Get temperature control pid deadband
+
+- read_temp_controller_feedback:
+  - op : 18
+  - arg: [id: Int16]
+  - ret: [value: Double]
+  - desc: Get temperature sensor feedback with exact same period sampling with controller
+
+- get_temp_controller_out:
+  - op  : 19
+  - arg : [id: Int16]
+  - ret : [value: Double]
+  - desc: Get temperature controller pwm out in percentage
+
+- set_temp_controller_auto:
+  - op  : 20
+  - arg : [id: Int16, auto: Int16]
+  - ret : null
+  - desc: Set temperature control auto, if 0 = we can manually control the actuator, if 1 we cannot control manually actuator output
+
+- get_temp_controller_auto:
+  - op  : 21
+  - arg : [id: Int16]
+  - ret : [auto: Int16]
+  - desc: Get temperature controller auto
+
+- set_temp_controller_period:
+  - op  : 22
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 23
+  - desc: Set temperature controller period in micro seconds
+
+- get_temp_controller_period:
+  - op  : 23
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get temperature controller period in micro seconds
+
+# ==================== Humidity Controller =====================================================
+- set_humidifier_controller_period:
+  - op  : 30
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 31
+  - desc: Set humidity controller period in micro seconds
+
+- get_humidifier_controller_period:
+  - op  : 31
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get humidity controller period in micro seconds
+
+- set_humidifier_controller_target:
+  - op  : 32
+  - arg : [value: Double]
+  - ret : null
+  - getter_op : 33
+  - desc: Set humidity controller target in percentage
+
+- get_humidifier_controller_target:
+  - op  : 33
+  - arg : null
+  - ret : [value: Double]
+  - eeprom : null
+  - desc: Get humidity controller target in percentage
+
+- set_humidifier_controller_pid:
+  - op  : 34
+  - arg : [p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - ret : null
+  - getter_op : 35
+  - desc: Set humidity controller PID gains
+
+- get_humidifier_controller_pid:
+  - op  : 35
+  - arg : null
+  - ret : [p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - eeprom : null
+  - desc: Get humidity controller PID gains
+
+- set_humidifier_controller_enable:
+  - op  : 36
+  - arg : [value: UInt16]
+  - ret : null
+  - desc: Set humidity controller Enable 0 = disable, 1 = enable
+
+- get_humidifier_controller_enable:
+  - op  : 37
+  - arg : null
+  - ret : [enabled: UInt16]
+  - desc: Get humidity controller Enable 0 = disable, 1 = enable
+
+- set_humidifier_controller_deadband:
+  - op  : 38
+  - arg : [lower: Double, upper: Double]
+  - ret : null
+  - getter_op : 39
+  - desc: Set humidity controller Deadband in percentage relative from target
+
+- get_humidifier_controller_deadband:
+  - op  : 39
+  - arg : null
+  - ret : [lower: Double, upper: Double]
+  - eeprom : null
+  - desc: Get humidity controller Deadband in percentage relative from target
+
+- get_humidifier_controller_out:
+  - op  : 40
+  - arg : null
+  - ret : [value: Double]
+  - desc: Get humidity controller output in percentage of period control
+
+- set_humidifier_current_threshold:
+  - op  : 41
+  - arg : [val_amp: Double]
+  - ret : null
+  - getter_op : 42
+  - desc: Set current threshold for humidifier if the current is lower than the setting, it will detect the water on tank is empty, so it will turn on the water pump
+
+- get_humidifier_current_threshold:
+  - op  : 42
+  - arg : null
+  - ret : [val_amp: Double]
+  - eeprom : null
+  - desc: Get current threshold for humidifier if the current is lower than the setting, it will detect the water on tank is empty, so it will turn on the water pump
+
+- set_water_pump_on_period:
+  - op  : 43
+  - arg : [on_us: UInt32]
+  - ret : null
+  - getter_op : 44
+  - desc: Set water pump turn on perido in micro seconds if the water empty detected
+  
+- get_water_pump_on_period:
+  - op  : 44
+  - arg : null
+  - ret : [on_us: UInt32]
+  - eeprom : null
+  - desc: Get water pump turn on perido in micro seconds if the water empty detected
+
+- read_humidifier_feedback:
+  - op  : 45
+  - arg : null
+  - ret : [value: Double]
+  - desc: Get humidity sensor feedback value in exact same sampling period with humidity controller
+
+# ==================== CO2 Controller =====================================================
+- set_co2_controller_period:
+  - op  : 50
+  - arg : [period: UInt32]
+  - ret : null
+  - getter_op : 51
+  - desc: Set co2 controller period in micro seconds
+
+- get_co2_controller_period:
+  - op  : 51
+  - arg : null
+  - ret : [period: UInt32]
+  - eeprom : null
+  - desc: Get co2 controller period in micro seconds
+
+- set_co2_controller_target:
+  - op  : 52
+  - arg : [value: Double]
+  - ret : null
+  - getter_op : 53
+  - desc: Set co2 controller target concentration in ppm
+
+- get_co2_controller_target:
+  - op  : 53
+  - arg : null
+  - ret : [value: Double]
+  - eeprom : null
+  - desc: Get co2 controller target concentration in ppm
+
+- set_co2_controller_pid:
+  - op  : 54
+  - arg : [p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - ret : null
+  - getter_op : 55
+  - desc: Set co2 controller PID gains
+
+- get_co2_controller_pid:
+  - op  : 55
+  - arg : null
+  - ret : [p: Double, i: Double, d: Double, iLimH: Double, iLimL: Double]
+  - eeprom : null
+  - desc: Get co2 controller PID gains
+
+- set_co2_controller_enable:
+  - op  : 56
+  - arg : [value: UInt16]
+  - ret : null
+  - desc: Set co2 controller enable, 0 = disable, 1 = enable
+
+- get_co2_controller_enable:
+  - op  : 57
+  - arg : null
+  - ret : [enabled: UInt16]
+  - desc: Get co2 controller enable, 0 = disable, 1 = enable
+
+- set_co2_controller_deadband:
+  - op  : 58
+  - arg : [lower: Double, upper: Double]
+  - ret : null
+  - getter_op : 59
+  - desc: Set co2 controller deadband relative to target in ppm
+
+- get_co2_controller_deadband:
+  - op  : 59
+  - arg : null
+  - ret : [lower: Double, upper: Double]
+  - eeprom : null
+  - desc: Get co2 controller deadband relative to target in ppm
+
+- get_co2_controller_out:
+  - op  : 60
+  - arg : null
+  - ret : [value: Double]
+  - desc: Get co2 controller output in percentage of period controller
+
+- read_co2_controller_feedback:
+  - op  : 61
+  - arg : null
+  - ret : [value: Double]
+  - desc: Get co2 sensor feedback with exact sampling of co2 controller
+
+# ==================== ACTUATOR =====================================================
+- set_heater_range:
+  - op  : 71
+  - arg : [id: Int16, max: Double, min: Double]
+  - ret : null
+  - getter_op : 72
+  - desc: Set heater for temperature control working range in percentage pwm min and max
+
+- get_heater_range:
+  - op  : 72
+  - arg : [id: Int16]
+  - ret : [max: Double, min: Double]
+  - eeprom : [id: 3]
+  - desc: Get heater for temperature control working range in percentage pwm min and max
+
+- set_fan_range:
+  - op  : 73
+  - arg : [id: Int16, max: Double, min: Double]
+  - ret : null
+  - getter_op : 74
+  - desc: Set FAN for temperature control working range in percentage pwm min and max
+
+- get_fan_range:
+  - op  : 74
+  - arg : [id: Int16]
+  - ret : [max: Double, min: Double]
+  - eeprom : [id: 3]
+  - desc: Get FAN for temperature control working range in percentage pwm min and max
+
+- set_heater_out:
+  - op  : 75
+  - arg : [id: Int16, value: Double]
+  - ret : null
+  - desc: Set Heater output for temperature control in percentage of PWM, this opcode only work if the controller is disable
+
+- get_heater_out:
+  - op  : 76
+  - arg : [id: Int16]
+  - ret : [value: Double]
+  - desc: Get Heater output for temperature control in percentage of PWM
+
+- set_heater_fan_out:
+  - op  : 77
+  - arg : [id: Int16, value: Double]
+  - ret : null
+  - desc: Set FAN output for temperature control in percentage of PWM, this opcode only work if the controller is disable
+
+- get_heater_fan_out:
+  - op  : 78
+  - arg : [id: Int16]
+  - ret : [value: Double]
+  - desc: Get FAN output for temperature control in percentage of PWM
+
+- set_co2_valve_state:
+  - op  : 120
+  - arg : [on: Boolean]
+  - ret : null
+  - desc: Set CO2 valve state
+
+- get_co2_valve_state:
+  - op  : 121
+  - arg : null
+  - ret : [on: Boolean]
+  - desc: Get CO2 valve state
+
+- set_humidifier_state:
+  - op  : 122
+  - arg : [on: Boolean]
+  - ret : null
+  - desc: Set humidifier state
+
+- get_humidifier_state:
+  - op  : 123
+  - arg : null
+  - ret : [on: Boolean]
+  - desc: Get humidifier state
+
+- set_water_pump_state:
+  - op  : 124
+  - arg : [on: Boolean]
+  - ret : null
+  - desc: Set water pump state
+
+- get_water_pump_state:
+  - op  : 125
+  - arg : null
+  - ret : [on: Boolean]
+  - desc: Get water pump state
+
+- set_water_valve_state:
+  - op  : 126
+  - arg : [on: Boolean]
+  - ret : null
+  - desc: Set water valve state
+
+- get_water_valve_state:
+  - op  : 127
+  - arg : null
+  - ret : [on: Boolean]
+  - desc: Get water valve state
+
+- set_humidifier_fan_state:
+  - op  : 128
+  - arg : [on: Boolean]
+  - ret : null
+  - desc: Set humidifier fan state
+
+- get_humidifier_fan_state:
+  - op  : 129
+  - arg : null
+  - ret : [on: Boolean]
+  - desc: Get humidifier fan state
+
+#=============================================== logger =============================================
+- set_log_prescaler:
+  - op : 81
+  - arg: [value: UInt16]
+  - ret: null
+
+- get_log_items:
+  - op : 82
+  - arg: null
+  - ret: [mask1: UInt16, mask2: UInt16, mask3: UInt16]
+
+- set_log_items:
+  - op : 83
+  - arg: [mask1: UInt16, mask2: UInt16, mask3: UInt16]
+  - ret: [error_code: UInt16]
+
+- start_log:
+  - op : 84
+  - arg: null
+  - ret: [started: Boolean]
+
+- stop_log:
+  - op : 85
+  - arg: null
+  - ret: [stopped: Boolean]
+
+- set_trigger:
+  - op : 86
+  - arg: [module_id: Int16, signal_id: Int16, level: Int16, type: Int16]
+  - ret: [succeeded: Boolean]
+
+- get_log_status:
+  - op : 87
+  - arg: null
+  - ret: [status: Int16, triggered_pos: UInt16]
+
+- read_log_data:
+  - op : 88
+  - arg: [first_item: Int16]
+  - ret: [error_code: UInt16, num_items: Int16, data: Array_UInt16_c]
+
+- read_log_stream_data:
+  - op : 89
+  - arg: null
+  - ret: [error_code: UInt16, num_items: Int16, data: Array_UInt16_c]
+#=============================================== end logger =============================================
+
+#=============================================== SENSORS ================================================
+- set_temp_sensor_params:
+  - op  : 91
+  - arg : [id: UInt16, offset_temp: Double, gain_amp: Double, scale_temp: Double, vref: Double, sampling_us: UInt32, lpf_cutoff: Double]
+  - ret : null
+  - getter_op : 92
+  - desc: Set temperature sensor parameters
+
+- get_temp_sensor_params:
+  - op  : 92
+  - arg : [id: UInt16]
+  - ret : [offset_temp: Double, gain_amp: Double, scale_temp: Double, vref: Double, sampling_us: UInt32, lpf_cutoff: Double]
+  - eeprom : [id: 3]
+  - desc: Set temperature sensor parameters
+
+- set_humidity_sensor_sampling:
+  - op  : 95
+  - arg : [sampling_us: UInt32]
+  - ret : null
+  - getter_op : 96
+  - desc: Set humidity sensor sampling in micro seconds
+
+- get_humidity_sensor_sampling:
+  - op  : 96
+  - arg : null
+  - ret : [sampling_us: UInt32]
+  - eeprom : null
+  - desc: Get humidity sensor sampling in micro seconds
+
+- read_humidity_sensor:
+  - op  : 97
+  - arg : null
+  - ret : [value: Double]
+  - desc: Read value of humidity sensor
+
+- set_humidifier_current_sense_config:
+  - op  : 98
+  - arg : [scale: Double, offset: Double]
+  - ret : null
+  - getter_op : 99
+  - desc: Set parameter for current sense of humidifier (scale and offset)
+
+- get_humidifier_current_sense_config:
+  - op  : 99
+  - arg : null
+  - ret : [scale: Double, offset: Double]
+  - eeprom : null
+  - desc: Get parameter for current sense of humidifier (scale and offset)
+
+- read_humidifier_current:
+  - op  : 100
+  - arg : null
+  - ret : [val_amp: Double]
+  - desc: Read current of humidifier
+
+- read_co2_sensor:
+  - op  : 103
+  - arg : null
+  - ret : [value: Double]
+  - desc: Read the CO2 sensor value
+
+- read_temperature_sensor:
+  - op  : 104
+  - arg : [id: Int16]
+  - ret : [value: Double]
+  - desc: Read temperature sensor value
+
+# ================ Communication =====================================================
+- set_address:
+  - op : 110
+  - arg: [address: Int16]
+  - ret: null
+  - desc: Set device address
+
+- get_packet_error_count:
+  - op : 111
+  - arg: null
+  - ret: [count: Int16]
+  
+# =============== chamber & jerry can sensor ================
+- get_sensor_chamber_param:
+  - op : 130
+  - arg: null
+  - ret: [scale: Double, offset: Double]
+  - eeprom : null
+  - desc: |
+          get sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+          
+- set_sensor_chamber_param:
+  - op : 131
+  - arg: [scale: Double, offset: Double]
+  - ret: null
+  - getter_op : 130
+  - desc: |
+          set sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+          
+- read_sensor_chamber:
+  - op : 132
+  - arg: null
+  - ret: [value: Double]
+  - desc: |
+          read the sensor value        
+
+- get_sensor_jerry_can_param:
+  - op : 133
+  - arg: null
+  - ret: [scale: Double, offset: Double]
+  - eeprom : null
+  - desc: |
+          get sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+          
+- set_sensor_jerry_can_param:
+  - op : 134
+  - arg: [scale: Double, offset: Double]
+  - ret: null
+  - getter_op : 133
+  - desc: |
+          set sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+          
+- read_sensor_jerry_can:
+  - op : 135
+  - arg: null
+  - ret: [value: Double]
+  - desc: |
+          read the sensor value  
+ 
+- get_humidifier_chamber_threshold:
+  - op : 136
+  - arg: null
+  - ret: [threshold_on: Double, threshold_off: Double]
+  - eeprom : null
+  - desc: |
+          get humidifier setting for threshold_on, threshold_off 
+          
+- set_humidifier_chamber_threshold:
+  - op : 137
+  - arg: [threshold_on: Double, threshold_off: Double]
+  - ret: null
+  - getter_op : 136
+  - desc: |
+          set humidifier setting for threshold_on, threshold_off         
+ 
+ 
+- get_water_pump_on_time_out:
+  - op  : 138
+  - arg : null
+  - ret : [timeout_us: UInt32]
+  - eeprom : null
+  - desc: Get water pump turn on time out in micro seconds if the water empty detected  
+  
+- set_water_pump_on_time_out:
+  - op  : 139
+  - arg : [timeout_us: UInt32]
+  - ret : null
+  - getter_op : 138
+  - desc: Set water pump turn on time out  in micro seconds if the water empty detected
+  
+
+- get_water_pump_controller_enable:
+  - op  : 140
+  - arg : null
+  - ret : [enabled: UInt16]
+  - desc: Get water pump controller enable, 0 = disable, 1 = enable
+  
+- set_water_pump_controller_enable:
+  - op  : 141   
+  - arg : [value: UInt16]
+  - ret : null
+  - desc: Set water pump controller enable, 0 = disable, 1 = enable
+ 
+ 
+#------- RH runaway ------------
+- get_rh_runaway_threshold:
+  - op  : 160
+  - arg : null
+  - ret : [threshold_high: Double, threshold_low: Double]
+  - eeprom : null
+  - desc: Get RH runaway threshold
+  
+- set_rh_runaway_threshold:
+  - op : 161
+  - arg: [threshold_high: Double, threshold_low: Double]
+  - ret: null
+  - getter_op : 160
+  - desc: |
+  
+- get_rh_runaway_timeout:
+  - op  : 162
+  - arg : null
+  - ret : [timeout_high_ms: UInt32, timeout_low_ms: UInt32]
+  - eeprom : null
+  - desc: Get RH runaway timeout in milisecond
+  
+- set_rh_runaway_timeout:
+  - op : 163
+  - arg: [timeout_high_ms: UInt32, timeout_low_ms: UInt32]
+  - ret: null
+  - getter_op : 162
+  - desc: | 
+ 
+#------- CO2 runaway ------------
+- get_co2_runaway_threshold:
+  - op  : 164
+  - arg : null
+  - ret : [threshold_high: Double, threshold_low: Double]
+  - eeprom : null
+  - desc: Get co2 runaway threshold
+  
+- set_co2_runaway_threshold:
+  - op : 165
+  - arg: [threshold_high: Double, threshold_low: Double]
+  - ret: null
+  - getter_op : 164
+  - desc: |
+  
+- get_co2_runaway_timeout:
+  - op  : 166
+  - arg : null
+  - ret : [timeout_high_ms: UInt32, timeout_low_ms: UInt32]
+  - eeprom : null
+  - desc: Get co2 runaway timeout in milisecond
+  
+- set_co2_runaway_timeout:
+  - op : 167
+  - arg: [timeout_high_ms: UInt32, timeout_low_ms: UInt32]
+  - ret: null
+  - getter_op : 166
+  - desc: | 
+
+#------- Temperature runaway ------------
+- get_temp_runaway_threshold:
+  - op  : 168
+  - arg : [id: UInt16]
+  - ret : [threshold_high: Double, threshold_low: Double]
+  - eeprom : [id: 3]
+  - desc: Get temp runaway threshold
+  
+- set_temp_runaway_threshold:
+  - op : 169
+  - arg: [id: UInt16, threshold_high: Double, threshold_low: Double]
+  - ret: null
+  - getter_op : 168
+  - desc: |
+  
+- get_temp_runaway_timeout:
+  - op  : 170
+  - arg : [id: UInt16]
+  - ret : [timeout_high_ms: UInt32, timeout_low_ms: UInt32]
+  - eeprom : [id: 3]
+  - desc: Get temp runaway timeout in miliseconddev
+  
+- set_temp_runaway_timeout:
+  - op : 171
+  - arg: [id: UInt16, timeout_high_ms: UInt32, timeout_low_ms: UInt32]
+  - ret: null
+  - getter_op : 170
+  - desc: | 
+
+#------------ sensor current heater ----------
+- get_sensor_current_heater_param:
+  - op : 172
+  - arg: [id: UInt16]
+  - ret: [scale: Double, offset: Double]
+  - eeprom : [id: 3]
+  - desc: |
+          get sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+          
+- set_sensor_current_heater_param:
+  - op : 173
+  - arg: [id: UInt16, scale: Double, offset: Double]
+  - ret: null
+  - getter_op : 172
+  - desc: |
+          set sensor scale and offset
+          Arguments
+          - scale     -> sensor scaling from adc count. 
+          - offset    -> sensor offset from adc count
+          
+- read_sensor_current_heater:
+  - op : 174
+  - arg: [id: UInt16]
+  - ret: [value: Double]
+  - desc: |
+          read the sensor value 
+          
+ # runaway enable
+ #RH
+- get_rh_runaway_enable:
+  - op  : 175
+  - arg : null
+  - ret : [enabled: UInt16]
+  - eeprom : null
+  - desc: Get rh runaway enabled 0 = disabled, 1 = enabled
+  
+- set_rh_runaway_enable:
+  - op  : 176
+  - arg : [enabled: UInt16]
+  - ret : null
+  - getter_op : 175
+  - desc: Set rh runaway enabled 0 = disabled, 1 = enabled
+ 
+ #CO2
+- get_co2_runaway_enable:
+  - op  : 177
+  - arg : null
+  - ret : [enabled: UInt16]
+  - eeprom : null
+  - desc: Get co2 runaway enabled 0 = disabled, 1 = enabled
+  
+- set_co2_runaway_enable:
+  - op  : 178
+  - arg : [enabled: UInt16]
+  - ret : null
+  - getter_op : 177
+  - desc: Set co2 runaway enabled 0 = disabled, 1 = enabled
+  
+#Temperature
+ #CO2
+- get_temp_runaway_enable:
+  - op  : 179
+  - arg : [id: UInt16]
+  - ret : [enabled: UInt16]
+  - eeprom : [id: 3]
+  - desc: Get co2 runaway enabled 0 = disabled, 1 = enabled
+  
+- set_temp_runaway_enable:
+  - op  : 180
+  - arg : [id: UInt16, enabled: UInt16]
+  - ret : null
+  - getter_op : 179
+  - desc: Set co2 runaway enabled 0 = disabled, 1 = enabled
+ 
+
+EVENTS:
+- on_water_pump_on_time_out:
+  - op : 800
+  - ret: null
+  
+- on_input_changed:
+  - op : 801
+  - ret: [input_id: UInt16, on: Boolean]
+  
+- on_rh_threshold_time_out:
+  - op : 802
+  - ret: [value: Double]
+  
+- on_co2_threshold_time_out:
+  - op : 803
+  - ret: [value: Double]
+  
+- on_temp_threshold_time_out:
+  - op : 804
+  - ret: [id: UInt16, value: Double]
